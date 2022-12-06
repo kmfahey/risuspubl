@@ -9,7 +9,7 @@ import pprint
 import random
 import datetime
 
-from risuspubl.dbmodels import *
+from dbmodels import *
 
 
 
