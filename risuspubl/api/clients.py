@@ -66,8 +66,6 @@ def create_client():
 @blueprint.route('/<int:client_id>', methods=['PATCH'])
 def update_client(client_id: int):
     try:
-        if 'title' in request.args and len(tuple(Client.query.where(Client.title == request.args['title']))):
-                return abort(400)
         client_obj = update_model_obj(client_id, Client, update_or_create_args())
         db.session.add(client_obj)
         db.session.commit()
