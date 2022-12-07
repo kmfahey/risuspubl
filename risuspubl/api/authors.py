@@ -1,16 +1,35 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
 import itertools
-import re
 
-from flask import Blueprint, jsonify, request, Response, abort
+from datetime import date, timedelta
 
-from risuspubl.dbmodels import *
+from flask import abort, Blueprint, jsonify, request, Response
+
 from risuspubl.api.commons import *
-
+from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('authors', __name__, url_prefix='/authors')
+
+
+create_or_update_author = lambda: {'first_name': (str, (), request.args.get('first_name')),
+                                   'last_name': (str, (), request.args.get('last_name'))}
+
+create_or_update_book = lambda: {'editor_id': (int, (0,), request.args.get('editor_id')),
+                                 'series_id': (int, (0,), request.args.get('series_id')),
+                                 'title': (str, (), request.args.get('title')),
+                                 'publication_date': (str, (), request.args.get('publication_date')),
+                                 'edition_number': (str, (1, 10), request.args.get('edition_number')),
+                                 'is_in_print': (bool, (), request.args.get('is_in_print'))}
+
+create_or_update_manuscript = lambda: {'editor_id': (int, (0,), request.args.get('editor_id')),
+                                       'series_id': (int, (0,), request.args.get('series_id')),
+                                       'working_title': (str, (), request.args.get('working_title')),
+                                       'due_date': (date, ((date.today() + timedelta(days=1)).isoformat(),
+                                                           "2023-07-01"),
+                                                    request.args.get('due_date')),
+                                       'advance': (int, (5000, 100000), request.args.get('advance'))}
 
 
 # decorator takes path and list of HTTP verbs
@@ -130,44 +149,22 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
 
 @blueprint.route('', methods=['POST'])
 def create_author():
-    author_args = dict()
     try:
-        author_args['first_name'] = validate_str(request.args['first_name'])
-        author_args['last_name'] = validate_str(request.args['last_name'])
-    except:
-        return abort(400)
-    author_obj = Author(**author_args)
+        author_obj = create_model_obj(Author, create_or_update_author())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(author_obj)
     db.session.commit()
     return jsonify(author_obj.serialize())
 
 
-def _validate_book_args():
-    book_args = dict()
-    try:
-        if Editor.query.get(request_args['editor_id']) is None:
-            return abort(400)
-        book_args['editor_id'] = validate_int(request.args['editor_id'], 0)
-        if 'series_id' in request.args:
-            if Series.query.get(request_args['series_id']) is None:
-                return abort(400)
-            book_args['series_id'] = validate_int(request.args['series_id'], 0)
-        if len(tuple(Book.query.where(Book.title == book_args['title']))):
-            raise ValueError()
-        book_args['title'] = validate_str(request.args['title'])
-        book_args['publication_date'] = validate_date(request.args['publication_date'])
-        book_args['edition_number'] = validate_int(request.args['edition_number'], 1, 10)
-        book_args['is_in_print'] = False if request.args['is_in_print'] in ("0", "false", "False") else True
-    except:
-        return abort(400)
-    return book_args
-
-
 @blueprint.route('/<int:author_id>/books', methods=['POST'])
 def create_author_book(author_id: int):
-    author_obj = Author.query.get_or_404(author_id)
-    book_args = _validate_book_args()
-    book_obj = Book(**book_args)
+    Author.query.get_or_404(author_id)
+    try:
+        book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(book_obj)
     db.session.commit()
     ab_insert = Authors_Books.insert().values(author_id=author_id, book_id=book_obj.book_id)
@@ -178,10 +175,12 @@ def create_author_book(author_id: int):
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['POST'])
 def create_authors_book(author1_id: int, author2_id: int):
-    author1_obj = Author.query.get_or_404(author1_id)
-    author2_obj = Author.query.get_or_404(author2_id)
-    book_args = _validate_book_args()
-    book_obj = Book(**book_args)
+    Author.query.get_or_404(author1_id)
+    Author.query.get_or_404(author2_id)
+    try:
+        book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(book_obj)
     db.session.commit()
     ab1_insert = Authors_Books.insert().values(author_id=author1_id, book_id=book_obj.book_id)
@@ -192,31 +191,13 @@ def create_authors_book(author1_id: int, author2_id: int):
     return jsonify(book_obj.serialize())
 
 
-def _validate_manuscript_args():
-    manuscript_args = dict()
-    try:
-        if Editor.query.get(request_args['editor_id']) is None:
-            return abort(400)
-        manuscript_args['editor_id'] = validate_int(request.args['editor_id'], 0)
-        if 'series_id' in request.args:
-            if Series.query.get(request_args['series_id']) is None:
-                return abort(400)
-            manuscript_args['series_id'] = validate_int(request.args['series_id'], 0)
-        if len(tuple(Manuscript.query.where(Manuscript.working_title == manuscript_args['working_title']))):
-            raise ValueError()
-        manuscript_args['working_title'] = validate_str(request.args['working_title'])
-        manuscript_args['due_date'] = validate_date(request.args['due_date'])
-        manuscript_args['advance'] = validate_int(request.args['advance'], 1000, 100000)
-    except:
-        return abort(400)
-    return manuscript_args
-
-
 @blueprint.route('/<int:author_id>/manuscripts', methods=['POST'])
 def create_author_manuscript(author_id: int):
-    author_obj = Author.query.get_or_404(author_id)
-    manuscript_args = _validate_manuscript_args()
-    manuscript_obj = Manuscript(**manuscript_args)
+    Author.query.get_or_404(author_id)
+    try:
+        manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(manuscript_obj)
     db.session.commit()
     ab_insert = Authors_Manuscripts.insert().values(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
@@ -227,10 +208,12 @@ def create_author_manuscript(author_id: int):
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['POST'])
 def create_authors_manuscript(author1_id: int, author2_id: int):
-    author1_obj = Author.query.get_or_404(author1_id)
-    author2_obj = Author.query.get_or_404(author2_id)
-    manuscript_args = _validate_manuscript_args()
-    manuscript_obj = Manuscript(**manuscript_args)
+    Author.query.get_or_404(author1_id)
+    Author.query.get_or_404(author2_id)
+    try:
+        manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(manuscript_obj)
     db.session.commit()
     ab1_insert = Authors_Manuscripts.insert().values(author_id=author1_id, manuscript_id=manuscript_obj.manuscript_id)
@@ -243,36 +226,13 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
 
 @blueprint.route('/<int:author_id>', methods=['PATCH'])
 def update_author(author_id: int):
-    author_obj = Author.query.get_or_404(author_id)
-    if 'first_name' in request.args:
-        author_obj.first_name = validate_str(request.args['first_name'])
-    if 'second_name' in request.args:
-        author_obj.last_name = validate_str(request.args['last_name'])
+    try:
+        author_obj = update_model_obj(author_id, Author, create_or_update_author())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(author_obj)
     db.session.commit()
     return jsonify(author_obj.serialize())
-
-
-def _update_book_obj(book_obj):
-    if 'editor_id' in request.args:
-        if Editor.query.get(request_args['editor_id']) is None:
-            return abort(400)
-        book_obj.editor_id = validate_int(request.args['editor_id'], 0)
-    if 'series_id' in request.args:
-        if Series.query.get(request_args['series_id']) is None:
-            return abort(400)
-        book_obj.series_id = validate_int(request.args['series_id'], 0)
-    if 'title' in request.args:
-        if len(tuple(Book.query.where(Book.title == request.args['title']))):
-            raise ValueError()
-        book_obj.title = validate_str(request.args['title'])
-    if 'publication_date' in request.args:
-        book_obj.publication_date = validate_date(request.args['publication_date'])
-    if 'edition_number' in request.args:
-        book_obj.edition_number = validate_int(request.args['edition_number'], 1, 10)
-    if 'is_in_print' in request.args:
-        book_obj.is_in_print = False if request.args['is_in_print'] in ("0", "false", "False") else True
-    return book_obj
 
 
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH'])
@@ -281,7 +241,10 @@ def update_author_book(author_id: int, book_id: int):
     book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
     if len(book_objs) == 0:
         return abort(404)
-    book_obj = _update_book_obj(book_objs[0])
+    try:
+        book_obj = update_model_obj(book_id, Book, create_or_update_book())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(book_obj)
     db.session.commit()
     return jsonify(book_obj.serialize())
@@ -295,30 +258,13 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
     a2_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author2_obj.books))
     if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
         return abort(404)
-    book_obj = _update_book_obj(a1_book_objs[0])
+    try:
+        book_obj = update_model_obj(book_id, Book, create_or_update_book())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(book_obj)
     db.session.commit()
     return jsonify(book_obj.serialize())
-
-
-def _update_manuscript_obj(manuscript_obj):
-    if 'editor_id' in request.args:
-        if Editor.query.get(request_args['editor_id']) is None:
-            return abort(400)
-        manuscript_obj.editor_id = validate_int(request.args['editor_id'], 0)
-    if 'series_id' in request.args:
-        if Series.query.get(request_args['series_id']) is None:
-            return abort(400)
-        manuscript_obj.series_id = validate_int(request.args['series_id'], 0)
-    if 'working_title' in request.args:
-        if len(tuple(Manuscript.query.where(Manuscript.working_title == request.args['working_title']))):
-            raise ValueError()
-        manuscript_obj.working_title = validate_str(request.args['working_title'])
-    if 'due_date' in request.args:
-        manuscript_obj.due_date = validate_date(request.args['due_date'])
-    if 'advance' in request.args:
-        manuscript_obj.advance = validate_int(request.args['advance'], 5000, 100000)
-    return manuscript_obj
 
 
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH'])
@@ -327,7 +273,10 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
     manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
     if len(manuscript_objs) == 0:
         return abort(404)
-    manuscript_obj = _update_manuscript_obj(manuscript_objs[0])
+    try:
+        manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(manuscript_obj)
     db.session.commit()
     return jsonify(manuscript_obj.serialize())
@@ -341,7 +290,10 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
     a2_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author2_obj.manuscripts))
     if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
         return abort(404)
-    manuscript_obj = _update_manuscript_obj(a1_manuscript_objs[0])
+    try:
+        manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(manuscript_obj)
     db.session.commit()
     return jsonify(manuscript_obj.serialize())

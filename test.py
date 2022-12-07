@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 
 import collections
-import csv
-import datetime
 import os
-import os.path
-import random
 
 from risuspubl import create_app
 from risuspubl.dbmodels import *
@@ -19,7 +15,7 @@ table_to_id_column = {'authors': 'author_id', 'books': 'book_id', 'clients': 'cl
                       'salespeople': 'salesperson_id', 'series': 'series_id'}
 
 table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor, 'manuscripts': Manuscript,
-                      'sales_records': SalesRecord, 'salespeople': Salespeople, 'series': Series}
+                      'sales_records': SalesRecord, 'salespeople': Salesperson, 'series': Series}
 
 model_objs = collections.defaultdict(list)
 
@@ -32,5 +28,3 @@ app = create_app()
 app.app_context().push()
 
 db = SQLAlchemy(app)
-
-

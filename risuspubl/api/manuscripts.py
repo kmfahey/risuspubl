@@ -1,14 +1,9 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-import itertools
-import re
+from flask import abort, Blueprint, jsonify, request, Response
 
-from datetime import date
-from flask import Blueprint, jsonify, request, Response, abort
-
-from risuspubl.dbmodels import *
 from risuspubl.api.commons import *
-
+from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
@@ -37,19 +32,20 @@ def show_manuscript(manuscript_id: int):
 
 @blueprint.route('/<int:manuscript_id>', methods=['PATCH'])
 def update_manuscript(manuscript_id: int):
-    if 'working_title' in request.args:
-        if len(tuple(Manuscript.query.where(Manuscript.working_title == request.args['working_title']))):
-            return abort(400)
     try:
+        if 'working_title' in request.args:
+            if len(tuple(Manuscript.query.where(Manuscript.working_title == request.args['working_title']))):
+                raise ValueError(f"'working_title' parameter value '{request.args['working_title']}' already use in a "
+                                 f'row in the {Manuscript.__tablename__} table; working_title values must be unique')
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                           {'editor_id': (int, (0,), request.args.get('editor_id')),
                                            'series_id': (int, (0,), request.args.get('series_id')),
                                            'working_title': (str, (), request.args.get('working_title')),
-                                           'due_date': (date, (date.today().isoformat(), "2025-12-31"),
+                                           'due_date': (date, (date.today().isoformat(), '2025-12-31'),
                                                         request.args.get('due_date')),
                                            'advance': (int, (5000, 100000), request.args.get('advance'))})
-    except ValueError:
-        return abort(400)
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(manuscript_obj)
     db.session.commit()
     return jsonify(manuscript_obj.serialize())

@@ -1,15 +1,9 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-import itertools
-import re
+from flask import abort, Blueprint, jsonify, request, Response
 
-from datetime import date
-
-from flask import Blueprint, jsonify, request, Response, abort
-
-from risuspubl.dbmodels import *
 from risuspubl.api.commons import *
-
+from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('editors', __name__, url_prefix='/editors')
@@ -34,7 +28,10 @@ def show_editor(editor_id: int):
 
 @blueprint.route('', methods=['POST'])
 def create_editor():
-    editor_obj = create_model_obj(Editor, update_or_create_args())
+    try:
+        editor_obj = create_model_obj(Editor, update_or_create_args())
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(editor_obj)
     db.session.commit()
     return jsonify(editor_obj.serialize())
@@ -44,8 +41,8 @@ def create_editor():
 def update_editor(editor_id: int):
     try:
         editor_obj = update_model_obj(editor_id, Editor, update_or_create_args())
-    except ValueError:
-        return abort(400)
+    except ValueError as exception:
+        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
     db.session.add(editor_obj)
     db.session.commit()
     return jsonify(editor_obj.serialize())
@@ -53,8 +50,5 @@ def update_editor(editor_id: int):
 
 @blueprint.route('/<int:editor_id>', methods=['DELETE'])
 def delete_editor(editor_id: int):
-    try:
-        delete_model_obj(editor_id, Editor)
-    except:
-        return abort(400)
+    delete_model_obj(editor_id, Editor)
     return jsonify(True)

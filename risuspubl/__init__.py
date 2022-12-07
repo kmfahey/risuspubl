@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 
 import os
-import math
 
 import flask
 
+from .api import authors, books, clients, editors, manuscripts, salespeople, sales_records, series
 from .dbmodels import db
-from .api import authors, books, manuscripts, clients, editors, salespeople, series, sales_records
 
 
 def create_app(test_config=None):

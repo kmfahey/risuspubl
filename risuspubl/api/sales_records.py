@@ -1,15 +1,9 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-import itertools
-import re
+from flask import Blueprint, jsonify, request
 
-from datetime import date
-
-from flask import Blueprint, jsonify, request, Response, abort
-
-from risuspubl.dbmodels import *
 from risuspubl.api.commons import *
-
+from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
