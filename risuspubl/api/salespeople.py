@@ -54,6 +54,8 @@ def show_salesperson_clients(salesperson_id: int):
     try:
         Salesperson.query.get_or_404(salesperson_id)
         retval = [client_obj.serialize() for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)]
+        if not len(retval):
+            return abort(404)
         return jsonify(retval)
     except Exception as exception:
         if isinstance(exception, NotFound):
