@@ -11,6 +11,10 @@ from risuspubl.dbmodels import *
 blueprint = Blueprint('editors', __name__, url_prefix='/editors')
 
 
+# This lambda holds the dict needed as an argument to create_model_obj() or
+# update_model_obj() when called for the Editor class. By wrapping it in a
+# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# the function is called within the context of an endpoint function.
 editor_update_or_create_args = lambda: {'first_name': (str, (), request.args.get('first_name')),
                                  'last_name': (str, (), request.args.get('last_name')),
                                  'salary': (int, (), request.args.get('salary'))}

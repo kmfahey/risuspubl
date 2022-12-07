@@ -11,6 +11,10 @@ from risuspubl.dbmodels import *
 blueprint = Blueprint('clients', __name__, url_prefix='/clients')
 
 
+# This lambda holds the dict needed as an argument to create_model_obj() or
+# update_model_obj() when called for the Client class. By wrapping it in a
+# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# the function is called within the context of an endpoint function.
 update_or_create_args = lambda: {'salesperson_id': (int, (0,), request.args.get('salesperson_id')),
                                  'email_address': (str, (), request.args.get('email_address')),
                                  'phone_number': (str, (11, 11), request.args.get('phone_number')),
