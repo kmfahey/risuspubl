@@ -1,5 +1,7 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
+from werkzeug.exceptions import NotFound
+
 from datetime import date
 
 from flask import abort, Blueprint, jsonify, request, Response
@@ -13,14 +15,26 @@ blueprint = Blueprint('books', __name__, url_prefix='/books')
 
 @blueprint.route('', methods=['GET'])
 def index():
-    result = [book_obj.serialize() for book_obj in Book.query.all()]
-    return jsonify(result) # return JSON response
+    try:
+        result = [book_obj.serialize() for book_obj in Book.query.all()]
+        return jsonify(result) # return JSON response
+    except Exception as exception:
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
 
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
 def show_book(book_id: int):
-    book_obj = Book.query.get_or_404(book_id)
-    return jsonify(book_obj.serialize())
+    try:
+        book_obj = Book.query.get_or_404(book_id)
+        return jsonify(book_obj.serialize())
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
 
 
 # A Create endpoint is deliberately not implemented, because without
@@ -35,10 +49,9 @@ def show_book(book_id: int):
 @blueprint.route('/<int:book_id>', methods=['PATCH'])
 def update_book(book_id: int):
     try:
-        if 'title' in request.args:
-            if len(tuple(Book.query.where(Book.title == request.args['title']))):
-                raise ValueError(f"'title' parameter value '{request.args['title']}' already use in a row in the "
-                                 f'{Book.__tablename__} table; title values must be unique')
+        if 'title' in request.args and len(tuple(Book.query.where(Book.title == request.args['title']))):
+            raise ValueError(f"'title' parameter value '{request.args['title']}' already use in a row in the "
+                             f'{Book.__tablename__} table; title values must be unique')
         book_obj = update_model_obj(book_id, Book,
                                     {'editor_id':        (int,  (0,),    request.args.get('editor_id')),
                                      'series_id':        (int,  (0,),    request.args.get('series_id')),
@@ -46,14 +59,21 @@ def update_book(book_id: int):
                                      'publication_date': (date, (),      request.args.get('publication_date')),
                                      'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
                                      'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
-    except ValueError as exception:
-        return Response(exception.args[0], status=400) if len(exception.args) else abort(400)
-    db.session.add(book_obj)
-    db.session.commit()
-    return jsonify(book_obj.serialize())
+        db.session.add(book_obj)
+        db.session.commit()
+        return jsonify(book_obj.serialize())
+    except Exception as exception:
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
 
 
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
 def delete_book(book_id: int):
-    delete_model_obj(book_id, Book)
-    return jsonify(True)
+    try:
+        delete_model_obj(book_id, Book)
+        return jsonify(True)
+    except Exception as exception:
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))

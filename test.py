@@ -3,6 +3,8 @@
 import collections
 import os
 
+from flask import abort
+
 from risuspubl import create_app
 from risuspubl.dbmodels import *
 

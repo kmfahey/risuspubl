@@ -1,6 +1,8 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from flask import Blueprint, jsonify, request
+from werkzeug.exceptions import NotFound
+
+from flask import Blueprint, jsonify, request, Response, abort
 
 from risuspubl.api.commons import *
 from risuspubl.dbmodels import *
@@ -18,16 +20,51 @@ update_or_create_args = lambda: {'sales_record_id', (int, (0,), request.args.get
                                  'net_profit', (float, (0.01,), request.args.get('net_profit'))}
 
 
-@blueprint.route('', methods=['GET'])
-def index():
-    result = [sales_record_obj.serialize() for sales_record_obj in SalesRecord.query.all()]
-    return jsonify(result) # return JSON response
-
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
 def show_sales_record(sales_record_id: int):
-    sales_record_obj = SalesRecord.query.get_or_404(sales_record_id)
-    return jsonify(sales_record_obj.serialize())
+    try:
+        sales_record_obj = SalesRecord.query.get_or_404(sales_record_id)
+        return jsonify(sales_record_obj.serialize())
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
+@blueprint.route('/year/<int:year>', methods=['GET'])
+def show_sales_records_by_year(year: int):
+    try:
+        retval = list()
+        if not (1990 <= year <= 2022):
+            raise ValueError(f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year")
+        for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
+            retval.append(sales_record_obj.serialize())
+        retval.sort(key=lambda dictval: (dictval['month'], dictval['book_id']))
+        return jsonify(retval)
+    except Exception as exception:
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
+@blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
+def show_sales_records_by_year_and_month(year: int, month: int):
+    try:
+        retval = list()
+        if not (1990 <= year <= 2022):
+            raise ValueError(f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year")
+        elif not (1 <= month <= 12):
+            raise ValueError(f"month parameter value {month} not in the range [1, 12]: invalid month parameter")
+        for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year).where(SalesRecord.month == month):
+            retval.append(sales_record_obj.serialize())
+        return jsonify(retval)
+    except Exception as exception:
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
 
 
 # Adding, updating and deleting sales records is deliberately made impossible
