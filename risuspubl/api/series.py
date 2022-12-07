@@ -106,6 +106,60 @@ def show_series_book_by_id(series_id: int, book_id: int):
                 if len(exception.args) else abort(status))
 
 
+@blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
+def show_series_manuscripts(series_id: int):
+    """
+    Implements a GET /series/<id>/manuscripts endpoint. All rows in the
+    manuscripts table with that series_id are loaded and output as a JSON list.
+
+    :series_id: The series_id associated with manuscript_ids in the
+                series_manuscripts table of rows from the manuscripts table to
+                display.
+    :return:    A flask.Response object.
+    """
+    try:
+        Series.query.get_or_404(series_id)
+        retval = [manuscript_obj.serialize() for manuscript_obj
+                  in Manuscript.query.where(Manuscript.series_id == series_id)]
+        if not len(retval):
+            return abort(404)
+        return jsonify(retval)
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
+@blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
+def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
+    """
+    Implements a GET /series/<id>/manuscripts/<id> endpoint. The row in the
+    manuscripts table with that series_id and that manuscript_id is loaded and
+    outputed in JSON.
+
+    :series_id:     The series_id of the row in the manuscripts table to
+                    display.
+    :manuscript_id: The manuscript_id of the row in the manuscripts table to
+                    load and display.
+    :return:        A flask.Response object.
+    """
+    try:
+        Series.query.get_or_404(series_id)
+        manuscript_objs = list(Manuscript.query.where(Manuscript.series_id == series_id))
+        for manuscript_obj in manuscript_objs:
+            if manuscript_obj.manuscript_id == manuscript_id:
+                return jsonify(manuscript_obj.serialize())
+        return abort(404)
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
 @blueprint.route('', methods=['POST'])
 def create_series():
     """
@@ -178,6 +232,40 @@ def update_series_book_by_id(series_id: int, book_id: int):
                 if len(exception.args) else abort(status))
 
 
+@blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['PATCH'])
+def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
+    """
+    Implements a PATCH /series/<id>/manuscripts/<id> endpoint. The row in the
+    manuscripts table with that manuscript_id and that series_id is updated from the CGI
+    parameters.
+
+    :series_id: The series_id of the row in the manuscripts table to update.
+    :manuscript_id:   The manuscript_id of the row in the manuscripts table to update.
+    :return:    A flask.Response object.
+    """
+    try:
+        Series.query.get_or_404(series_id)
+        if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
+                   in Manuscript.query.where(Manuscript.series_id == series_id)):
+            return abort(404)
+        manuscript_obj = update_model_obj(manuscript_id, Manuscript,
+                                    {'series_id':        (int,  (0,),    request.args.get('series_id')),
+                                     'series_id':        (int,  (0,),    series_id),
+                                     'title':            (str,  (),      request.args.get('title')),
+                                     'publication_date': (date, (),      request.args.get('publication_date')),
+                                     'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
+                                     'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
+        db.session.add(manuscript_obj)
+        db.session.commit()
+        return jsonify(manuscript_obj.serialize())
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
 @blueprint.route('/<int:series_id>', methods=['DELETE'])
 def delete_series(series_id: int):
     """
@@ -211,6 +299,35 @@ def delete_series_book_by_id(series_id: int, book_id: int):
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
             return abort(404)
         delete_model_obj(book_id, Book)
+        series_obj.volumes = series_obj.volumes - 1
+        db.session.add(series_obj)
+        db.session.commit()
+        return jsonify(True)
+    except Exception as exception:
+        if isinstance(exception, NotFound):
+            raise exception from None
+        status = 400 if isinstance(exception, ValueError) else 500
+        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+                if len(exception.args) else abort(status))
+
+
+@blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
+def delete_series_manuscript_by_id(series_id: int, manuscript_id: int):
+    """
+    Implements a DELETE /series/<id>/manuscripts/<id> endpoint. The row in the
+    manuscripts table with that manuscript_id and that series_id is deleted.
+
+    :series_id:     The series_id of the row in the manuscripts table to delete.
+    :manuscript_id: The manuscript_id of the row in the manuscripts table to
+                    delete.
+    :return:        A flask.Response object.
+    """
+    try:
+        series_obj = Series.query.get_or_404(series_id)
+        if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
+                   in Manuscript.query.where(Manuscript.series_id == series_id)):
+            return abort(404)
+        delete_model_obj(manuscript_id, Manuscript)
         series_obj.volumes = series_obj.volumes - 1
         db.session.add(series_obj)
         db.session.commit()

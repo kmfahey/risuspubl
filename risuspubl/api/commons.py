@@ -103,7 +103,7 @@ def delete_model_obj(id_val, model_subclass):
         db.session.execute(ab_del)
         db.session.commit()
     elif model_subclass is Manuscript:
-        am_del = Authors_Manuscript.delete().where(Authors_Manuscript.columns[1] == id_val)
+        am_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == id_val)
         db.session.execute(am_del)
         db.session.commit()
     db.session.delete(model_obj)
