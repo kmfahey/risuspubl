@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-import datetime
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -138,7 +136,7 @@ class SalesRecord(db.Model):
             }
 
 
-class Salespeople(db.Model):
+class Salesperson(db.Model):
     __tablename__ = 'salespeople'
 
     salesperson_id = db.Column('salesperson_id', db.Integer, primary_key=True, autoincrement=True)
@@ -155,7 +153,7 @@ class Salespeople(db.Model):
             }
 
 
-Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salespeople.salesperson_id), nullable=False)
+Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
 
 
 class Series(db.Model):
