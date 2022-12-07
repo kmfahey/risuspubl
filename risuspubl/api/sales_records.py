@@ -23,6 +23,13 @@ update_or_create_args = lambda: {'sales_record_id', (int, (0,), request.args.get
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
 def show_sales_record(sales_record_id: int):
+    """
+    Implements a GET /<id> endpoint. The row with that sales_record_id in the
+    sales_records table is loaded and output as JSON.
+
+    :year:   The year of rows from sales_records table to display.
+    :return: A flask.Response object.
+    """
     try:
         sales_record_obj = SalesRecord.query.get_or_404(sales_record_id)
         return jsonify(sales_record_obj.serialize())
@@ -36,6 +43,13 @@ def show_sales_record(sales_record_id: int):
 
 @blueprint.route('/year/<int:year>', methods=['GET'])
 def show_sales_records_by_year(year: int):
+    """
+    Implements a GET /year/<year> endpoint. All rows in the sales_records table
+    with that year are loaded and output as a JSON list.
+
+    :year:   The year of rows from sales_records table to display.
+    :return: A flask.Response object.
+    """
     try:
         retval = list()
         if not (1990 <= year <= 2022):
@@ -52,6 +66,15 @@ def show_sales_records_by_year(year: int):
 
 @blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
 def show_sales_records_by_year_and_month(year: int, month: int):
+    """
+    Implements a GET /year/<year>/month/<month> endpoint. All rows in the
+    sales_records table with that year and that month are loaded and output as a
+    JSON list.
+
+    :year:   The year of rows from sales_records table to display.
+    :month:  The year of rows from sales_records table to display.
+    :return: A flask.Response object.
+    """
     try:
         retval = list()
         if not (1990 <= year <= 2022):

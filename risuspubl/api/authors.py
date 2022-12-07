@@ -88,11 +88,11 @@ def show_author(author_id: int):
 def show_author_books(author_id: int):
     """
     Implements a GET /authors/<id>/books endpoint. All rows in the books table
-    associated with that author_ids in the authors_books table are loaded and
+    associated with that author_id in the authors_books table are loaded and
     output as a JSON list.
 
-    :author_id: The two author_ids associated with book_ids in the
-                authors_books table of rows from the books table to display.
+    :author_id: The author_id associated with book_ids in the authors_books
+                table of rows from the books table to display.
     :return:    A flask.Response object.
     """
     try:
@@ -141,8 +141,9 @@ def show_author_manuscripts(author_id: int):
     manuscripts table associated with that author_ids in the authors_manuscripts
     table are loaded and output as a JSON list.
 
-    :author_id: The two author_id associated with manuscript_ids in the
-                authors_manuscripts table of rows from the manuscripts table to display.
+    :author_id: The author_id associated with manuscript_ids in the
+                authors_manuscripts table of rows from the manuscripts table to
+                display.
     :return:    A flask.Response object.
     """
     try:
@@ -282,24 +283,17 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
 def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> set:
-    try:
-        author1_obj = Author.query.get_or_404(author1_id)
-        author2_obj = Author.query.get_or_404(author2_id)
-        author1_manuscripts = author1_obj.manuscripts
-        author2_manuscripts = author2_obj.manuscripts
-        manuscript_objs_by_id = {manuscript_obj.manuscript_id: manuscript_obj for manuscript_obj
-                                 in itertools.chain(author1_manuscripts, author2_manuscripts)}
-        shared_manuscript_ids = set(author1_manuscript_obj.manuscript_id
-                                    for author1_manuscript_obj in author1_manuscripts) & \
-                              set(author2_manuscript_obj.manuscript_id
-                                  for author2_manuscript_obj in author2_manuscripts)
-        return [manuscript_objs_by_id[manuscript_id] for manuscript_id in shared_manuscript_ids]
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    author1_obj = Author.query.get_or_404(author1_id)
+    author2_obj = Author.query.get_or_404(author2_id)
+    author1_manuscripts = author1_obj.manuscripts
+    author2_manuscripts = author2_obj.manuscripts
+    manuscript_objs_by_id = {manuscript_obj.manuscript_id: manuscript_obj for manuscript_obj
+                             in itertools.chain(author1_manuscripts, author2_manuscripts)}
+    shared_manuscript_ids = set(author1_manuscript_obj.manuscript_id
+                                for author1_manuscript_obj in author1_manuscripts) & \
+                          set(author2_manuscript_obj.manuscript_id
+                              for author2_manuscript_obj in author2_manuscripts)
+    return [manuscript_objs_by_id[manuscript_id] for manuscript_id in shared_manuscript_ids]
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['GET'])

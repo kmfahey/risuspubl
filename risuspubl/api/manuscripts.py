@@ -13,6 +13,12 @@ blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /manuscripts endpoint. All rows in the manuscripts table
+    are loaded and output as a JSON list.
+
+    :return:    A flask.Response object.
+    """
     try:
         result = [manuscript_obj.serialize() for manuscript_obj in Manuscript.query.all()]
         return jsonify(result) # return JSON response
@@ -24,6 +30,14 @@ def index():
 
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
 def show_manuscript(manuscript_id: int):
+    """
+    Implements a GET /manuscripts/<id> endpoint. The row in the manuscripts
+    table with the given manuscript_id is loaded and output in JSON.
+
+    :manuscript_id: The manuscript_id of the row in the manuscripts table to
+                    load and display.
+    :return:        A flask.Response object.
+    """
     try:
         manuscript_obj = Manuscript.query.get_or_404(manuscript_id)
         return jsonify(manuscript_obj.serialize())
@@ -44,6 +58,14 @@ def show_manuscript(manuscript_id: int):
 
 @blueprint.route('/<int:manuscript_id>', methods=['PATCH'])
 def update_manuscript(manuscript_id: int):
+    """
+    Implements a PATCH /manuscripts/<id> endpoint. The row in the manuscripts
+    table with that manuscript_id is updated from the CGI parameters.
+
+    :manuscript_id: The manuscript_id of the row in the manuscripts table to
+                    update.
+    :return:        A flask.Response object.
+    """
     try:
         if 'working_title' in request.args and len(tuple(Manuscript.query.where(Manuscript.working_title
                                                                                 == request.args['working_title']))):
@@ -67,6 +89,14 @@ def update_manuscript(manuscript_id: int):
 
 @blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
 def delete_manuscript(manuscript_id: int):
+    """
+    Implements a DELETE /manuscripts/<id> endpoint. The row in the manuscripts
+    table with that manuscript_id is deleted.
+
+    :manuscript_id: The manuscript_id of the row in the manuscripts table to
+                    delete.
+    :return:        A flask.Response object.
+    """
     try:
         manuscript_obj = Manuscript.query.get_or_404(manuscript_id)
         am_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)

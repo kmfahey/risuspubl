@@ -21,6 +21,12 @@ update_or_create_args = lambda: {'title': (str, (), request.args.get('title')),
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /series endpoint. All rows in the series table are loaded
+    and output as a JSON list.
+
+    :return: A flask.Response object.
+    """
     try:
         result = [series_obj.serialize() for series_obj in Series.query.all()]
         return jsonify(result) # return JSON response
@@ -32,6 +38,14 @@ def index():
 
 @blueprint.route('/<int:series_id>', methods=['GET'])
 def show_series(series_id: int):
+    """
+    Implements a GET /series/<id> endpoint. The row in the series table with
+    the given series_id is loaded and output in JSON.
+
+    :series_id: The series_id of the row in the series table to load and
+                display.
+    :return:    A flask.Response object.
+    """
     try:
         series_obj = Series.query.get_or_404(series_id)
         return jsonify(series_obj.serialize())
@@ -45,6 +59,14 @@ def show_series(series_id: int):
 
 @blueprint.route('/<int:series_id>/books', methods=['GET'])
 def show_series_books(series_id: int):
+    """
+    Implements a GET /series/<id>/books endpoint. All rows in the books table
+    with that series_id are loaded and output as a JSON list.
+
+    :series_id: The series_id associated with book_ids in the
+                series_books table of rows from the books table to display.
+    :return:    A flask.Response object.
+    """
     try:
         Series.query.get_or_404(series_id)
         retval = [book_obj.serialize() for book_obj in Book.query.where(Book.series_id == series_id)]
@@ -61,6 +83,14 @@ def show_series_books(series_id: int):
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['GET'])
 def show_series_book_by_id(series_id: int, book_id: int):
+    """
+    Implements a GET /series/<id>/books/<id> endpoint. The row in the books
+    table with that series_id and that book_id is loaded and outputed in JSON.
+
+    :series_id: The series_id of the row in the books table to display.
+    :book_id:   The book_id of the row in the books table to load and display.
+    :return:    A flask.Response object.
+    """
     try:
         Series.query.get_or_404(series_id)
         book_objs = list(Book.query.where(Book.series_id == series_id))
@@ -78,6 +108,12 @@ def show_series_book_by_id(series_id: int, book_id: int):
 
 @blueprint.route('', methods=['POST'])
 def create_series():
+    """
+    Implements a POST /series endpoint. A new row in the series table is
+    constituted from the CGI parameters and saved to that table.
+
+    :return:    A flask.Response object.
+    """
     try:
         series_obj = create_model_obj(Series, update_or_create_args())
         db.session.add(series_obj)
@@ -91,6 +127,13 @@ def create_series():
 
 @blueprint.route('/<int:series_id>', methods=['PATCH'])
 def update_series(series_id: int):
+    """
+    Implements a PATCH /series/<id> endpoint. The row in the series table with
+    that series_id is updated from the CGI parameters.
+
+    :series_id: The series_id of the row in the series table to update.
+    :return:    A flask.Response object.
+    """
     try:
         series_obj = update_model_obj(series_id, Series, update_or_create_args())
         db.session.add(series_obj)
@@ -104,6 +147,15 @@ def update_series(series_id: int):
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['PATCH'])
 def update_series_book_by_id(series_id: int, book_id: int):
+    """
+    Implements a PATCH /series/<id>/books/<id> endpoint. The row in the
+    books table with that book_id and that series_id is updated from the CGI
+    parameters.
+
+    :series_id: The series_id of the row in the books table to update.
+    :book_id:   The book_id of the row in the books table to update.
+    :return:    A flask.Response object.
+    """
     try:
         Series.query.get_or_404(series_id)
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
@@ -128,6 +180,13 @@ def update_series_book_by_id(series_id: int, book_id: int):
 
 @blueprint.route('/<int:series_id>', methods=['DELETE'])
 def delete_series(series_id: int):
+    """
+    Implements a DELETE /series/<id> endpoint. The row in the series table
+    with that series_id is deleted.
+
+    :series_id: The series_id of the row in the series table to delete.
+    :return:    A flask.Response object.
+    """
     try:
         delete_model_obj(series_id, Series)
         return jsonify(True)
@@ -139,6 +198,14 @@ def delete_series(series_id: int):
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['DELETE'])
 def delete_series_book_by_id(series_id: int, book_id: int):
+    """
+    Implements a DELETE /series/<id>/books/<id> endpoint. The row in the books
+    table with that book_id and that series_id is deleted.
+
+    :series_id: The series_id of the row in the books table to delete.
+    :book_id:   The book_id of the row in the books table to delete.
+    :return:    A flask.Response object.
+    """
     try:
         series_obj = Series.query.get_or_404(series_id)
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):

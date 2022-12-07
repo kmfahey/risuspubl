@@ -22,6 +22,12 @@ editor_update_or_create_args = lambda: {'first_name': (str, (), request.args.get
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /editors endpoint. All rows in the editors table are loaded
+    and output as a JSON list.
+
+    :return: A flask.Response object.
+    """
     try:
         result = [editor_obj.serialize() for editor_obj in Editor.query.all()]
         return jsonify(result) # return JSON response
@@ -33,6 +39,14 @@ def index():
 
 @blueprint.route('/<int:editor_id>', methods=['GET'])
 def show_editor(editor_id: int):
+    """
+    Implements a GET /editors/<id> endpoint. The row in the editors table with
+    the given editor_id is loaded and output in JSON.
+
+    :editor_id: The editor_id of the row in the editors table to load and
+                display.
+    :return:    A flask.Response object.
+    """
     try:
         editor_obj = Editor.query.get_or_404(editor_id)
         return jsonify(editor_obj.serialize())
@@ -46,6 +60,14 @@ def show_editor(editor_id: int):
 
 @blueprint.route('/<int:editor_id>/books', methods=['GET'])
 def show_editor_books(editor_id: int):
+    """
+    Implements a GET /editors/<id>/books endpoint. All rows in the books table
+    with that editor_id are loaded and output as a JSON list.
+
+    :editor_id: The editor_id associated with book_ids in the
+                editors_books table of rows from the books table to display.
+    :return:    A flask.Response object.
+    """
     try:
         Editor.query.get_or_404(editor_id)
         retval = [book_obj.serialize() for book_obj in Book.query.where(Book.editor_id == editor_id)]
@@ -62,6 +84,14 @@ def show_editor_books(editor_id: int):
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['GET'])
 def show_editor_book_by_id(editor_id: int, book_id: int):
+    """
+    Implements a GET /editors/<id>/books/<id> endpoint. The row in the books
+    table with that editor_id and that book_id is loaded and outputed in JSON.
+
+    :editor_id: The editor_id of the row in the books table to display.
+    :book_id:   The book_id of the row in the books table to load and display.
+    :return:    A flask.Response object.
+    """
     try:
         Editor.query.get_or_404(editor_id)
         book_objs = list(Book.query.where(Book.editor_id == editor_id))
@@ -79,6 +109,12 @@ def show_editor_book_by_id(editor_id: int, book_id: int):
 
 @blueprint.route('', methods=['POST'])
 def create_editor():
+    """
+    Implements a POST /editors endpoint. A new row in the editors table is
+    constituted from the CGI parameters and saved to that table.
+
+    :return:    A flask.Response object.
+    """
     try:
         editor_obj = create_model_obj(Editor, editor_update_or_create_args())
         db.session.add(editor_obj)
@@ -92,6 +128,13 @@ def create_editor():
 
 @blueprint.route('/<int:editor_id>', methods=['PATCH'])
 def update_editor(editor_id: int):
+    """
+    Implements a PATCH /editors/<id> endpoint. The row in the editors table with
+    that editor_id is updated from the CGI parameters.
+
+    :editor_id: The editor_id of the row in the editors table to update.
+    :return:    A flask.Response object.
+    """
     try:
         editor_obj = update_model_obj(editor_id, Editor, editor_update_or_create_args())
         db.session.add(editor_obj)
@@ -105,6 +148,15 @@ def update_editor(editor_id: int):
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH'])
 def update_editor_book_by_id(editor_id: int, book_id: int):
+    """
+    Implements a PATCH /editors/<id>/books/<id> endpoint. The row in the
+    books table with that book_id and that editor_id is updated from the CGI
+    parameters.
+
+    :editor_id: The editor_id of the row in the books table to update.
+    :book_id:   The book_id of the row in the books table to update.
+    :return:    A flask.Response object.
+    """
     try:
         Editor.query.get_or_404(editor_id)
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.editor_id == editor_id)):
@@ -129,6 +181,13 @@ def update_editor_book_by_id(editor_id: int, book_id: int):
 
 @blueprint.route('/<int:editor_id>', methods=['DELETE'])
 def delete_editor(editor_id: int):
+    """
+    Implements a DELETE /editors/<id> endpoint. The row in the editors table
+    with that editor_id is deleted.
+
+    :editor_id: The editor_id of the row in the editors table to delete.
+    :return:    A flask.Response object.
+    """
     try:
         delete_model_obj(editor_id, Editor)
         return jsonify(True)
@@ -140,6 +199,14 @@ def delete_editor(editor_id: int):
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['DELETE'])
 def delete_editor_book_by_id(editor_id: int, book_id: int):
+    """
+    Implements a DELETE /editors/<id>/books/<id> endpoint. The row in the books
+    table with that book_id and that editor_id is deleted.
+
+    :editor_id: The editor_id of the row in the books table to delete.
+    :book_id:   The book_id of the row in the books table to delete.
+    :return:    A flask.Response object.
+    """
     try:
         Editor.query.get_or_404(editor_id)
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.editor_id == editor_id)):

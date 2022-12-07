@@ -15,6 +15,12 @@ blueprint = Blueprint('books', __name__, url_prefix='/books')
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /books endpoint. All rows in the books table are loaded
+    and output as a JSON list.
+
+    :return:    A flask.Response object.
+    """
     try:
         result = [book_obj.serialize() for book_obj in Book.query.all()]
         return jsonify(result) # return JSON response
@@ -26,6 +32,14 @@ def index():
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
 def show_book(book_id: int):
+    """
+    Implements a GET /books/<id> endpoint. The row in the books table with the
+    given book_id is loaded and output in JSON.
+
+    :book_id: The book_id of the row in the books table to load and
+              display.
+    :return:  A flask.Response object.
+    """
     try:
         book_obj = Book.query.get_or_404(book_id)
         return jsonify(book_obj.serialize())
@@ -48,6 +62,13 @@ def show_book(book_id: int):
 
 @blueprint.route('/<int:book_id>', methods=['PATCH'])
 def update_book(book_id: int):
+    """
+    Implements a PATCH /books/<id> endpoint. The row in the books table with
+    that book_id is updated from the CGI parameters.
+
+    :book_id: The book_id of the row in the books table to update.
+    :return:  A flask.Response object.
+    """
     try:
         if 'title' in request.args and len(tuple(Book.query.where(Book.title == request.args['title']))):
             raise ValueError(f"'title' parameter value '{request.args['title']}' already use in a row in the "
@@ -70,6 +91,13 @@ def update_book(book_id: int):
 
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
 def delete_book(book_id: int):
+    """
+    Implements a DELETE /books/<id> endpoint. The row in the books table with
+    that book_id is deleted.
+
+    :book_id: The book_id of the row in the books table to delete.
+    :return:  A flask.Response object.
+    """
     try:
         delete_model_obj(book_id, Book)
         return jsonify(True)

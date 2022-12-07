@@ -28,6 +28,12 @@ update_or_create_args = lambda: {'salesperson_id': (int, (0,), request.args.get(
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /clients endpoint. All rows in the clients table are loaded
+    and output as a JSON list.
+
+    :return: A flask.Response object.
+    """
     try:
         result = [client_obj.serialize() for client_obj in Client.query.all()]
         return jsonify(result) # return JSON response
@@ -39,6 +45,14 @@ def index():
 
 @blueprint.route('/<int:client_id>', methods=['GET'])
 def show_client(client_id: int):
+    """
+    Implements a GET /clients/<id> endpoint. The row in the clients table with
+    the given client_id is loaded and output in JSON.
+
+    :client_id: The client_id of the row in the clients table to load and
+                display.
+    :return:    A flask.Response object.
+    """
     try:
         client_obj = Client.query.get_or_404(client_id)
         return jsonify(client_obj.serialize())
@@ -52,6 +66,12 @@ def show_client(client_id: int):
 
 @blueprint.route('', methods=['POST'])
 def create_client():
+    """
+    Implements a POST /clients endpoint. A new row in the clients table is
+    constituted from the CGI parameters and saved to that table.
+
+    :return:    A flask.Response object.
+    """
     try:
         try:
             client_obj = create_model_obj(Client, update_or_create_args())
@@ -69,6 +89,13 @@ def create_client():
 
 @blueprint.route('/<int:client_id>', methods=['PATCH'])
 def update_client(client_id: int):
+    """
+    Implements a PATCH /clients/<id> endpoint. The row in the clients table with
+    that client_id is updated from the CGI parameters.
+
+    :client_id: The client_id of the row in the clients table to update.
+    :return:    A flask.Response object.
+    """
     try:
         client_obj = update_model_obj(client_id, Client, update_or_create_args())
         db.session.add(client_obj)
@@ -82,6 +109,13 @@ def update_client(client_id: int):
 
 @blueprint.route('/<int:client_id>', methods=['DELETE'])
 def delete_client(client_id: int):
+    """
+    Implements a DELETE /clients/<id> endpoint. The row in the clients table
+    with that client_id is deleted.
+
+    :client_id: The client_id of the row in the clients table to delete.
+    :return:    A flask.Response object.
+    """
     try:
         delete_model_obj(client_id, Client)
         return jsonify(True)

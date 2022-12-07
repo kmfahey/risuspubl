@@ -35,6 +35,12 @@ client_update_or_create_args = lambda: {'email_address': (str, (), request.args.
 
 @blueprint.route('', methods=['GET'])
 def index():
+    """
+    Implements a GET /salespeople endpoint. All rows in the salespeople table
+    are loaded and output as a JSON list.
+
+    :return:    A flask.Response object.
+    """
     try:
         result = [salesperson_obj.serialize() for salesperson_obj in Salesperson.query.all()]
         return jsonify(result) # return JSON response
@@ -46,6 +52,14 @@ def index():
 
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
 def show_salesperson(salesperson_id: int):
+    """
+    Implements a GET /salespeople/<id> endpoint. The row in the salespeople
+    table with the given salesperson_id is loaded and output in JSON.
+
+    :salesperson_id: The salesperson_id of the row in the salespeople table to
+                     load and display.
+    :return:         A flask.Response object.
+    """
     try:
         salesperson_obj = Salesperson.query.get_or_404(salesperson_id)
         return jsonify(salesperson_obj.serialize())
@@ -59,6 +73,14 @@ def show_salesperson(salesperson_id: int):
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
 def show_salesperson_clients(salesperson_id: int):
+    """
+    Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
+    table with that salesperson_id are loaded and output as a JSON list.
+
+    :salesperson_id: The salesperson_id of the rows from the clients table to
+                     display.
+    :return:    A flask.Response object.
+    """
     try:
         Salesperson.query.get_or_404(salesperson_id)
         retval = [client_obj.serialize() for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)]
@@ -75,6 +97,14 @@ def show_salesperson_clients(salesperson_id: int):
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
 def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
+    """
+    Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
+    table with that salesperson_id are loaded and output as a JSON list.
+
+    :salesperson_id: The salesperson_id of the rows from the clients table to
+                     display.
+    :return:    A flask.Response object.
+    """
     try:
         Salesperson.query.get_or_404(salesperson_id)
         client_objs = list(Client.query.where(Client.salesperson_id == salesperson_id))
@@ -92,6 +122,12 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
 
 @blueprint.route('', methods=['POST'])
 def create_salesperson():
+    """
+    Implements a POST /salespeople endpoint. A new row in the salespeople table
+    is constituted from the CGI parameters and saved to that table.
+
+    :return:    A flask.Response object.
+    """
     try:
         salesperson_obj = create_model_obj(Salesperson, salesperson_update_or_create_args())
         db.session.add(salesperson_obj)
@@ -105,6 +141,16 @@ def create_salesperson():
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
 def create_salesperson_client(salesperson_id: int):
+    """
+    Implements a POST /salespeople/<id>/<id>/clients endpoint. A new row in the
+    clients table is constituted from the CGI parameters and that salesperson_id
+    and saved to that table.
+
+    :salesperson_id: The salesperson_id to save to the new row in the clients
+                     table.
+    :client_id:      The client_id of the row in the clients table to update.
+    :return:         A flask.Response object.
+    """
     try:
         Salesperson.query.get_or_404(salesperson_id)
         client_obj = create_model_obj(Client, client_update_or_create_args())
@@ -122,6 +168,14 @@ def create_salesperson_client(salesperson_id: int):
 
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH'])
 def update_salesperson(salesperson_id: int):
+    """
+    Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
+    table with that salesperson_id is updated from the CGI parameters.
+
+    :salesperson_id: The salesperson_id of the row in the salespeople table to
+                     update.
+    :return:         A flask.Response object.
+    """
     try:
         salesperson_obj = update_model_obj(salesperson_id, Salesperson, salesperson_update_or_create_args())
         db.session.add(salesperson_obj)
@@ -135,6 +189,16 @@ def update_salesperson(salesperson_id: int):
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH'])
 def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
+    """
+    Implements a PATCH /salespeople/<id>/clients/<id> endpoint. The row in the
+    clients table with that client_id and that salesperson_id is updated from
+    the CGI parameters.
+
+    :salesperson_id: The salesperson_id of the row in the clients table to
+                     update.
+    :client_id:      The client_id of the row in the clients table to update.
+    :return:         A flask.Response object.
+    """
     try:
         Salesperson.query.get_or_404(salesperson_id)
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
@@ -154,6 +218,13 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
 
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
 def delete_salesperson(salesperson_id: int):
+    """
+    Implements a DELETE /salespeople/<id> endpoint. The row in the salespeople
+    table with that salesperson_id is deleted.
+
+    :salesperson_id: The salesperson_id of the row in the salespeople table to delete.
+    :return:         A flask.Response object.
+    """
     try:
         delete_model_obj(salesperson_id, Salesperson)
         return jsonify(True)
@@ -165,6 +236,16 @@ def delete_salesperson(salesperson_id: int):
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
 def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
+    """
+    Implements a DELETE /salespeople/<id>/clients/<id> endpoint. The row in the
+    clients table with that client_id and that salesperson_id is deleted.
+
+    :salesperson_id: The salesperson_id of the row in the clients table to
+                     delete.
+    :client_id:      The client_id value of the row in the clients table to
+                     delete.
+    :return:         A flask.Response object.
+    """
     try:
         Salesperson.query.get_or_404(salesperson_id)
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
