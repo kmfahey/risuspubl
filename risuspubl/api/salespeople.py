@@ -6,7 +6,8 @@ from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
 from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
-        update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory
+        update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory, \
+        show_one_classes_other_class_obj_by_id
 from risuspubl.dbmodels import *
 
 
@@ -99,6 +100,10 @@ def show_salesperson_clients(salesperson_id: int):
                 if len(exception.args) else abort(status))
 
 
+salesperson_client_by_id_shower = show_one_classes_other_class_obj_by_id(Salesperson, 'salesperson_id', Client,
+                                                                         'client_id')
+
+
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
 def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
@@ -109,24 +114,7 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
                      display.
     :return:    A flask.Response object.
     """
-    try:
-        Salesperson.query.get_or_404(salesperson_id)
-        # Fetching a Client object for every row in the clients table with the
-        # given salesperson_id.
-        client_objs = list(Client.query.where(Client.salesperson_id == salesperson_id))
-        # Iterating across the list looking for a Client object with the
-        # matching client_id. If it's found, it's serialized and returned as
-        # json. Otherwise, a 404 is raised.
-        for client_obj in client_objs:
-            if client_obj.client_id == client_id:
-                return jsonify(client_obj.serialize())
-        return abort(404)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_client_by_id_shower(salesperson_id, client_id)
 
 
 salesperson_creator = create_class_obj_factory(Salesperson)
@@ -136,7 +124,7 @@ salesperson_creator = create_class_obj_factory(Salesperson)
 def create_salesperson():
     """
     Implements a POST /salespeople endpoint. A new row in the salespeople table
-    is constituted from the CGI parameters and saved to that table.
+    is constituted from the JSON parameters and saved to that table.
 
     :return:    A flask.Response object.
     """
@@ -147,7 +135,7 @@ def create_salesperson():
 def create_salesperson_client(salesperson_id: int):
     """
     Implements a POST /salespeople/<id>/<id>/clients endpoint. A new row in the
-    clients table is constituted from the CGI parameters and that salesperson_id
+    clients table is constituted from the JSON parameters and that salesperson_id
     and saved to that table.
 
     :salesperson_id: The salesperson_id to save to the new row in the clients
@@ -179,7 +167,7 @@ salesperson_by_id_updater = update_class_obj_by_id_factory(Salesperson, 'salespe
 def update_salesperson_by_id(salesperson_id: int):
     """
     Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
-    table with that salesperson_id is updated from the CGI parameters.
+    table with that salesperson_id is updated from the JSON parameters.
 
     :salesperson_id: The salesperson_id of the row in the salespeople table to
                      update.
@@ -196,7 +184,7 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
     Implements a PATCH /salespeople/<id>/clients/<id> endpoint. The row in the
     clients table with that client_id and that salesperson_id is updated from
-    the CGI parameters.
+    the JSON parameters.
 
     :salesperson_id: The salesperson_id of the row in the clients table to
                      update.

@@ -5,7 +5,8 @@ from werkzeug.exceptions import NotFound
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
-from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory, \
+        create_class_obj_factory
 from risuspubl.dbmodels import *
 
 
@@ -65,25 +66,18 @@ def show_client(client_id: int):
                 if len(exception.args) else abort(status))
 
 
+client_creator = create_class_obj_factory(Client)
+
+
 @blueprint.route('', methods=['POST'])
 def create_client():
     """
     Implements a POST /clients endpoint. A new row in the clients table is
-    constituted from the CGI parameters and saved to that table.
+    constituted from the JSON parameters and saved to that table.
 
     :return:    A flask.Response object.
     """
-    try:
-        # Using create_model_obj() to process request.json into a Client()
-        # argument dict and instance a Client() object.
-        client_obj = create_model_obj(Client, update_or_create_args())
-        db.session.add(client_obj)
-        db.session.commit()
-        return jsonify(client_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return client_creator(request.json)
 
 
 client_by_id_updater = update_class_obj_by_id_factory(Client, 'client_id')
@@ -93,7 +87,7 @@ client_by_id_updater = update_class_obj_by_id_factory(Client, 'client_id')
 def update_client_by_id(client_id: int):
     """
     Implements a PATCH /clients/<id> endpoint. The row in the clients table with
-    that client_id is updated from the CGI parameters.
+    that client_id is updated from the JSON parameters.
 
     :client_id: The client_id of the row in the clients table to update.
     :return:    A flask.Response object.

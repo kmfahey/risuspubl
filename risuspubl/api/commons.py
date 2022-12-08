@@ -146,9 +146,9 @@ def validate_date(param_name, param_value, lower_bound='1900-01-01', upper_bound
     lower and upper bounds. If it succeeds, the param value string is returned.
     If it fails, a ValueError is raised.
 
-    :param_name:  The name of the CGI parameter. Used in the ValueError exception
+    :param_name:  The name of the JSON parameter. Used in the ValueError exception
                   message if one is raised.
-    :param_value: The value of the CGI parameter, a string.
+    :param_value: The value of the JSON parameter, a string.
     :lower_bound: The lower bound that the float value is tested against; must
                   be greater than or equal to. Defaults to 1900-01-01.
     :upper_bound: The upper bound that the float value is tested against; must
@@ -181,9 +181,9 @@ def validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=mat
     lower and upper bounds. If it succeeds, the int is returned. If it fails, a
     ValueError is raised.
 
-    :param_name:  The name of the CGI parameter. Used in the ValueError exception
+    :param_name:  The name of the JSON parameter. Used in the ValueError exception
                   message if one is raised.
-    :param_value: The value of the CGI parameter, a string.
+    :param_value: The value of the JSON parameter, a string.
     :lower_bound: The lower bound that the float value is tested against; must
                   be greater than or equal to. Defaults to -Infinity.
     :upper_bound: The upper bound that the float value is tested against; must
@@ -203,9 +203,9 @@ def validate_float(param_name, param_value, lower_bound=-math.inf, upper_bound=m
     lower and upper bounds. If it succeeds, the float is returned. If it fails,
     a ValueError is raised.
 
-    :param_name:  The name of the CGI parameter. Used in the ValueError exception
+    :param_name:  The name of the JSON parameter. Used in the ValueError exception
                   message if one is raised.
-    :param_value: The value of the CGI parameter, a string.
+    :param_value: The value of the JSON parameter, a string.
     :lower_bound: The lower bound that the float value is tested against; must
                   be greater than or equal to. Defaults to -Infinity.
     :upper_bound: The upper bound that the float value is tested against; must
@@ -228,9 +228,9 @@ def validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
     and upper bounds. If it succeeds, the string is returned. If it fails, a
     ValueError is raised.
 
-    :param_name:  The name of the CGI parameter. Used in the ValueError exception
+    :param_name:  The name of the JSON parameter. Used in the ValueError exception
                   message if one is raised.
-    :param_value: The value of the CGI parameter, a string.
+    :param_value: The value of the JSON parameter, a string.
     :lower_bound: The lower bound on the value's length, default 1.
     :upper_bound: The upper bound on the value's length, default 64.
     :return:      A string, the param_value unmodified.
@@ -257,9 +257,9 @@ def validate_bool(param_name, param_value):
     This function parses a param value to a boolean. If it succeeds, the boolean
     is returned. If it fails, a ValueError is raised.
 
-    :param_name:  The name of the CGI parameter. Used in the ValueError exception
+    :param_name:  The name of the JSON parameter. Used in the ValueError exception
                   message if one is raised.
-    :param_value: The value of the CGI parameter, a string.
+    :param_value: The value of the JSON parameter, a string.
     :return:      A boolean, parsed from the param_value.
     """
     if param_value.lower() in ('true', 't', 'yes', '1'):    # Tries to accept a variety 

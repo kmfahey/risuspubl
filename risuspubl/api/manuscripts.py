@@ -64,7 +64,7 @@ manuscript_by_id_updater = update_class_obj_by_id_factory(Manuscript, 'manuscrip
 def update_manuscript_by_id(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/<id> endpoint. The row in the manuscripts
-    table with that manuscript_id is updated from the CGI parameters.
+    table with that manuscript_id is updated from the JSON parameters.
 
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     update.

@@ -9,7 +9,7 @@ from datetime import date, timedelta
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
-from risuspubl.api.endpfact import update_class_obj_by_id_factory
+from risuspubl.api.endpfact import update_class_obj_by_id_factory, create_class_obj_factory
 from risuspubl.dbmodels import *
 
 
@@ -397,32 +397,25 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
                 if len(exception.args) else abort(status))
 
 
+author_creator = create_class_obj_factory(Author)
+
+
 @blueprint.route('', methods=['POST'])
 def create_author():
     """
     Implements a POST /authors endpoint. A new row in the authors table is
-    constituted from the CGI parameters and saved to that table.
+    constituted from the JSON parameters and saved to that table.
 
     :return:    A flask.Response object.
     """
-    try:
-        # Using create_model_obj() to process request.json into a Author()
-        # argument dict and instance a Author() object.
-        author_obj = create_model_obj(Author, create_or_update_author())
-        db.session.add(author_obj)
-        db.session.commit()
-        return jsonify(author_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return author_creator(request.json)
 
 
 @blueprint.route('/<int:author_id>/books', methods=['POST'])
 def create_author_book(author_id: int):
     """
     Implements a POST /authors/<id>/books endpoint. A new row in the
-    books table is constituted from the CGI parameters and saved to that
+    books table is constituted from the JSON parameters and saved to that
     table. In addition, a row in the authors_books table associating the
     new book_id with that author_id is added.
 
@@ -456,7 +449,7 @@ def create_author_book(author_id: int):
 def create_authors_book(author1_id: int, author2_id: int):
     """
     Implements a POST /authors/<id>/books endpoint. A new row in the books table
-    is constituted from the CGI parameters and saved to that table. In addition,
+    is constituted from the JSON parameters and saved to that table. In addition,
     rows in the authors_books table associating the new book_id with
     those two author_ids are added.
 
@@ -495,7 +488,7 @@ def create_authors_book(author1_id: int, author2_id: int):
 def create_author_manuscript(author_id: int):
     """
     Implements a POST /authors/<id>/manuscripts endpoint. A new row in the
-    manuscripts table is constituted from the CGI parameters and saved to that
+    manuscripts table is constituted from the JSON parameters and saved to that
     table. In addition, a row in the authors_manuscripts table associating the
     new manuscript_id with that author_id is added.
 
@@ -529,7 +522,7 @@ def create_author_manuscript(author_id: int):
 def create_authors_manuscript(author1_id: int, author2_id: int):
     """
     Implements a POST /authors/<id>/<id>/manuscripts endpoint. A new row in the
-    manuscripts table is constituted from the CGI parameters and saved to that
+    manuscripts table is constituted from the JSON parameters and saved to that
     table. In addition, rows in the authors_manuscripts table associating the
     new manuscript_id with those two author_ids are added.
 
@@ -573,7 +566,7 @@ author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
 def update_author_by_id(author_id: int):
     """
     Implements a PATCH /authors/<id> endpoint. The row in the authors table with
-    that author_id is updated from the CGI parameters.
+    that author_id is updated from the JSON parameters.
 
     :author_id: The author_id of the row in the authors table to update.
     :return:    A flask.Response object.
@@ -586,7 +579,7 @@ def update_author_book(author_id: int, book_id: int):
     """
     Implements a PATCH /authors/<id>/books/<id> endpoint. The row in the books
     table with that book_id associated with that author_id in the authors_books
-    table is updated from the CGI parameters.
+    table is updated from the JSON parameters.
 
     :author_id: The author_id associated with that book_id in the
                 authors_books table.
@@ -620,7 +613,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a PATCH /authors/<id>/<id>/books/<id> endpoint. The row in the
     books table with that book_id associated with those two author_ids in the
-    authors_books table is updated from the CGI parameters.
+    authors_books table is updated from the JSON parameters.
 
     :author1_id: One of the two author_ids associated with that book_id in the
                  authors_books table.
@@ -657,7 +650,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
     """
     Implements a PATCH /authors/<id>/manuscripts/<id> endpoint. The row in the
     manuscripts table with that manuscript_id associated with that author_id in
-    the authors_manuscripts table is updated from the CGI parameters.
+    the authors_manuscripts table is updated from the JSON parameters.
 
     :author_id:     The author_id associated with that manuscript_id in the
                     authors_manuscripts table.
@@ -691,7 +684,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
     """
     Implements a PATCH /authors/<id>/<id>/manuscripts/<id> endpoint. The row
     in the manuscripts table with that manuscript_id associated with those
-    two author_ids in the authors_manuscripts table is updated from the CGI
+    two author_ids in the authors_manuscripts table is updated from the JSON
     parameters.
 
     :author1_id:    One of the two author_ids associated with that

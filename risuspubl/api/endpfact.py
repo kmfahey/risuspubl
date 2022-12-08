@@ -279,3 +279,40 @@ class create_class_obj_factory(endpoint_factory):
             return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
+
+
+class show_one_classes_other_class_obj_by_id(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
+        self.outer_class = outer_class
+        self.outer_id_column = outer_id_column
+        self.inner_class = inner_class
+        self.inner_id_column = inner_id_column
+
+    def __call__(self, outer_id, inner_id):
+        try:
+            self.outer_class.query.get_or_404(outer_id)
+            # An inner_class object for every row in the inner_class table with
+            # the given outer_id.
+            inner_class_objs = list(self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column)
+                                                                 == outer_id))
+            # Iterating across the list looking for the self.inner_class object with
+            # the given inner_class_id. If it's found, it's serialized and
+            # returned. Otherwise, a 404 error is raised.
+            for inner_class_obj in inner_class_objs:
+                if getattr(inner_class_obj, self.inner_id_column) == inner_id:
+                    return jsonify(inner_class_obj.serialize())
+            return abort(404)
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, werkzeug.exceptions.NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+

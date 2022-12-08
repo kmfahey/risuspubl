@@ -68,7 +68,7 @@ book_by_id_updater = update_class_obj_by_id_factory(Book, 'book_id')
 def update_book_by_id(book_id: int):
     """
     Implements a PATCH /books/<id> endpoint. The row in the books table with
-    that book_id is updated from the CGI parameters.
+    that book_id is updated from the JSON parameters.
 
     :book_id: The book_id of the row in the books table to update.
     :return:  A flask.Response object.

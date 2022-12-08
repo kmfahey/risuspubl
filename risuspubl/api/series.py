@@ -9,7 +9,7 @@ from flask import abort, Blueprint, jsonify, request, Response
 from risuspubl.api.commons import *
 from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, \
         update_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
-        update_class_obj_by_id_factory, create_class_obj_factory
+        update_class_obj_by_id_factory, create_class_obj_factory, show_one_classes_other_class_obj_by_id
 
 from risuspubl.dbmodels import *
 
@@ -89,6 +89,9 @@ def show_series_books(series_id: int):
                 if len(exception.args) else abort(status))
 
 
+series_book_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Book, 'book_id')
+
+
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['GET'])
 def show_series_book_by_id(series_id: int, book_id: int):
     """
@@ -99,23 +102,7 @@ def show_series_book_by_id(series_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to load and display.
     :return:    A flask.Response object.
     """
-    try:
-        Series.query.get_or_404(series_id)
-        # A Book object for every row in the books table with the given series_id.
-        book_objs = list(Book.query.where(Book.series_id == series_id))
-        # Iterating across the list looking for the Book object with the given
-        # manuscript_id. If it's found, it's serialized and returned. Otherwise,
-        # a 404 error is raised.
-        for book_obj in book_objs:
-            if book_obj.book_id == book_id:
-                return jsonify(book_obj.serialize())
-        return abort(404)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_book_by_id_shower(series_id, book_id)
 
 
 @blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
@@ -146,6 +133,10 @@ def show_series_manuscripts(series_id: int):
                 if len(exception.args) else abort(status))
 
 
+series_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Manuscript,
+                                                                        'manuscript_id')
+
+
 @blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
 def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
@@ -159,23 +150,7 @@ def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
                     load and display.
     :return:        A flask.Response object.
     """
-    try:
-        Series.query.get_or_404(series_id)
-        # A Manuscript object for every row in the manuscripts table with the given series_id.
-        manuscript_objs = list(Manuscript.query.where(Manuscript.series_id == series_id))
-        # Iterating across the list looking for the Manuscript object with the
-        # given manuscript_id. If it's found, it's serialized and returned.
-        # Otherwise, a 404 error is raised.
-        for manuscript_obj in manuscript_objs:
-            if manuscript_obj.manuscript_id == manuscript_id:
-                return jsonify(manuscript_obj.serialize())
-        return abort(404)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_manuscript_by_id_shower(series_id, manuscript_id)
 
 
 series_creator = create_class_obj_factory(Series)
@@ -185,7 +160,7 @@ series_creator = create_class_obj_factory(Series)
 def create_series():
     """
     Implements a POST /series endpoint. A new row in the series table is
-    constituted from the CGI parameters and saved to that table.
+    constituted from the JSON parameters and saved to that table.
 
     :return:    A flask.Response object.
     """
@@ -199,7 +174,7 @@ series_by_id_updater = update_class_obj_by_id_factory(Series, 'series_id')
 def update_series_by_id(series_id: int):
     """
     Implements a PATCH /series/<id> endpoint. The row in the series table with
-    that series_id is updated from the CGI parameters.
+    that series_id is updated from the JSON parameters.
 
     :series_id: The series_id of the row in the series table to update.
     :return:    A flask.Response object.
@@ -214,7 +189,7 @@ series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Ser
 def update_series_book_by_id(series_id: int, book_id: int):
     """
     Implements a PATCH /series/<id>/books/<id> endpoint. The row in the
-    books table with that book_id and that series_id is updated from the CGI
+    books table with that book_id and that series_id is updated from the JSON
     parameters.
 
     :series_id: The series_id of the row in the books table to update.
@@ -232,7 +207,7 @@ series_manuscript_by_id_updater = update_one_classes_other_class_obj_by_id_facto
 def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
     Implements a PATCH /series/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id and that series_id is updated from the CGI
+    manuscripts table with that manuscript_id and that series_id is updated from the JSON
     parameters.
 
     :series_id: The series_id of the row in the manuscripts table to update.
