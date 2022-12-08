@@ -9,6 +9,7 @@ from datetime import date, timedelta
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
+from risuspubl.api.endpfact import update_class_obj_by_id_factory
 from risuspubl.dbmodels import *
 
 
@@ -565,8 +566,11 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
                 if len(exception.args) else abort(status))
 
 
+author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
+
+
 @blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
-def update_author(author_id: int):
+def update_author_by_id(author_id: int):
     """
     Implements a PATCH /authors/<id> endpoint. The row in the authors table with
     that author_id is updated from the CGI parameters.
@@ -574,17 +578,7 @@ def update_author(author_id: int):
     :author_id: The author_id of the row in the authors table to update.
     :return:    A flask.Response object.
     """
-    try:
-        # Using update_model_obj() to fetch the Author object and update it
-        # against request.json.
-        author_obj = update_model_obj(author_id, Author, create_or_update_author())
-        db.session.add(author_obj)
-        db.session.commit()
-        return jsonify(author_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return author_by_id_updater(author_id, request.json)
 
 
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])

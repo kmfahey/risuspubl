@@ -7,6 +7,7 @@ from datetime import date
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory
 from risuspubl.dbmodels import *
 
 
@@ -60,8 +61,11 @@ def show_book(book_id: int):
 # appropriately.
 
 
+book_by_id_updater = update_class_obj_by_id_factory(Book, 'book_id')
+
+
 @blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
-def update_book(book_id: int):
+def update_book_by_id(book_id: int):
     """
     Implements a PATCH /books/<id> endpoint. The row in the books table with
     that book_id is updated from the CGI parameters.
@@ -69,26 +73,10 @@ def update_book(book_id: int):
     :book_id: The book_id of the row in the books table to update.
     :return:  A flask.Response object.
     """
-    try:
-        if 'title' in request.json and len(tuple(Book.query.where(Book.title == request.json['title']))):
-            raise ValueError(f"'title' parameter value '{request.json['title']}' already use in a row in the "
-                             f'{Book.__tablename__} table; title values must be unique')
-        # Using update_model_obj() to fetch the Book object and update it
-        # against request.json.
-        book_obj = update_model_obj(book_id, Book,
-                                    {'editor_id':        (int,  (0,),    request.json.get('editor_id')),
-                                     'series_id':        (int,  (0,),    request.json.get('series_id')),
-                                     'title':            (str,  (),      request.json.get('title')),
-                                     'publication_date': (date, (),      request.json.get('publication_date')),
-                                     'edition_number':   (int,  (1, 10), request.json.get('edition_number')),
-                                     'is_in_print':      (bool, (),      request.json.get('is_in_print'))})
-        db.session.add(book_obj)
-        db.session.commit()
-        return jsonify(book_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return book_by_id_updater(book_id, request.json)
+
+
+book_by_id_deleter = delete_class_obj_by_id_factory(Book, 'book_id')
 
 
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
@@ -100,10 +88,4 @@ def delete_book(book_id: int):
     :book_id: The book_id of the row in the books table to delete.
     :return:  A flask.Response object.
     """
-    try:
-        delete_model_obj(book_id, Book)
-        return jsonify(True)
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return book_by_id_deleter(book_id)

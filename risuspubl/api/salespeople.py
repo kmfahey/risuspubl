@@ -1,10 +1,12 @@
-#!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
+#!/home/kmfahey/Workspace/NuCampFolder/Python/1-SQL/week3/venv/bin/python3
 
 from werkzeug.exceptions import NotFound
 
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
+from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
+        update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory
 from risuspubl.dbmodels import *
 
 
@@ -127,6 +129,9 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
                 if len(exception.args) else abort(status))
 
 
+salesperson_creator = create_class_obj_factory(Salesperson)
+
+
 @blueprint.route('', methods=['POST'])
 def create_salesperson():
     """
@@ -135,17 +140,7 @@ def create_salesperson():
 
     :return:    A flask.Response object.
     """
-    try:
-        # Using create_model_obj() to process request.json into a Salesperson()
-        # argument dict and instance a Salesperson() object.
-        salesperson_obj = create_model_obj(Salesperson, salesperson_update_or_create_args())
-        db.session.add(salesperson_obj)
-        db.session.commit()
-        return jsonify(salesperson_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_creator(request.json)
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
@@ -177,8 +172,11 @@ def create_salesperson_client(salesperson_id: int):
                 if len(exception.args) else abort(status))
 
 
+salesperson_by_id_updater = update_class_obj_by_id_factory(Salesperson, 'salesperson_id')
+
+
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
-def update_salesperson(salesperson_id: int):
+def update_salesperson_by_id(salesperson_id: int):
     """
     Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
     table with that salesperson_id is updated from the CGI parameters.
@@ -187,15 +185,10 @@ def update_salesperson(salesperson_id: int):
                      update.
     :return:         A flask.Response object.
     """
-    try:
-        salesperson_obj = update_model_obj(salesperson_id, Salesperson, salesperson_update_or_create_args())
-        db.session.add(salesperson_obj)
-        db.session.commit()
-        return jsonify(salesperson_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_by_id_updater(salesperson_id, request.json)
+
+
+series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id', Client, 'client_id')
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
@@ -210,25 +203,10 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     :client_id:      The client_id of the row in the clients table to update.
     :return:         A flask.Response object.
     """
-    try:
-        Salesperson.query.get_or_404(salesperson_id)
-        # Checking that there exists a row in clients with the given
-        # salesperson_id and the given client_id. If not, that's a 404.
-        if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
-            return abort(404)
-        # Using update_model_obj() to fetch the Client object and update it
-        # against request.json.
-        client_obj = update_model_obj(client_id, Client, client_update_or_create_args())
-        client_obj.salesperson_id = salesperson_id
-        db.session.add(client_obj)
-        db.session.commit()
-        return jsonify(client_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_book_by_id_updater(salesperson_id, client_id, request.json)
+
+
+salesperson_by_id_deleter = delete_class_obj_by_id_factory(Salesperson, 'salesperson_id')
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
@@ -240,14 +218,11 @@ def delete_salesperson(salesperson_id: int):
     :salesperson_id: The salesperson_id of the row in the salespeople table to delete.
     :return:         A flask.Response object.
     """
-    try:
-        # Using delete_model_obj() to fetch the Salesperson object and delete it.
-        delete_model_obj(salesperson_id, Salesperson)
-        return jsonify(True)
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_by_id_deleter(salesperson_id)
+
+
+salesperson_client_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(
+                                       Salesperson, 'salesperson_id', Client, 'client_id')
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
@@ -262,18 +237,4 @@ def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
                      delete.
     :return:         A flask.Response object.
     """
-    try:
-        Salesperson.query.get_or_404(salesperson_id)
-        # Checking that there exists a row in clients with the given
-        # salesperson_id and the given client_id. If not, that's a 404.
-        if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
-            return abort(404)
-        # Using delete_model_obj() to fetch the Client object and delete it.
-        delete_model_obj(client_id, Client)
-        return jsonify(True)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_client_by_id_deleter(salesperson_id, client_id)

@@ -5,6 +5,7 @@ from werkzeug.exceptions import NotFound
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory
 from risuspubl.dbmodels import *
 
 
@@ -85,8 +86,11 @@ def create_client():
                 if len(exception.args) else abort(status))
 
 
+client_by_id_updater = update_class_obj_by_id_factory(Client, 'client_id')
+
+
 @blueprint.route('/<int:client_id>', methods=['PATCH', 'PUT'])
-def update_client(client_id: int):
+def update_client_by_id(client_id: int):
     """
     Implements a PATCH /clients/<id> endpoint. The row in the clients table with
     that client_id is updated from the CGI parameters.
@@ -94,17 +98,10 @@ def update_client(client_id: int):
     :client_id: The client_id of the row in the clients table to update.
     :return:    A flask.Response object.
     """
-    try:
-        # Using update_model_obj() to fetch the Client object and update it
-        # against request.json.
-        client_obj = update_model_obj(client_id, Client, update_or_create_args())
-        db.session.add(client_obj)
-        db.session.commit()
-        return jsonify(client_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return client_by_id_updater(client_id, request.json)
+
+
+client_by_id_deleter = delete_class_obj_by_id_factory(Client, 'client_id')
 
 
 @blueprint.route('/<int:client_id>', methods=['DELETE'])
@@ -116,11 +113,4 @@ def delete_client(client_id: int):
     :client_id: The client_id of the row in the clients table to delete.
     :return:    A flask.Response object.
     """
-    try:
-        # Using delete_model_obj() to fetch the Client object and delete it.
-        delete_model_obj(client_id, Client)
-        return jsonify(True)
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return client_by_id_deleter(client_id)
