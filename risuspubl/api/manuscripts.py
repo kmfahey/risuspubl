@@ -74,7 +74,7 @@ def update_manuscript(manuscript_id: int):
             # the given value is already in use, so a ValueError is raised.
             raise ValueError(f"'working_title' parameter value '{request.args['working_title']}' already use in a "
                              f'row in the {Manuscript.__tablename__} table; working_title values must be unique')
-        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                           {'editor_id': (int, (0,), request.args.get('editor_id')),

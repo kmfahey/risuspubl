@@ -575,7 +575,7 @@ def update_author(author_id: int):
     :return:    A flask.Response object.
     """
     try:
-        # Using update_model_obj() to fetch the author_obj and update it
+        # Using update_model_obj() to fetch the Author object and update it
         # against request.args.
         author_obj = update_model_obj(author_id, Author, create_or_update_author())
         db.session.add(author_obj)
@@ -607,7 +607,7 @@ def update_author_book(author_id: int, book_id: int):
         # authors_books.
         if len(book_objs) == 0:
             return abort(404)
-        # Using update_model_obj() to fetch the book_obj and update it
+        # Using update_model_obj() to fetch the Book object and update it
         # against request.args.
         book_obj = update_model_obj(book_id, Book, create_or_update_book())
         db.session.add(book_obj)
@@ -678,7 +678,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         # authors_manuscripts.
         if len(manuscript_objs) == 0:
             return abort(404)
-        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)
@@ -717,7 +717,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         # manuscript_id in authors_manuscripts.
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
-        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)

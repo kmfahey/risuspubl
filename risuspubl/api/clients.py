@@ -95,7 +95,7 @@ def update_client(client_id: int):
     :return:    A flask.Response object.
     """
     try:
-        # Using update_model_obj() to fetch the client_obj and update it
+        # Using update_model_obj() to fetch the Client object and update it
         # against request.args.
         client_obj = update_model_obj(client_id, Client, update_or_create_args())
         db.session.add(client_obj)
@@ -117,7 +117,7 @@ def delete_client(client_id: int):
     :return:    A flask.Response object.
     """
     try:
-        # Using delete_model_obj() to fetch the client_obj and delete it.
+        # Using delete_model_obj() to fetch the Client object and delete it.
         delete_model_obj(client_id, Client)
         return jsonify(True)
     except Exception as exception:

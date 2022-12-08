@@ -99,7 +99,7 @@ def show_editor_book_by_id(editor_id: int, book_id: int):
         # A Book object for every row in the books table with the given value
         # for editor_id.
         book_objs = list(Book.query.where(Book.editor_id == editor_id))
-        # Iterating across the list looking for a book_obj with the given
+        # Iterating across the list looking for a Book object with the given
         # book_id. If it's found, it's serialized and returned as json.
         # Otherwise, a 404 error is raised.
         for book_obj in book_objs:
@@ -160,7 +160,7 @@ def show_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
         # A Manuscript object for every row in the manuscripts table with the
         # given value for editor_id.
         manuscript_objs = list(Manuscript.query.where(Manuscript.editor_id == editor_id))
-        # Iterating across the list looking for a manuscript_obj with the given
+        # Iterating across the list looking for a Manuscript object with the given
         # manuscript_id. If it's found, it's serialized and returned as json.
         # Otherwise, a 404 error is raised.
         for manuscript_obj in manuscript_objs:
@@ -204,7 +204,7 @@ def update_editor(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        # Using update_model_obj() to fetch the editor_obj and update it
+        # Using update_model_obj() to fetch the Editor object and update it
         # against request.args.
         editor_obj = update_model_obj(editor_id, Editor, editor_update_or_create_args())
         db.session.add(editor_obj)
@@ -231,7 +231,7 @@ def update_editor_book_by_id(editor_id: int, book_id: int):
         Editor.query.get_or_404(editor_id)
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.editor_id == editor_id)):
             return abort(404)
-        # Using update_model_obj() to fetch the book_obj and update it
+        # Using update_model_obj() to fetch the Book object and update it
         # against request.args.
         book_obj = update_model_obj(book_id, Book,
                                     {'editor_id':        (int,  (0,),    editor_id),
@@ -268,7 +268,7 @@ def update_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.editor_id == editor_id)):
             return abort(404)
-        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                     {'editor_id':        (int,  (0,),    editor_id),
@@ -298,7 +298,7 @@ def delete_editor(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        # Using delete_model_obj() to fetch the editor_obj and delete it.
+        # Using delete_model_obj() to fetch the Editor object and delete it.
         delete_model_obj(editor_id, Editor)
         return jsonify(True)
     except Exception as exception:
@@ -323,7 +323,7 @@ def delete_editor_book_by_id(editor_id: int, book_id: int):
         # editor_id.
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.editor_id == editor_id)):
             return abort(404)
-        # Using delete_model_obj() to fetch the book_obj and delete it.
+        # Using delete_model_obj() to fetch the Book object and delete it.
         delete_model_obj(book_id, Book)
         return jsonify(True)
     except Exception as exception:
@@ -352,7 +352,7 @@ def delete_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.editor_id == editor_id)):
             return abort(404)
-        # Using delete_model_obj() to fetch the editor_obj and delete it.
+        # Using delete_model_obj() to fetch the Editor object and delete it.
         delete_model_obj(manuscript_id, Manuscript)
         return jsonify(True)
     except Exception as exception:

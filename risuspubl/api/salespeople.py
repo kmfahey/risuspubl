@@ -216,7 +216,7 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
         # salesperson_id and the given client_id. If not, that's a 404.
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
             return abort(404)
-        # Using update_model_obj() to fetch the client_obj and update it
+        # Using update_model_obj() to fetch the Client object and update it
         # against request.args.
         client_obj = update_model_obj(client_id, Client, client_update_or_create_args())
         client_obj.salesperson_id = salesperson_id
@@ -241,7 +241,7 @@ def delete_salesperson(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
-        # Using delete_model_obj() to fetch the salesperson_obj and delete it.
+        # Using delete_model_obj() to fetch the Salesperson object and delete it.
         delete_model_obj(salesperson_id, Salesperson)
         return jsonify(True)
     except Exception as exception:
@@ -268,7 +268,7 @@ def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
         # salesperson_id and the given client_id. If not, that's a 404.
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
             return abort(404)
-        # Using delete_model_obj() to fetch the client_obj and delete it.
+        # Using delete_model_obj() to fetch the Client object and delete it.
         delete_model_obj(client_id, Client)
         return jsonify(True)
     except Exception as exception:

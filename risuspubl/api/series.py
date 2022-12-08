@@ -230,7 +230,7 @@ def update_series_book_by_id(series_id: int, book_id: int):
         # book_id and series_id.
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
             return abort(404)
-        # Using update_model_obj() to fetch the book_obj and update it
+        # Using update_model_obj() to fetch the Book object and update it
         # against request.args.
         book_obj = update_model_obj(book_id, Book,
                                     {'series_id':        (int,  (0,),    request.args.get('series_id')),
@@ -268,7 +268,7 @@ def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.series_id == series_id)):
             return abort(404)
-        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                           {'series_id':        (int,  (0,),    request.args.get('series_id')),
@@ -322,7 +322,7 @@ def delete_series_book_by_id(series_id: int, book_id: int):
         # book_id and series_id.
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
             return abort(404)
-        # Using delete_model_obj() to fetch the book_obj and delete it.
+        # Using delete_model_obj() to fetch the Book object and delete it.
         delete_model_obj(book_id, Book)
         series_obj.volumes = series_obj.volumes - 1
         db.session.add(series_obj)
@@ -354,7 +354,7 @@ def delete_series_manuscript_by_id(series_id: int, manuscript_id: int):
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.series_id == series_id)):
             return abort(404)
-        # Using delete_model_obj() to fetch the series_obj and delete it.
+        # Using delete_model_obj() to fetch the Series object and delete it.
         delete_model_obj(manuscript_id, Manuscript)
         series_obj.volumes = series_obj.volumes - 1
         db.session.add(series_obj)
