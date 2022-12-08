@@ -316,3 +316,75 @@ class show_one_classes_other_class_obj_by_id(endpoint_factory):
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
+
+class show_all_of_one_classes_other_class_objs(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, outer_class, outer_id_column, inner_class):
+        self.outer_class = outer_class
+        self.outer_id_column = outer_id_column
+        self.inner_class = inner_class
+
+    def __call__(self, outer_id):
+        try:
+            self.outer_class.query.get_or_404(outer_id)
+            # A outer_class object for every row in the inner_class table with
+            # the given outer_id.
+            retval = [inner_class_obj.serialize() for inner_class_obj
+                      in self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column) == outer_id)]
+            if not len(retval):
+                return abort(404)
+            return jsonify(retval)
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, werkzeug.exceptions.NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            status = 400 if isinstance(exception, ValueError) else 500
+            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_class_obj_by_id(endpoint_factory):
+    __slots__ = 'model_class',
+
+    def __init__(self, model_class):
+        self.model_class = model_class
+
+    def __call__(self, model_id):
+        try:
+            model_class_obj = self.model_class.query.get_or_404(model_id)
+            return jsonify(model_class_obj.serialize())
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_class_index(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, model_class):
+        self.model_class = model_class
+
+    def __call__(self):
+        try:
+            result = [model_class_obj.serialize() for model_class_obj in self.model_class.query.all()]
+            return jsonify(result) # return JSON response
+        except Exception as exception:
+            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))

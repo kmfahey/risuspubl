@@ -9,7 +9,8 @@ from werkzeug.exceptions import NotFound
 from risuspubl.api.commons import create_model_obj, delete_model_obj, update_model_obj
 from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
         update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory, \
-        show_one_classes_other_class_obj_by_id
+        show_one_classes_other_class_obj_by_id, show_all_of_one_classes_other_class_objs, show_class_obj_by_id, \
+        show_class_index
 from risuspubl.dbmodels import Book, Editor, Manuscript, db
 
 blueprint = Blueprint('editors', __name__, url_prefix='/editors')
@@ -24,6 +25,9 @@ editor_update_or_create_args = lambda: {'first_name':   (str,   (),     request.
                                         'salary':       (int,   (),     request.json.get('salary'))}
 
 
+editors_indexer = show_class_index(Editor)
+
+
 @blueprint.route('', methods=['GET'])
 def index():
     """
@@ -32,17 +36,14 @@ def index():
 
     :return: A flask.Response object.
     """
-    try:
-        result = [editor_obj.serialize() for editor_obj in Editor.query.all()]
-        return jsonify(result)
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+    return editors_indexer()
+
+
+editor_by_id_shower = show_class_obj_by_id(Editor)
 
 
 @blueprint.route('/<int:editor_id>', methods=['GET'])
-def show_editor(editor_id: int):
+def show_editor_by_id(editor_id: int):
     """
     Implements a GET /editors/<id> endpoint. The row in the editors table with
     the given editor_id is loaded and output in JSON.
@@ -51,15 +52,10 @@ def show_editor(editor_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        editor_obj = Editor.query.get_or_404(editor_id)
-        return jsonify(editor_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+    return editor_by_id_shower(editor_id)
+
+
+editor_books_shower = show_all_of_one_classes_other_class_objs(Editor, 'editor_id', Book)
 
 
 @blueprint.route('/<int:editor_id>/books', methods=['GET'])
@@ -72,24 +68,10 @@ def show_editor_books(editor_id: int):
                 editors_books table of rows from the books table to display.
     :return:    A flask.Response object.
     """
-    try:
-        Editor.query.get_or_404(editor_id)
-        # A Book object for every row in the manuscripts table with the
-        # given value for editor_id.
-        retval = [book_obj.serialize() for book_obj in Book.query.where(Book.editor_id == editor_id)]
-        if not len(retval):
-            return abort(404)
-        return jsonify(retval)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+    return editor_books_shower(editor_id)
 
 
 editor_book_by_id_shower = show_one_classes_other_class_obj_by_id(Editor, 'editor_id', Book, 'book_id')
-
 
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['GET'])
@@ -105,6 +87,9 @@ def show_editor_book_by_id(editor_id: int, book_id: int):
     return editor_book_by_id_shower(editor_id, book_id)
 
 
+editor_manuscripts_shower = show_all_of_one_classes_other_class_objs(Editor, 'editor_id', Manuscript)
+
+
 @blueprint.route('/<int:editor_id>/manuscripts', methods=['GET'])
 def show_editor_manuscripts(editor_id: int):
     """
@@ -116,21 +101,7 @@ def show_editor_manuscripts(editor_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        Editor.query.get_or_404(editor_id)
-        # A Manuscript object for every row in the manuscripts table with the
-        # given value for editor_id.
-        retval = [manuscript_obj.serialize() for manuscript_obj
-                  in Manuscript.query.where(Manuscript.editor_id == editor_id)]
-        if not len(retval):
-            return abort(404)
-        return jsonify(retval)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+    return editor_manuscripts_shower(editor_id)
 
 
 editor_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Editor, 'editor_id', Manuscript,

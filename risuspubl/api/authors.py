@@ -9,7 +9,8 @@ from datetime import date, timedelta
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
-from risuspubl.api.endpfact import update_class_obj_by_id_factory, create_class_obj_factory
+from risuspubl.api.endpfact import update_class_obj_by_id_factory, create_class_obj_factory, show_class_obj_by_id, \
+        show_class_index
 from risuspubl.dbmodels import *
 
 
@@ -47,6 +48,9 @@ create_or_update_manuscript = lambda: {'editor_id':     (int, (0,),         requ
                                        'advance':       (int, (5e3, 1e5),   request.json.get('advance'))}
 
 
+authors_indexer = show_class_index(Author)
+
+
 @blueprint.route('', methods=['GET'])
 def index():
     """
@@ -55,17 +59,14 @@ def index():
 
     :return:    A flask.Response object.
     """
-    try:
-        result = [author_obj.serialize() for author_obj in Author.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return authors_indexer()
+
+
+author_by_id_shower = show_class_obj_by_id(Author)
 
 
 @blueprint.route('/<int:author_id>', methods=['GET'])
-def show_author(author_id: int):
+def show_author_by_id(author_id: int):
     """
     Implements a GET /authors/<id> endpoint. The row in the authors table with
     the given author_id is loaded and output in JSON.
@@ -74,15 +75,7 @@ def show_author(author_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        author_obj = Author.query.get_or_404(author_id)
-        return jsonify(author_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return author_by_id_shower(author_id)
 
 
 @blueprint.route('/<int:author_id>/books', methods=['GET'])
@@ -197,7 +190,7 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
 # if this endpoint is loaded something *should* be here since /authors/<id> is
 # valid and /authors/<id>/<id>/books is valid. Provied for completeness.
 @blueprint.route('/<int:author1_id>/<int:author2_id>', methods=['GET'])
-def show_authors(author1_id: int, author2_id: int):
+def show_authors_by_ids(author1_id: int, author2_id: int):
     """
     Implements a GET /authors/<id>/<id> endpoint. The rows in the authors table
     with those two author_ids are loaded and outputed in a JSON list.

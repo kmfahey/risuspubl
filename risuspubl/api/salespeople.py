@@ -7,7 +7,8 @@ from flask import abort, Blueprint, jsonify, request, Response
 from risuspubl.api.commons import *
 from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
         update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory, \
-        show_one_classes_other_class_obj_by_id
+        show_one_classes_other_class_obj_by_id, show_all_of_one_classes_other_class_objs, show_class_obj_by_id, \
+        show_class_index
 from risuspubl.dbmodels import *
 
 
@@ -36,6 +37,9 @@ client_update_or_create_args = lambda: {'email_address':        (str,   (),     
                                         'country':              (str,   (),         request.json.get('country'))}
 
 
+salespeople_indexer = show_class_index(Salesperson)
+
+
 @blueprint.route('', methods=['GET'])
 def index():
     """
@@ -44,17 +48,14 @@ def index():
 
     :return:    A flask.Response object.
     """
-    try:
-        result = [salesperson_obj.serialize() for salesperson_obj in Salesperson.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salespeople_indexer()
+
+
+salesperson_by_id_shower = show_class_obj_by_id(Salesperson)
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
-def show_salesperson(salesperson_id: int):
+def show_salesperson_by_id(salesperson_id: int):
     """
     Implements a GET /salespeople/<id> endpoint. The row in the salespeople
     table with the given salesperson_id is loaded and output in JSON.
@@ -63,15 +64,10 @@ def show_salesperson(salesperson_id: int):
                      load and display.
     :return:         A flask.Response object.
     """
-    try:
-        salesperson_obj = Salesperson.query.get_or_404(salesperson_id)
-        return jsonify(salesperson_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_by_id_shower(salesperson_id)
+
+
+salesperson_clients_shower = show_all_of_one_classes_other_class_objs(Salesperson, 'salesperson_id', Client)
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
@@ -84,20 +80,7 @@ def show_salesperson_clients(salesperson_id: int):
                      display.
     :return:    A flask.Response object.
     """
-    try:
-        Salesperson.query.get_or_404(salesperson_id)
-        # Fetching a Client object for every row in the clients table with the
-        # given salesperson_id.
-        retval = [client_obj.serialize() for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)]
-        if not len(retval):
-            return abort(404)
-        return jsonify(retval)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return salesperson_clients_shower(salesperson_id)
 
 
 salesperson_client_by_id_shower = show_one_classes_other_class_obj_by_id(Salesperson, 'salesperson_id', Client,

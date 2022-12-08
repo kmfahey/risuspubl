@@ -5,6 +5,7 @@ from werkzeug.exceptions import NotFound
 from flask import Blueprint, jsonify, request, Response, abort
 
 from risuspubl.api.commons import *
+from risuspubl.api.endpfact import show_class_obj_by_id
 from risuspubl.dbmodels import *
 
 
@@ -24,6 +25,8 @@ update_or_create_args = lambda: {'sales_record_id': (int,   (0,),           requ
                                  'net_profit':      (float, (0.01,),        request.json.get('net_profit'))}
 
 
+sales_record_by_id_shower = show_class_obj_by_id(SalesRecord)
+
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
 def show_sales_record(sales_record_id: int):
@@ -34,15 +37,7 @@ def show_sales_record(sales_record_id: int):
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
-    try:
-        sales_record_obj = SalesRecord.query.get_or_404(sales_record_id)
-        return jsonify(sales_record_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return sales_record_by_id_shower(sales_record_id)
 
 
 @blueprint.route('/year/<int:year>', methods=['GET'])

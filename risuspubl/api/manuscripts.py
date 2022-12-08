@@ -5,11 +5,14 @@ from werkzeug.exceptions import NotFound
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
-from risuspubl.api.endpfact import update_class_obj_by_id_factory
+from risuspubl.api.endpfact import update_class_obj_by_id_factory, show_class_obj_by_id, show_class_index
 from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
+
+
+manuscripts_indexer = show_class_index(Manuscript)
 
 
 @blueprint.route('', methods=['GET'])
@@ -20,17 +23,14 @@ def index():
 
     :return:    A flask.Response object.
     """
-    try:
-        result = [manuscript_obj.serialize() for manuscript_obj in Manuscript.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return manuscripts_indexer()
+
+
+manuscript_by_id_shower = show_class_obj_by_id(Manuscript)
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
-def show_manuscript(manuscript_id: int):
+def show_manuscript_by_id(manuscript_id: int):
     """
     Implements a GET /manuscripts/<id> endpoint. The row in the manuscripts
     table with the given manuscript_id is loaded and output in JSON.
@@ -39,13 +39,7 @@ def show_manuscript(manuscript_id: int):
                     load and display.
     :return:        A flask.Response object.
     """
-    try:
-        manuscript_obj = Manuscript.query.get_or_404(manuscript_id)
-        return jsonify(manuscript_obj.serialize())
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return manuscript_by_id_shower(manuscript_id)
 
 
 # A Create endpoint is deliberately not implemented, because without

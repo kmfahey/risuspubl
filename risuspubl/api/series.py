@@ -9,7 +9,8 @@ from flask import abort, Blueprint, jsonify, request, Response
 from risuspubl.api.commons import *
 from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, \
         update_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
-        update_class_obj_by_id_factory, create_class_obj_factory, show_one_classes_other_class_obj_by_id
+        update_class_obj_by_id_factory, create_class_obj_factory, show_one_classes_other_class_obj_by_id, \
+        show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id
 
 from risuspubl.dbmodels import *
 
@@ -25,6 +26,9 @@ update_or_create_args = lambda: {'title':   (str,   (),     request.json.get('ti
                                  'volumes': (int,   (2, 5), request.json.get('volumes'))}
 
 
+series_indexer = show_class_index(Series)
+
+
 @blueprint.route('', methods=['GET'])
 def index():
     """
@@ -33,17 +37,14 @@ def index():
 
     :return: A flask.Response object.
     """
-    try:
-        result = [series_obj.serialize() for series_obj in Series.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_indexer()
+
+
+series_by_id_shower = show_class_obj_by_id(Series)
 
 
 @blueprint.route('/<int:series_id>', methods=['GET'])
-def show_series(series_id: int):
+def show_series_by_id(series_id: int):
     """
     Implements a GET /series/<id> endpoint. The row in the series table with
     the given series_id is loaded and output in JSON.
@@ -52,15 +53,10 @@ def show_series(series_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        series_obj = Series.query.get_or_404(series_id)
-        return jsonify(series_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_by_id_shower(series_id)
+
+
+series_books_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Book)
 
 
 @blueprint.route('/<int:series_id>/books', methods=['GET'])
@@ -73,20 +69,7 @@ def show_series_books(series_id: int):
                 series_books table of rows from the books table to display.
     :return:    A flask.Response object.
     """
-    try:
-        Series.query.get_or_404(series_id)
-        # A Book object for every row in the books table with the given
-        # series_id.
-        retval = [book_obj.serialize() for book_obj in Book.query.where(Book.series_id == series_id)]
-        if not len(retval):
-            return abort(404)
-        return jsonify(retval)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_books_shower(series_id)
 
 
 series_book_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Book, 'book_id')
@@ -105,6 +88,9 @@ def show_series_book_by_id(series_id: int, book_id: int):
     return series_book_by_id_shower(series_id, book_id)
 
 
+series_manuscripts_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Manuscript)
+
+
 @blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
 def show_series_manuscripts(series_id: int):
     """
@@ -116,21 +102,7 @@ def show_series_manuscripts(series_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        Series.query.get_or_404(series_id)
-        # A Manuscript object for every row in the manuscripts table with the
-        # given series_id.
-        retval = [manuscript_obj.serialize() for manuscript_obj
-                  in Manuscript.query.where(Manuscript.series_id == series_id)]
-        if not len(retval):
-            return abort(404)
-        return jsonify(retval)
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return series_manuscripts_shower(series_id)
 
 
 series_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Manuscript,

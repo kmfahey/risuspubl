@@ -7,11 +7,15 @@ from datetime import date
 from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
-from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory, \
+        show_class_obj_by_id, show_class_index
 from risuspubl.dbmodels import *
 
 
 blueprint = Blueprint('books', __name__, url_prefix='/books')
+
+
+books_indexer = show_class_index(Book)
 
 
 @blueprint.route('', methods=['GET'])
@@ -22,17 +26,14 @@ def index():
 
     :return:    A flask.Response object.
     """
-    try:
-        result = [book_obj.serialize() for book_obj in Book.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return books_indexer()
+
+
+book_by_id_shower = show_class_obj_by_id(Book)
 
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
-def show_book(book_id: int):
+def show_book_by_id(book_id: int):
     """
     Implements a GET /books/<id> endpoint. The row in the books table with the
     given book_id is loaded and output in JSON.
@@ -41,15 +42,7 @@ def show_book(book_id: int):
               display.
     :return:  A flask.Response object.
     """
-    try:
-        book_obj = Book.query.get_or_404(book_id)
-        return jsonify(book_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return book_by_id_shower(book_id)
 
 
 # A Create endpoint is deliberately not implemented, because without

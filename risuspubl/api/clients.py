@@ -6,7 +6,7 @@ from flask import abort, Blueprint, jsonify, request, Response
 
 from risuspubl.api.commons import *
 from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory, \
-        create_class_obj_factory
+        create_class_obj_factory, show_class_obj_by_id, show_class_index
 from risuspubl.dbmodels import *
 
 
@@ -28,6 +28,9 @@ update_or_create_args = lambda: {'salesperson_id':      (int, (0,),     request.
                                  'country':             (str, (),       request.json.get('country'))}
 
 
+clients_indexer = show_class_index(Client)
+
+
 @blueprint.route('', methods=['GET'])
 def index():
     """
@@ -36,17 +39,14 @@ def index():
 
     :return: A flask.Response object.
     """
-    try:
-        result = [client_obj.serialize() for client_obj in Client.query.all()]
-        return jsonify(result) # return JSON response
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return clients_indexer()
+
+
+client_by_id_shower = show_class_obj_by_id(Client)
 
 
 @blueprint.route('/<int:client_id>', methods=['GET'])
-def show_client(client_id: int):
+def show_client_by_id(client_id: int):
     """
     Implements a GET /clients/<id> endpoint. The row in the clients table with
     the given client_id is loaded and output in JSON.
@@ -55,15 +55,7 @@ def show_client(client_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    try:
-        client_obj = Client.query.get_or_404(client_id)
-        return jsonify(client_obj.serialize())
-    except Exception as exception:
-        if isinstance(exception, NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return client_by_id_shower(client_id)
 
 
 client_creator = create_class_obj_factory(Client)
