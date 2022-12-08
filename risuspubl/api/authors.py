@@ -17,33 +17,33 @@ blueprint = Blueprint('authors', __name__, url_prefix='/authors')
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Author class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-create_or_update_author = lambda: {'first_name': (str, (), request.args.get('first_name')),
-                                   'last_name': (str, (), request.args.get('last_name'))}
+create_or_update_author = lambda: {'first_name':        (str,   (),         request.json.get('first_name')),
+                                   'last_name':         (str,   (),         request.json.get('last_name'))}
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Book class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-create_or_update_book = lambda: {'editor_id': (int, (0,), request.args.get('editor_id')),
-                                 'series_id': (int, (0,), request.args.get('series_id')),
-                                 'title': (str, (), request.args.get('title')),
-                                 'publication_date': (str, (), request.args.get('publication_date')),
-                                 'edition_number': (str, (1, 10), request.args.get('edition_number')),
-                                 'is_in_print': (bool, (), request.args.get('is_in_print'))}
+create_or_update_book = lambda: {'editor_id':           (int,   (0,),       request.json.get('editor_id')),
+                                 'series_id':           (int,   (0,),       request.json.get('series_id')),
+                                 'title':               (str,   (),         request.json.get('title')),
+                                 'publication_date':    (str,   (),         request.json.get('publication_date')),
+                                 'edition_number':      (str,   (1, 10),    request.json.get('edition_number')),
+                                 'is_in_print':         (bool,  (),         request.json.get('is_in_print'))}
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Manuscript class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-create_or_update_manuscript = lambda: {'editor_id': (int, (0,), request.args.get('editor_id')),
-                                       'series_id': (int, (0,), request.args.get('series_id')),
-                                       'working_title': (str, (), request.args.get('working_title')),
-                                       'due_date': (date, ((date.today() + timedelta(days=1)).isoformat(),
-                                                           "2023-07-01"),
-                                                    request.args.get('due_date')),
-                                       'advance': (int, (5000, 100000), request.args.get('advance'))}
+create_or_update_manuscript = lambda: {'editor_id':     (int, (0,),         request.json.get('editor_id')),
+                                       'series_id':     (int, (0,),         request.json.get('series_id')),
+                                       'working_title': (str, (),           request.json.get('working_title')),
+                                       'due_date':      (date, ((date.today() + timedelta(days=1)).isoformat(),
+                                                                "2023-07-01"),
+                                                                            request.json.get('due_date')),
+                                       'advance':       (int, (5e3, 1e5),   request.json.get('advance'))}
 
 
 @blueprint.route('', methods=['GET'])
@@ -405,7 +405,7 @@ def create_author():
     :return:    A flask.Response object.
     """
     try:
-        # Using create_model_obj() to process request.args into a Author()
+        # Using create_model_obj() to process request.json into a Author()
         # argument dict and instance a Author() object.
         author_obj = create_model_obj(Author, create_or_update_author())
         db.session.add(author_obj)
@@ -432,7 +432,7 @@ def create_author_book(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
-        # Using create_model_obj() to process request.args into a Book()
+        # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
         book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
         db.session.add(book_obj)
@@ -469,7 +469,7 @@ def create_authors_book(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        # Using create_model_obj() to process request.args into a Book()
+        # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
         book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
         db.session.add(book_obj)
@@ -505,7 +505,7 @@ def create_author_manuscript(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
-        # Using create_model_obj() to process request.args into a Manuscript()
+        # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
         db.session.add(manuscript_obj)
@@ -542,7 +542,7 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        # Using create_model_obj() to process request.args into a Manuscript()
+        # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
         db.session.add(manuscript_obj)
@@ -565,7 +565,7 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:author_id>', methods=['PATCH'])
+@blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
 def update_author(author_id: int):
     """
     Implements a PATCH /authors/<id> endpoint. The row in the authors table with
@@ -576,7 +576,7 @@ def update_author(author_id: int):
     """
     try:
         # Using update_model_obj() to fetch the Author object and update it
-        # against request.args.
+        # against request.json.
         author_obj = update_model_obj(author_id, Author, create_or_update_author())
         db.session.add(author_obj)
         db.session.commit()
@@ -587,7 +587,7 @@ def update_author(author_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH'])
+@blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_author_book(author_id: int, book_id: int):
     """
     Implements a PATCH /authors/<id>/books/<id> endpoint. The row in the books
@@ -608,7 +608,7 @@ def update_author_book(author_id: int, book_id: int):
         if len(book_objs) == 0:
             return abort(404)
         # Using update_model_obj() to fetch the Book object and update it
-        # against request.args.
+        # against request.json.
         book_obj = update_model_obj(book_id, Book, create_or_update_book())
         db.session.add(book_obj)
         db.session.commit()
@@ -621,7 +621,7 @@ def update_author_book(author_id: int, book_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH'])
+@blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_authors_book(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a PATCH /authors/<id>/<id>/books/<id> endpoint. The row in the
@@ -644,7 +644,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         # authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        # Using create_model_obj() to process request.args into a Book()
+        # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
         book_obj = update_model_obj(book_id, Book, create_or_update_book())
         db.session.add(book_obj)
@@ -658,7 +658,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH'])
+@blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_author_manuscript(author_id: int, manuscript_id: int):
     """
     Implements a PATCH /authors/<id>/manuscripts/<id> endpoint. The row in the
@@ -679,7 +679,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         if len(manuscript_objs) == 0:
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
-        # against request.args.
+        # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -692,7 +692,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['PATCH'])
+@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: int):
     """
     Implements a PATCH /authors/<id>/<id>/manuscripts/<id> endpoint. The row
@@ -718,7 +718,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
-        # against request.args.
+        # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)
         db.session.commit()

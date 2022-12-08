@@ -13,11 +13,11 @@ blueprint = Blueprint('editors', __name__, url_prefix='/editors')
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Editor class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-editor_update_or_create_args = lambda: {'first_name': (str, (), request.args.get('first_name')),
-                                 'last_name': (str, (), request.args.get('last_name')),
-                                 'salary': (int, (), request.args.get('salary'))}
+editor_update_or_create_args = lambda: {'first_name':   (str,   (),     request.json.get('first_name')),
+                                        'last_name':    (str,   (),     request.json.get('last_name')),
+                                        'salary':       (int,   (),     request.json.get('salary'))}
 
 
 @blueprint.route('', methods=['GET'])
@@ -194,7 +194,7 @@ def create_editor():
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:editor_id>', methods=['PATCH'])
+@blueprint.route('/<int:editor_id>', methods=['PATCH', 'PUT'])
 def update_editor(editor_id: int):
     """
     Implements a PATCH /editors/<id> endpoint. The row in the editors table with
@@ -205,7 +205,7 @@ def update_editor(editor_id: int):
     """
     try:
         # Using update_model_obj() to fetch the Editor object and update it
-        # against request.args.
+        # against request.json.
         editor_obj = update_model_obj(editor_id, Editor, editor_update_or_create_args())
         db.session.add(editor_obj)
         db.session.commit()
@@ -216,7 +216,7 @@ def update_editor(editor_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH'])
+@blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_editor_book_by_id(editor_id: int, book_id: int):
     """
     Implements a PATCH /editors/<id>/books/<id> endpoint. The row in the
@@ -232,14 +232,14 @@ def update_editor_book_by_id(editor_id: int, book_id: int):
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.editor_id == editor_id)):
             return abort(404)
         # Using update_model_obj() to fetch the Book object and update it
-        # against request.args.
+        # against request.json.
         book_obj = update_model_obj(book_id, Book,
                                     {'editor_id':        (int,  (0,),    editor_id),
-                                     'series_id':        (int,  (0,),    request.args.get('series_id')),
-                                     'title':            (str,  (),      request.args.get('title')),
-                                     'publication_date': (date, (),      request.args.get('publication_date')),
-                                     'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
-                                     'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
+                                     'series_id':        (int,  (0,),    request.json.get('series_id')),
+                                     'title':            (str,  (),      request.json.get('title')),
+                                     'publication_date': (date, (),      request.json.get('publication_date')),
+                                     'edition_number':   (int,  (1, 10), request.json.get('edition_number')),
+                                     'is_in_print':      (bool, (),      request.json.get('is_in_print'))})
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -251,7 +251,7 @@ def update_editor_book_by_id(editor_id: int, book_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['PATCH'])
+@blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
     """
     Implements a PATCH /editors/<id>/manuscripts/<id> endpoint. The row in the
@@ -269,14 +269,14 @@ def update_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
                    in Manuscript.query.where(Manuscript.editor_id == editor_id)):
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
-        # against request.args.
+        # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                     {'editor_id':        (int,  (0,),    editor_id),
-                                     'series_id':        (int,  (0,),    request.args.get('series_id')),
-                                     'title':            (str,  (),      request.args.get('title')),
-                                     'publication_date': (date, (),      request.args.get('publication_date')),
-                                     'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
-                                     'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
+                                     'series_id':        (int,  (0,),    request.json.get('series_id')),
+                                     'title':            (str,  (),      request.json.get('title')),
+                                     'publication_date': (date, (),      request.json.get('publication_date')),
+                                     'edition_number':   (int,  (1, 10), request.json.get('edition_number')),
+                                     'is_in_print':      (bool, (),      request.json.get('is_in_print'))})
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())

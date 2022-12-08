@@ -56,7 +56,7 @@ def show_manuscript(manuscript_id: int):
 # appropriately.
 
 
-@blueprint.route('/<int:manuscript_id>', methods=['PATCH'])
+@blueprint.route('/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_manuscript(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/<id> endpoint. The row in the manuscripts
@@ -67,22 +67,22 @@ def update_manuscript(manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        if ('working_title' in request.args
-            and len(tuple(Manuscript.query.where(Manuscript.working_title == request.args['working_title'])))):
+        if ('working_title' in request.json
+            and len(tuple(Manuscript.query.where(Manuscript.working_title == request.json['working_title'])))):
             # The working_title column in the manuscripts table is required to
             # be unique. If that Manuscript query returns a nonempty sequence,
             # the given value is already in use, so a ValueError is raised.
-            raise ValueError(f"'working_title' parameter value '{request.args['working_title']}' already use in a "
+            raise ValueError(f"'working_title' parameter value '{request.json['working_title']}' already use in a "
                              f'row in the {Manuscript.__tablename__} table; working_title values must be unique')
         # Using update_model_obj() to fetch the Manuscript object and update it
-        # against request.args.
+        # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
-                                          {'editor_id': (int, (0,), request.args.get('editor_id')),
-                                           'series_id': (int, (0,), request.args.get('series_id')),
-                                           'working_title': (str, (), request.args.get('working_title')),
-                                           'due_date': (date, (date.today().isoformat(), '2025-12-31'),
-                                                        request.args.get('due_date')),
-                                           'advance': (int, (5000, 100000), request.args.get('advance'))})
+                                          {'editor_id':     (int,       (0,),   request.json.get('editor_id')),
+                                           'series_id':     (int,       (0,),   request.json.get('series_id')),
+                                           'working_title': (str,       (),     request.json.get('working_title')),
+                                           'due_date':      (date, (date.today().isoformat(), '2025-12-31'),
+                                                                                request.json.get('due_date')),
+                                           'advance':       (int, (5e3, 1e5),   request.json.get('advance'))})
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())

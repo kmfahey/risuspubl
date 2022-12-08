@@ -11,13 +11,17 @@ from risuspubl.dbmodels import *
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 
-update_or_create_args = lambda: {'sales_record_id', (int, (0,), request.args.get('sales_record_id')),
-                                 'book_id', (int, (0,), request.args.get('book_id')),
-                                 'year', (int, (1900, 2022), request.args.get('year')),
-                                 'month', (int, (1, 12), request.args.get('month')),
-                                 'copies_sold', (int, (1,), request.args.get('copies_sold')),
-                                 'gross_profit', (float, (0.01,), request.args.get('gross_profit')),
-                                 'net_profit', (float, (0.01,), request.args.get('net_profit'))}
+# This lambda holds the dict needed as an argument to create_model_obj() or
+# update_model_obj() when called for the SalesRecord class. By wrapping it in a
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
+# the function is called within the context of an endpoint function.
+update_or_create_args = lambda: {'sales_record_id': (int,   (0,),           request.json.get('sales_record_id')),
+                                 'book_id':         (int,   (0,),           request.json.get('book_id')),
+                                 'year':            (int,   (1900, 2022),   request.json.get('year')),
+                                 'month':           (int,   (1, 12),        request.json.get('month')),
+                                 'copies_sold':     (int,   (1,),           request.json.get('copies_sold')),
+                                 'gross_profit':    (float, (0.01,),        request.json.get('gross_profit')),
+                                 'net_profit':      (float, (0.01,),        request.json.get('net_profit'))}
 
 
 

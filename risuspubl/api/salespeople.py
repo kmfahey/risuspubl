@@ -13,24 +13,24 @@ blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Salesperson class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-salesperson_update_or_create_args = lambda: {'first_name': (str, (), request.args.get('first_name')),
-                                             'last_name': (str, (), request.args.get('last_name')),
-                                             'salary': (str, (), request.args.get('salary'))}
+salesperson_update_or_create_args = lambda: {'first_name':      (str,   (),         request.json.get('first_name')),
+                                             'last_name':       (str,   (),         request.json.get('last_name')),
+                                             'salary':          (str,   (),         request.json.get('salary'))}
 
 # This lambda holds the dict needed as an argument to create_model_obj() or
 # update_model_obj() when called for the Client class. By wrapping it in a
-# zero-argument lambda, the embedded request.args variable isn't evaluated until
+# zero-argument lambda, the embedded request.json variable isn't evaluated until
 # the function is called within the context of an endpoint function.
-client_update_or_create_args = lambda: {'email_address': (str, (), request.args.get('email_address')),
-                                        'phone_number': (str, (11, 11), request.args.get('phone_number')),
-                                        'business_name': (str, (), request.args.get('business_name')),
-                                        'street_address': (str, (), request.args.get('street_address')),
-                                        'city': (str, (), request.args.get('city')),
-                                        'state_or_province': (str, (2, 4), request.args.get('state_or_province')),
-                                        'zipcode': (str, (9, 9), request.args.get('zipcode')),
-                                        'country': (str, (), request.args.get('country'))}
+client_update_or_create_args = lambda: {'email_address':        (str,   (),         request.json.get('email_address')),
+                                        'phone_number':         (str,   (11, 11),   request.json.get('phone_number')),
+                                        'business_name':        (str,   (),         request.json.get('business_name')),
+                                        'street_address':       (str,   (),         request.json.get('street_address')),
+                                        'city':                 (str,   (),         request.json.get('city')),
+                                        'state_or_province':    (str,   (2, 4),     request.json.get('state_or_province')),
+                                        'zipcode':              (str,   (9, 9),     request.json.get('zipcode')),
+                                        'country':              (str,   (),         request.json.get('country'))}
 
 
 @blueprint.route('', methods=['GET'])
@@ -136,7 +136,7 @@ def create_salesperson():
     :return:    A flask.Response object.
     """
     try:
-        # Using create_model_obj() to process request.args into a Salesperson()
+        # Using create_model_obj() to process request.json into a Salesperson()
         # argument dict and instance a Salesperson() object.
         salesperson_obj = create_model_obj(Salesperson, salesperson_update_or_create_args())
         db.session.add(salesperson_obj)
@@ -162,7 +162,7 @@ def create_salesperson_client(salesperson_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
-        # Using create_model_obj() to process request.args into a Client()
+        # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
         client_obj = create_model_obj(Client, client_update_or_create_args())
         client_obj.salesperson_id = salesperson_id
@@ -177,7 +177,7 @@ def create_salesperson_client(salesperson_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:salesperson_id>', methods=['PATCH'])
+@blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
 def update_salesperson(salesperson_id: int):
     """
     Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
@@ -198,7 +198,7 @@ def update_salesperson(salesperson_id: int):
                 if len(exception.args) else abort(status))
 
 
-@blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH'])
+@blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
 def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
     Implements a PATCH /salespeople/<id>/clients/<id> endpoint. The row in the
@@ -217,7 +217,7 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
             return abort(404)
         # Using update_model_obj() to fetch the Client object and update it
-        # against request.args.
+        # against request.json.
         client_obj = update_model_obj(client_id, Client, client_update_or_create_args())
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)

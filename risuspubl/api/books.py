@@ -60,7 +60,7 @@ def show_book(book_id: int):
 # appropriately.
 
 
-@blueprint.route('/<int:book_id>', methods=['PATCH'])
+@blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_book(book_id: int):
     """
     Implements a PATCH /books/<id> endpoint. The row in the books table with
@@ -70,18 +70,18 @@ def update_book(book_id: int):
     :return:  A flask.Response object.
     """
     try:
-        if 'title' in request.args and len(tuple(Book.query.where(Book.title == request.args['title']))):
-            raise ValueError(f"'title' parameter value '{request.args['title']}' already use in a row in the "
+        if 'title' in request.json and len(tuple(Book.query.where(Book.title == request.json['title']))):
+            raise ValueError(f"'title' parameter value '{request.json['title']}' already use in a row in the "
                              f'{Book.__tablename__} table; title values must be unique')
         # Using update_model_obj() to fetch the Book object and update it
-        # against request.args.
+        # against request.json.
         book_obj = update_model_obj(book_id, Book,
-                                    {'editor_id':        (int,  (0,),    request.args.get('editor_id')),
-                                     'series_id':        (int,  (0,),    request.args.get('series_id')),
-                                     'title':            (str,  (),      request.args.get('title')),
-                                     'publication_date': (date, (),      request.args.get('publication_date')),
-                                     'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
-                                     'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
+                                    {'editor_id':        (int,  (0,),    request.json.get('editor_id')),
+                                     'series_id':        (int,  (0,),    request.json.get('series_id')),
+                                     'title':            (str,  (),      request.json.get('title')),
+                                     'publication_date': (date, (),      request.json.get('publication_date')),
+                                     'edition_number':   (int,  (1, 10), request.json.get('edition_number')),
+                                     'is_in_print':      (bool, (),      request.json.get('is_in_print'))})
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
