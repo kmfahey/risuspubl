@@ -8,6 +8,10 @@ from datetime import date
 from ..dbmodels import *
 
 
+# This lookup table associates a *_id param name with the SQLAlchemy.Model
+# subclass class object representing the table where a column by that name is
+# the primary key. Used to validate whether a parameter with such a name has a
+# value that is associated with a row in that table.
 id_params_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor, 'manuscript_id': Manuscript,
                               'sales_record_id': SalesRecord, 'salesperson_id': Salesperson, 'series_id': Series}
 
@@ -30,16 +34,28 @@ def update_model_obj(id_val, model_subclass, params_to_types_args_values):
                                   argument.
     """
     model_obj = model_subclass.query.get_or_404(id_val)
+    # If all the dict's param_value slots are None, this update can't proceed bc
+    # there's nothing to update, so a ValueError is raised.
     if all(param_value is None for _, _, param_value in params_to_types_args_values.values()):
         raise ValueError('update action executed with no parameters indicating fields to update')
     for param_name, (param_type, validator_args, param_value) in params_to_types_args_values.items():
         if param_value is None:
             continue
         if param_name.endswith('_id'):
+            # This step matches a *_id parameters with the Model class for the
+            # table where that column is a primary key, and does a get() to
+            # confirm the *_id value corresponds to a row in that table. If not,
+            # a ValueError is raised.
             id_model_subclass = id_params_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
                                  f"the `{id_model_subclass.__tablename__}` table")
+        # The validator for this data type is located and applied with the given
+        # arguments. All of this module's validators are passthroughs: they
+        # accept the value as an argument and return the value after processing;
+        # in the case of int and float they've casted the value to its proper
+        # type. date values are returned as strings because that's the format
+        # that a SQLAlchemy.Model subclass's Date columns accept values in.
         validator = types_to_validators[param_type]
         setattr(model_obj, param_name, validator(param_name, param_value, *validator_args))
     return model_obj
@@ -70,15 +86,27 @@ def create_model_obj(model_subclass, params_to_types_args_values, optional_param
     """
     model_obj_args = dict()
     for param_name, (param_type, validator_args, param_value) in params_to_types_args_values.items():
+        # optional_params is the list of names of parameters that may be None.
         if param_value is None and param_name in optional_params:
             continue
+        # If a required param is none, a ValueError is raised.
         elif param_value is None:
             raise ValueError(f"required parameter '{param_name}' not present")
         if param_name.endswith('_id'):
+            # This step matches a *_id parameters with the Model class for the
+            # table where that column is a primary key, and does a get() to
+            # confirm the *_id value corresponds to a row in that table. If not,
+            # a ValueError is raised.
             id_model_subclass = id_params_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
                                  f"the `{id_model_subclass.__tablename__}` table")
+        # The validator for this data type is located and applied with the given
+        # arguments. All of this module's validators are passthroughs: they
+        # accept the value as an argument and return the value after processing;
+        # in the case of int and float they've casted the value to its proper
+        # type. date values are returned as strings because that's the format
+        # that a SQLAlchemy.Model subclass's Date columns accept values in.
         validator = types_to_validators[param_type]
         model_obj_args[param_name] = validator(param_name, param_value, *validator_args)
     return model_subclass(**model_obj_args)
@@ -98,6 +126,8 @@ def delete_model_obj(id_val, model_subclass):
     :return:         None
     """
     model_obj = model_subclass.query.get_or_404(id_val)
+    # In the case of Book or Manuscript objects, there's also corresponding rows
+    # in authors_books or authors_manuscripts that need to be deleted as well.
     if model_subclass is Book:
         ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == id_val)
         db.session.execute(ab_del)
@@ -137,6 +167,8 @@ def validate_date(param_name, param_value, lower_bound='1900-01-01', upper_bound
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a date{message}") from None
     lower_bound_date = date.fromisoformat(lower_bound)
     upper_bound_date = date.fromisoformat(upper_bound)
+    # datetime.date objects support comparisons so the values are converted to
+    # date objects and a two-sided comparison is used.
     if not (lower_bound_date <= param_date_obj <= upper_bound_date):
         raise ValueError(f"parameter {param_name}: supplied date value {param_value} does not fall within "
                          f"[{lower_bound}, {upper_bound}]")
@@ -204,8 +236,12 @@ def validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
     :return:      A string, the param_value unmodified.
     """
     if not (lower_bound <= len(param_value) <= upper_bound):
+        # If the reason for failure is the str is length zero, a more specific
+        # error message is used.
         if len(param_value) == 0:
             raise ValueError(f"parameter {param_name}: may not be zero-length")
+        # If the upper and lower bounds are equal, that's a requirement the
+        # string be that length, so the error message states that.
         elif lower_bound == upper_bound:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
                              f"equal to {lower_bound}")
@@ -226,18 +262,18 @@ def validate_bool(param_name, param_value):
     :param_value: The value of the CGI parameter, a string.
     :return:      A boolean, parsed from the param_value.
     """
-    if param_value.lower() in ('true', 't', 'yes', '1'):
-        return True
-    elif param_value.lower() in ('false', 'f', 'no', '0'):
+    if param_value.lower() in ('true', 't', 'yes', '1'):    # Tries to accept a variety 
+        return True                                         # of conventions for a True 
+    elif param_value.lower() in ('false', 'f', 'no', '0'):  # boolean or a False boolean.
         return False
     else:
         raise ValueError(f"parameter {param_name}: the supplied parameter value '{param_value}' does not parse as either "
                          "True or False")
 
 
-# This dict relates a type to the validator function for that data type. It's
-# defined at the end of the file so that all the function names are defined.
-# It's used in functions at the top of the file, but thanks to lazy evaluation
-# they'll have access to it even though it's defined here.
+# This lookup table associates a type object to the validator function for that
+# data type. It's defined at the end of the file so that all the function names
+# are defined. It's used by functions at the top of the file, but thanks to lazy
+# evaluation they'll have access to it even though it's defined here.
 types_to_validators = {int: validate_int, bool: validate_bool, str: validate_str, date: validate_date,
                        float: validate_float}

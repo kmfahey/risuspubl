@@ -73,11 +73,9 @@ def create_client():
     :return:    A flask.Response object.
     """
     try:
-        try:
-            client_obj = create_model_obj(Client, update_or_create_args())
-        except ValueError as exception:
-            return (Response(exception.args[0], status=400)
-                    if len(exception.args) else abort(400))
+        # Using create_model_obj() to process request.args into a Client()
+        # argument dict and instance a Client() object.
+        client_obj = create_model_obj(Client, update_or_create_args())
         db.session.add(client_obj)
         db.session.commit()
         return jsonify(client_obj.serialize())
@@ -97,6 +95,8 @@ def update_client(client_id: int):
     :return:    A flask.Response object.
     """
     try:
+        # Using update_model_obj() to fetch the client_obj and update it
+        # against request.args.
         client_obj = update_model_obj(client_id, Client, update_or_create_args())
         db.session.add(client_obj)
         db.session.commit()
@@ -117,6 +117,7 @@ def delete_client(client_id: int):
     :return:    A flask.Response object.
     """
     try:
+        # Using delete_model_obj() to fetch the client_obj and delete it.
         delete_model_obj(client_id, Client)
         return jsonify(True)
     except Exception as exception:

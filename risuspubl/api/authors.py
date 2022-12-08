@@ -121,6 +121,9 @@ def show_author_book_by_id(author_id: int, book_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
+        # Iterating across the Author.manuscripts list looking for a Book object
+        # by that id. If it's found, it's serialized and returned as JSON.
+        # Otherwise, a 404 error is raised.
         for book_obj in author_obj.books:
             if book_obj.book_id != book_id:
                 continue
@@ -173,6 +176,9 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
+        # Iterating across the Author.manuscripts list looking for a Manuscript
+        # object by that id. If it's found, it's serialized and returned as
+        # JSON. Otherwise, a 404 error is raised.
         for manuscript_obj in author_obj.manuscripts:
             if manuscript_obj.manuscript_id != manuscript_id:
                 continue
@@ -186,6 +192,9 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
                 if len(exception.args) else abort(status))
 
 
+# To be frank this endpoint doesn't have much of a reason to exist, save that
+# if this endpoint is loaded something *should* be here since /authors/<id> is
+# valid and /authors/<id>/<id>/books is valid. Provied for completeness.
 @blueprint.route('/<int:author1_id>/<int:author2_id>', methods=['GET'])
 def show_authors(author1_id: int, author2_id: int):
     """
@@ -201,6 +210,7 @@ def show_authors(author1_id: int, author2_id: int):
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        # The two author_objs are serialized and returned as a 2-element json list.
         retval = [author1_obj.serialize(), author2_obj.serialize()]
         return jsonify(retval)
     except Exception as exception:
@@ -215,13 +225,22 @@ def show_authors(author1_id: int, author2_id: int):
 # show_authors_book_by_id() to generate a list of Book objects with book_ids
 # that are associated with both author_ids in the authors_books table.
 def _authors_shared_book_ids(author1_id: int, author2_id: int) -> set:
-    author1_obj = Author.query.get_or_404(author1_id)
-    author2_obj = Author.query.get_or_404(author2_id)
+    Author.query.get_or_404(author1_id)
+    Author.query.get_or_404(author2_id)
+    # The books attribute on an Author object comprises the Book
+    # objects whose book_ids are associated with its author_id in the
+    # authors_books table.
     author1_books = author1_obj.books
     author2_books = author2_obj.books
+    # A dict of Book objects by book_id is built from both lists
+    # chained in sequence.
     book_objs_by_id = {book_obj.book_id: book_obj for book_obj in itertools.chain(author1_books, author2_books)}
+    # Sets of book_ids associated with each author_id are built and
+    # intersected to find the shared books.
     shared_book_ids = set(author1_book_obj.book_id for author1_book_obj in author1_books) & \
                           set(author2_book_obj.book_id for author2_book_obj in author2_books)
+    # The book_ids are looked up in the dict via a list comprehension and
+    # that list is returned.
     return [book_objs_by_id[book_id] for book_id in shared_book_ids]
 
 
@@ -239,7 +258,10 @@ def show_authors_books(author1_id: int, author2_id: int):
     :return:     A flask.Response object.
     """
     try:
+        # A utility function is used to fetch a list of Book objects whose
+        # book_id is associated with both author_ids in authors_books.
         shared_books = _authors_shared_book_ids(author1_id, author2_id)
+        # The list is serialized and returned as json.
         retval = [book_obj.serialize() for book_obj in shared_books]
         return jsonify(retval)
     except Exception as exception:
@@ -264,11 +286,16 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
     :return:     A flask.Response object.
     """
     try:
+        # A utility function is used to fetch a list of Book objects whose
+        # book_id is associated with both author_ids in authors_books.
         shared_books = _authors_shared_book_ids(author1_id, author2_id)
+        # The Book object list is iterated over, looking for the object with the
+        # matching book_id. If it's found, it's serialized and returned as json.
         for book_obj in shared_books:
             if book_obj.book_id != book_id:
                 continue
             return jsonify(book_obj.serialize())
+        # If the book_id wasn't found, that's a 404.
         return abort(404)
     except Exception as exception:
         if isinstance(exception, NotFound):
@@ -283,16 +310,25 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
 def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> set:
-    author1_obj = Author.query.get_or_404(author1_id)
-    author2_obj = Author.query.get_or_404(author2_id)
+    Author.query.get_or_404(author1_id)
+    Author.query.get_or_404(author2_id)
+    # The manuscripts attribute on an Author object comprises the Manuscript
+    # objects whose manuscript_ids are associated with its author_id in the
+    # authors_manuscripts table.
     author1_manuscripts = author1_obj.manuscripts
     author2_manuscripts = author2_obj.manuscripts
+    # A dict of Manuscript objects by manuscript_id is built from both lists
+    # chained in sequence.
     manuscript_objs_by_id = {manuscript_obj.manuscript_id: manuscript_obj for manuscript_obj
                              in itertools.chain(author1_manuscripts, author2_manuscripts)}
+    # Sets of manuscript_ids associated with each author_id are built and
+    # intersected to find the shared manuscripts.
     shared_manuscript_ids = set(author1_manuscript_obj.manuscript_id
                                 for author1_manuscript_obj in author1_manuscripts) & \
                           set(author2_manuscript_obj.manuscript_id
                               for author2_manuscript_obj in author2_manuscripts)
+    # The manuscript_ids are looked up in the dict via a list comprehension and
+    # that list is returned.
     return [manuscript_objs_by_id[manuscript_id] for manuscript_id in shared_manuscript_ids]
 
 
@@ -310,7 +346,11 @@ def show_authors_manuscripts(author1_id: int, author2_id: int):
     :return:        A flask.Response object.
     """
     try:
+        # This utility function looks up which manuscript_ids are associated
+        # with both author_ids in authors_manuscripts and returns Manuscript()
+        # objects for those manuscript_ids. 
         shared_manuscripts = _authors_shared_manuscript_ids(author1_id, author2_id)
+        # A list of serializations is built # and returned via jsonify.
         retval = [manuscript_obj.serialize() for manuscript_obj in shared_manuscripts]
         return jsonify(retval)
     except Exception as exception:
@@ -335,11 +375,18 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
     :return:        A flask.Response object.
     """
     try:
+        # Using a utility function to look up which manuscript_ids are associated
+        # with both author_ids in authors_manuscripts and return Manuscript()
+        # objects for those manuscript_ids.
         shared_manuscripts = _authors_shared_manuscript_ids(author1_id, author2_id)
+        # Iterating across the Manuscript object list until the object with the
+        # matching manuscript_id is found.
         for manuscript_obj in shared_manuscripts:
             if manuscript_obj.manuscript_id != manuscript_id:
                 continue
             return jsonify(manuscript_obj.serialize())
+        # If the loop completed and the Manuscript() object wasn't found, that's
+        # a 404.
         return abort(404)
     except Exception as exception:
         if isinstance(exception, NotFound):
@@ -358,6 +405,8 @@ def create_author():
     :return:    A flask.Response object.
     """
     try:
+        # Using create_model_obj() to process request.args into a Author()
+        # argument dict and instance a Author() object.
         author_obj = create_model_obj(Author, create_or_update_author())
         db.session.add(author_obj)
         db.session.commit()
@@ -383,9 +432,13 @@ def create_author_book(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
+        # Using create_model_obj() to process request.args into a Book()
+        # argument dict and instance a Book() object.
         book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
+        # Associating the new book_id with both author_ids in the
+        # authors_books table.
         ab_insert = Authors_Books.insert().values(author_id=author_id, book_id=book_obj.book_id)
         db.session.execute(ab_insert)
         db.session.commit()
@@ -416,9 +469,13 @@ def create_authors_book(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        # Using create_model_obj() to process request.args into a Book()
+        # argument dict and instance a Book() object.
         book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
+        # Associating the new book_id with both author_ids in the authors_books
+        # table.
         ab1_insert = Authors_Books.insert().values(author_id=author1_id, book_id=book_obj.book_id)
         ab2_insert = Authors_Books.insert().values(author_id=author2_id, book_id=book_obj.book_id)
         db.session.execute(ab1_insert)
@@ -448,9 +505,13 @@ def create_author_manuscript(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
+        # Using create_model_obj() to process request.args into a Manuscript()
+        # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
+        # Associating the new manuscript_id with the author_id in the
+        # authors_manuscripts table.
         ab_insert = Authors_Manuscripts.insert().values(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
         db.session.execute(ab_insert)
         db.session.commit()
@@ -481,9 +542,13 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        # Using create_model_obj() to process request.args into a Manuscript()
+        # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
+        # Associating the new manuscript_id with both author_ids in the
+        # authors_manuscripts table.
         ab1_insert = Authors_Manuscripts.insert().values(author_id=author1_id,
                                                          manuscript_id=manuscript_obj.manuscript_id)
         ab2_insert = Authors_Manuscripts.insert().values(author_id=author2_id,
@@ -510,6 +575,8 @@ def update_author(author_id: int):
     :return:    A flask.Response object.
     """
     try:
+        # Using update_model_obj() to fetch the author_obj and update it
+        # against request.args.
         author_obj = update_model_obj(author_id, Author, create_or_update_author())
         db.session.add(author_obj)
         db.session.commit()
@@ -536,8 +603,12 @@ def update_author_book(author_id: int, book_id: int):
     try:
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
+        # Verifying that this author_id is associated with this book_id in
+        # authors_books.
         if len(book_objs) == 0:
             return abort(404)
+        # Using update_model_obj() to fetch the book_obj and update it
+        # against request.args.
         book_obj = update_model_obj(book_id, Book, create_or_update_book())
         db.session.add(book_obj)
         db.session.commit()
@@ -569,8 +640,12 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         author2_obj = Author.query.get_or_404(author2_id)
         a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
         a2_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author2_obj.books))
+        # Verifying that both author_ids are associated with this book_id in
+        # authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
+        # Using create_model_obj() to process request.args into a Book()
+        # argument dict and instance a Book() object.
         book_obj = update_model_obj(book_id, Book, create_or_update_book())
         db.session.add(book_obj)
         db.session.commit()
@@ -599,8 +674,12 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
     try:
         author_obj = Author.query.get_or_404(author_id)
         manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
+        # Verifying that this author_id is associated with this manuscript_id in
+        # authors_manuscripts.
         if len(manuscript_objs) == 0:
             return abort(404)
+        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -634,8 +713,12 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         author2_obj = Author.query.get_or_404(author2_id)
         a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
         a2_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author2_obj.manuscripts))
+        # Verifying that the two author_ids are associated with the
+        # manuscript_id in authors_manuscripts.
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
+        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -693,9 +776,12 @@ def delete_author_book(author_id: int, book_id: int):
     try:
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
+        # This step verifies that there is a row in authors_books with the given
+        # author_id and the given book_id.
         if len(book_objs) == 0:
             return abort(404)
         book_obj, = book_objs
+        # That row in authors_books must be deleted as well.
         ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
         db.session.execute(ab_del)
         db.session.commit()
@@ -731,9 +817,12 @@ def delete_authors_book(author1_id: int, author2_id: int, book_id: int):
         author2_obj = Author.query.get_or_404(author2_id)
         a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
         a2_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author2_obj.books))
+        # This step verifies that the two author_ids each occur in a row in
+        # authors_books with this book_id set.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
         book_obj, = a1_book_objs
+        # That row in authors_books needs to be deleted too.
         ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
         db.session.execute(ab_del)
         db.session.commit()
@@ -765,9 +854,12 @@ def delete_author_manuscript(author_id: int, manuscript_id: int):
     try:
         author_obj = Author.query.get_or_404(author_id)
         manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
+        # This step verifies that there is a row in authors_manuscripts with the
+        # given author_id and the given manuscript_id.
         if len(manuscript_objs) == 0:
             return abort(404)
         manuscript_obj, = manuscript_objs
+        # That row in authors_manuscripts must be deleted as well.
         ab_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
         db.session.execute(ab_del)
         db.session.commit()
@@ -803,9 +895,13 @@ def delete_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         author2_obj = Author.query.get_or_404(author2_id)
         a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
         a2_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author2_obj.manuscripts))
+        # This step verifies that the two author_ids each occur in a row in
+        # authors_manuscripts with this manuscript_id set.
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
+
         manuscript_obj, = a1_manuscript_objs
+        # That row in authors_manuscripts needs to be deleted too.
         ab_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
         db.session.execute(ab_del)
         db.session.commit()

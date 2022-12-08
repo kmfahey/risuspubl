@@ -69,6 +69,8 @@ def show_series_books(series_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # A Book object for every row in the books table with the given
+        # series_id.
         retval = [book_obj.serialize() for book_obj in Book.query.where(Book.series_id == series_id)]
         if not len(retval):
             return abort(404)
@@ -93,7 +95,11 @@ def show_series_book_by_id(series_id: int, book_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # A Book object for every row in the books table with the given series_id.
         book_objs = list(Book.query.where(Book.series_id == series_id))
+        # Iterating across the list looking for the Book object with the given
+        # manuscript_id. If it's found, it's serialized and returned. Otherwise,
+        # a 404 error is raised.
         for book_obj in book_objs:
             if book_obj.book_id == book_id:
                 return jsonify(book_obj.serialize())
@@ -119,6 +125,8 @@ def show_series_manuscripts(series_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # A Manuscript object for every row in the manuscripts table with the
+        # given series_id.
         retval = [manuscript_obj.serialize() for manuscript_obj
                   in Manuscript.query.where(Manuscript.series_id == series_id)]
         if not len(retval):
@@ -147,7 +155,11 @@ def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # A Manuscript object for every row in the manuscripts table with the given series_id.
         manuscript_objs = list(Manuscript.query.where(Manuscript.series_id == series_id))
+        # Iterating across the list looking for the Manuscript object with the
+        # given manuscript_id. If it's found, it's serialized and returned.
+        # Otherwise, a 404 error is raised.
         for manuscript_obj in manuscript_objs:
             if manuscript_obj.manuscript_id == manuscript_id:
                 return jsonify(manuscript_obj.serialize())
@@ -169,6 +181,8 @@ def create_series():
     :return:    A flask.Response object.
     """
     try:
+        # Using create_model_obj() to process request.args into a Series()
+        # argument dict and instance a Series() object.
         series_obj = create_model_obj(Series, update_or_create_args())
         db.session.add(series_obj)
         db.session.commit()
@@ -212,8 +226,12 @@ def update_series_book_by_id(series_id: int, book_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # Confirming that there's a row in the books table with the given
+        # book_id and series_id.
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
             return abort(404)
+        # Using update_model_obj() to fetch the book_obj and update it
+        # against request.args.
         book_obj = update_model_obj(book_id, Book,
                                     {'series_id':        (int,  (0,),    request.args.get('series_id')),
                                      'series_id':        (int,  (0,),    series_id),
@@ -245,16 +263,20 @@ def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
     try:
         Series.query.get_or_404(series_id)
+        # Confirming that there's a row in the manuscripts table with the given
+        # manuscript_id and series_id.
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.series_id == series_id)):
             return abort(404)
+        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
-                                    {'series_id':        (int,  (0,),    request.args.get('series_id')),
-                                     'series_id':        (int,  (0,),    series_id),
-                                     'title':            (str,  (),      request.args.get('title')),
-                                     'publication_date': (date, (),      request.args.get('publication_date')),
-                                     'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
-                                     'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
+                                          {'series_id':        (int,  (0,),    request.args.get('series_id')),
+                                           'series_id':        (int,  (0,),    series_id),
+                                           'title':            (str,  (),      request.args.get('title')),
+                                           'publication_date': (date, (),      request.args.get('publication_date')),
+                                           'edition_number':   (int,  (1, 10), request.args.get('edition_number')),
+                                           'is_in_print':      (bool, (),      request.args.get('is_in_print'))})
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -296,8 +318,11 @@ def delete_series_book_by_id(series_id: int, book_id: int):
     """
     try:
         series_obj = Series.query.get_or_404(series_id)
+        # Confirming that there's a row in the books table with the given
+        # book_id and series_id.
         if not any(book_obj.book_id == book_id for book_obj in Book.query.where(Book.series_id == series_id)):
             return abort(404)
+        # Using delete_model_obj() to fetch the book_obj and delete it.
         delete_model_obj(book_id, Book)
         series_obj.volumes = series_obj.volumes - 1
         db.session.add(series_obj)
@@ -324,9 +349,12 @@ def delete_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
     try:
         series_obj = Series.query.get_or_404(series_id)
+        # Confirming that there's a row in the manuscripts table with the given
+        # series_id and manuscript_id.
         if not any(manuscript_obj.manuscript_id == manuscript_id for manuscript_obj
                    in Manuscript.query.where(Manuscript.series_id == series_id)):
             return abort(404)
+        # Using delete_model_obj() to fetch the series_obj and delete it.
         delete_model_obj(manuscript_id, Manuscript)
         series_obj.volumes = series_obj.volumes - 1
         db.session.add(series_obj)

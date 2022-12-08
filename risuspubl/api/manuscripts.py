@@ -67,10 +67,15 @@ def update_manuscript(manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        if 'working_title' in request.args and len(tuple(Manuscript.query.where(Manuscript.working_title
-                                                                                == request.args['working_title']))):
-                raise ValueError(f"'working_title' parameter value '{request.args['working_title']}' already use in a "
-                                 f'row in the {Manuscript.__tablename__} table; working_title values must be unique')
+        if ('working_title' in request.args
+            and len(tuple(Manuscript.query.where(Manuscript.working_title == request.args['working_title'])))):
+            # The working_title column in the manuscripts table is required to
+            # be unique. If that Manuscript query returns a nonempty sequence,
+            # the given value is already in use, so a ValueError is raised.
+            raise ValueError(f"'working_title' parameter value '{request.args['working_title']}' already use in a "
+                             f'row in the {Manuscript.__tablename__} table; working_title values must be unique')
+        # Using update_model_obj() to fetch the manuscript_obj and update it
+        # against request.args.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
                                           {'editor_id': (int, (0,), request.args.get('editor_id')),
                                            'series_id': (int, (0,), request.args.get('series_id')),
@@ -99,6 +104,8 @@ def delete_manuscript(manuscript_id: int):
     """
     try:
         manuscript_obj = Manuscript.query.get_or_404(manuscript_id)
+        # A delete expression for row in the authors_manuscripts table with the
+        # given manuscript_id, which need to be deleted as well.
         am_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
         db.session.execute(am_del)
         db.session.commit()

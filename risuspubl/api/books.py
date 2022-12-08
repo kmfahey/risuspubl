@@ -73,6 +73,8 @@ def update_book(book_id: int):
         if 'title' in request.args and len(tuple(Book.query.where(Book.title == request.args['title']))):
             raise ValueError(f"'title' parameter value '{request.args['title']}' already use in a row in the "
                              f'{Book.__tablename__} table; title values must be unique')
+        # Using update_model_obj() to fetch the book_obj and update it
+        # against request.args.
         book_obj = update_model_obj(book_id, Book,
                                     {'editor_id':        (int,  (0,),    request.args.get('editor_id')),
                                      'series_id':        (int,  (0,),    request.args.get('series_id')),

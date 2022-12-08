@@ -83,6 +83,8 @@ def show_salesperson_clients(salesperson_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
+        # Fetching a Client object for every row in the clients table with the
+        # given salesperson_id.
         retval = [client_obj.serialize() for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)]
         if not len(retval):
             return abort(404)
@@ -107,7 +109,12 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
+        # Fetching a Client object for every row in the clients table with the
+        # given salesperson_id.
         client_objs = list(Client.query.where(Client.salesperson_id == salesperson_id))
+        # Iterating across the list looking for a Client object with the
+        # matching client_id. If it's found, it's serialized and returned as
+        # json. Otherwise, a 404 is raised.
         for client_obj in client_objs:
             if client_obj.client_id == client_id:
                 return jsonify(client_obj.serialize())
@@ -129,6 +136,8 @@ def create_salesperson():
     :return:    A flask.Response object.
     """
     try:
+        # Using create_model_obj() to process request.args into a Salesperson()
+        # argument dict and instance a Salesperson() object.
         salesperson_obj = create_model_obj(Salesperson, salesperson_update_or_create_args())
         db.session.add(salesperson_obj)
         db.session.commit()
@@ -153,6 +162,8 @@ def create_salesperson_client(salesperson_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
+        # Using create_model_obj() to process request.args into a Client()
+        # argument dict and instance a Client() object.
         client_obj = create_model_obj(Client, client_update_or_create_args())
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
@@ -201,8 +212,12 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
+        # Checking that there exists a row in clients with the given
+        # salesperson_id and the given client_id. If not, that's a 404.
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
             return abort(404)
+        # Using update_model_obj() to fetch the client_obj and update it
+        # against request.args.
         client_obj = update_model_obj(client_id, Client, client_update_or_create_args())
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
@@ -226,6 +241,7 @@ def delete_salesperson(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
+        # Using delete_model_obj() to fetch the salesperson_obj and delete it.
         delete_model_obj(salesperson_id, Salesperson)
         return jsonify(True)
     except Exception as exception:
@@ -248,8 +264,11 @@ def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
     try:
         Salesperson.query.get_or_404(salesperson_id)
+        # Checking that there exists a row in clients with the given
+        # salesperson_id and the given client_id. If not, that's a 404.
         if not any(client_obj.client_id == client_id for client_obj in Client.query.where(Client.salesperson_id == salesperson_id)):
             return abort(404)
+        # Using delete_model_obj() to fetch the client_obj and delete it.
         delete_model_obj(client_id, Client)
         return jsonify(True)
     except Exception as exception:

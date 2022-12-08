@@ -24,8 +24,11 @@ class Book(db.Model):
     __tablename__ = 'books'
 
     book_id = db.Column('book_id', db.Integer, primary_key=True, autoincrement=True)
-    #editor_id = db.Column('editor_id', db.Integer, nullable=False)
-    #series_id = db.Column('series_id', db.Integer, nullable=True)
+    # These can't be defined now because the Editor and Series classes don't
+    # Theexist yet. y're assigned later once the Editor and Series classes have
+    # Thebeen defined.
+    #editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
+    #series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
     title = db.Column('title', db.String(64), nullable=False)
     publication_date = db.Column('publication_date', db.Date, nullable=False)
     edition_number = db.Column('edition_number', db.Integer, nullable=False)
@@ -47,7 +50,9 @@ class Client(db.Model):
     __tablename__ = 'clients'
 
     client_id = db.Column('client_id', db.Integer, primary_key=True, autoincrement=True)
-    #salesperson_id = db.Column('salesperson_id', db.Integer, nullable=False)
+    # This can't be defined now because the Salesperson table doesn't exist yet.
+    # It's assigned later once Salesperson has been defined.
+    #salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
     email_address = db.Column('email_address', db.String(64), nullable=True)
     phone_number = db.Column('phone_number', db.String(11), nullable=False)
     business_name = db.Column('business_name', db.String(64), nullable=False)
@@ -89,6 +94,7 @@ class Editor(db.Model):
             }
 
 
+# Defining these late because the 2nd Model subclass didn't exist until now.
 Book.editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
 
 
@@ -97,7 +103,9 @@ class Manuscript(db.Model):
 
     manuscript_id = db.Column('manuscript_id', db.Integer, primary_key=True, autoincrement=True)
     editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
-    #series_id = db.Column('series_id', db.Integer, nullable=False)
+    # This can't be defined now because the Series table doesn't exist yet. It's
+    # assigned later once Series has been defined.
+    #series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
     working_title = db.Column('working_title', db.String(64), nullable=False)
     due_date = db.Column('due_date', db.Date, nullable=False)
     advance = db.Column('advance', db.Integer, nullable=False)
@@ -153,6 +161,7 @@ class Salesperson(db.Model):
             }
 
 
+# Defining these late because the 2nd Model subclass didn't exist until now.
 Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
 
 
@@ -170,12 +179,17 @@ class Series(db.Model):
             'volumes': self.volumes,
             }
 
-
+# Defining these late because the 2nd Model subclass didn't exist until now.
 Book.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
 
 Manuscript.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
 
 
+# Defining a Table subclass object that represents the authors_books table, and
+# assigning attributes to the Book and Author classes such that an Author object
+# will have a books attribute containing a list of Book objects whose book_ids
+# are associated in the authors_books table with the given author_id, and vice
+# versa for Book objects.
 Authors_Books = db.Table('authors_books',
                          db.Column('author_id', db.ForeignKey(Author.author_id), primary_key=True, autoincrement=False),
                          db.Column('book_id', db.ForeignKey(Book.book_id), primary_key=True, autoincrement=False)
@@ -187,6 +201,12 @@ Book.authors = db.relationship('Author', secondary=Authors_Books, lazy='subquery
                                backref=db.backref('book_authors', lazy=True))
 
 
+# Defining a Table subclass object that represents the authors_manuscripts
+# table, and assigning attributes to the Manuscript and Author classes
+# such that an Author object will have a manuscripts attribute containing
+# a list of Manuscript objects whose manuscript_ids are associated in the
+# authors_manuscripts table with the given author_id, and vice versa for
+# Manuscript objects.
 Authors_Manuscripts = db.Table('authors_manuscripts',
                                db.Column('author_id', db.ForeignKey(Author.author_id), primary_key=True,
                                          autoincrement=False),
