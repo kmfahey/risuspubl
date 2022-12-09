@@ -4,8 +4,7 @@ from flask import Blueprint, Response, abort, jsonify, request
 
 import werkzeug.exceptions
 
-from risuspubl.api.commons import create_model_obj
-from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_model_obj_argd_factory, \
+from risuspubl.api.utility import create_class_obj_factory, create_model_obj, create_or_update_argd_gen, \
         delete_class_obj_by_id_factory, delete_one_classes_other_class_obj_by_id_factory, \
         show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
         show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
@@ -17,7 +16,7 @@ blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 
 # These are callable objects being instanced from classes imported from
-# risuspubl.api.endpfact. See that module for the classes.
+# risuspubl.api.utility. See that module for the classes.
 #
 # These callables were derived from duplicated code across the risuspubl.api.*
 # codebase. Each one implements the entirety of a specific endpoint function,
@@ -111,12 +110,12 @@ def create_salesperson_client(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_model_obj_argd_factory(Client, 'salesperson_id')
         Salesperson.query.get_or_404(salesperson_id)
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
-        client_obj = create_model_obj(Client, create_model_param_factory.generate_argd(request.json,
-                                                                                       salesperson_id))
+        client_obj = create_model_obj(Client,
+                                      create_or_update_argd_gen(Client, 'salesperson_id')
+                                             .generate_argd(request.json, salesperson_id))
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
         db.session.commit()

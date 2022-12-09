@@ -2,8 +2,7 @@
 
 from flask import Blueprint, request
 
-
-from risuspubl.api.endpfact import create_class_obj_factory, delete_class_obj_by_id_factory, show_class_index, \
+from risuspubl.api.utility import create_class_obj_factory, delete_class_obj_by_id_factory, show_class_index, \
         show_class_obj_by_id, update_class_obj_by_id_factory
 from risuspubl.dbmodels import Client
 
@@ -12,7 +11,7 @@ blueprint = Blueprint('clients', __name__, url_prefix='/clients')
 
 
 # These are callable objects being instanced from classes imported from
-# risuspubl.api.endpfact. See that module for the classes.
+# risuspubl.api.utility. See that module for the classes.
 #
 # These callables were derived from duplicated code across the risuspubl.api.*
 # codebase. Each one implements the entirety of a specific endpoint function,

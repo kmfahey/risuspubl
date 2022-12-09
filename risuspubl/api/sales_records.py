@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response, abort, jsonify
 
-from risuspubl.api.endpfact import show_class_obj_by_id
+from risuspubl.api.utility import show_class_obj_by_id
 from risuspubl.dbmodels import SalesRecord
 
 
@@ -10,7 +10,7 @@ blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 
 # This is a callable object being instanced from classes imported from
-# risuspubl.api.endpfact. See that module for the classes.
+# risuspubl.api.utility. See that module for the classes.
 sales_record_by_id_shower = show_class_obj_by_id(SalesRecord)
 
 
@@ -76,10 +76,11 @@ def show_sales_records_by_year_and_month(year: int, month: int):
 
 
 # Adding, updating and deleting sales records is deliberately made impossible
-# since that's outside their object model: each book has sales records for every
-# month between its publication date and present, or the date it went out of
-# print if it's out of print. New records are generated in bulk at the end of
-# each month. If a record were to be removed, the entire sales history for that
-# book would be impaired. Records aren't just added or removed at any time,
-# and the way they're added in bulk at end-of-month isn't done by a RESTful
-# algorithm, you use SQL to INSERT from a csv for that. So records are read-only.
+# since that's outside their object model: each book has sales records for
+# every month between its publication date and present, or the date it went
+# out of print if it's out of print. New records are generated in bulk at the
+# end of each month. If a record were to be removed, the entire sales history
+# for that book would be impaired. Records aren't just added or removed at
+# any time, and the way they're added in bulk at end-of-month isn't done by a
+# RESTful algorithm, you use SQL to INSERT from a csv for that. So records are
+# read-only.

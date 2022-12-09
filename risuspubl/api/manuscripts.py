@@ -2,7 +2,7 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.endpfact import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
+from risuspubl.api.utility import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
         update_class_obj_by_id_factory
 from risuspubl.dbmodels import Manuscript
 
@@ -11,8 +11,8 @@ blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 
 # These are callable objects being instanced from classes imported from
-# risuspubl.api.endpfact. See that module for the classes.
-# 
+# risuspubl.api.utility. See that module for the classes.
+#
 # These callables were derived from duplicated code across the risuspubl.api.*
 # codebase. Each one implements the entirety of a specific endpoint function,
 # such that an endpoint function just tail calls the corresponding one of
@@ -48,12 +48,12 @@ def show_manuscript_by_id(manuscript_id: int):
     return manuscript_by_id_shower(manuscript_id)
 
 
-# A Create endpoint is deliberately not implemented, because without
-# a way to specify the author or authors to attach the manuscript to, no
-# entry in the authors_manuscripts table would be created and the manuscript
+# A Create endpoint is deliberately not implemented, because without a way
+# to specify the author or authors to attach the manuscript to, no entry
+# in the authors_manuscripts table would be created and the manuscript
 # would an orphan in the database. /authors/<author_id>/manuscripts and
-# /authors/<author1_id>/<author2_id>/manuscripts already accept Create actions and
-# when done that way associations with an author or authors can be created
+# /authors/<author1_id>/<author2_id>/manuscripts already accept Create actions
+# and when done that way associations with an author or authors can be created
 # appropriately.
 
 
