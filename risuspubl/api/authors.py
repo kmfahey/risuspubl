@@ -2,52 +2,22 @@
 
 import itertools
 
-from werkzeug.exceptions import NotFound
-
-from datetime import date, timedelta
-
 from flask import abort, Blueprint, jsonify, request, Response
 
-from risuspubl.api.commons import *
-from risuspubl.api.endpfact import update_class_obj_by_id_factory, create_class_obj_factory, show_class_obj_by_id, \
-        show_class_index
-from risuspubl.dbmodels import *
+from werkzeug.exceptions import NotFound
+
+from risuspubl.api.commons import create_model_obj, update_model_obj
+from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_param_tab_factory, show_class_index, \
+        show_class_obj_by_id, update_class_obj_by_id_factory
+from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Manuscript, db
 
 
 blueprint = Blueprint('authors', __name__, url_prefix='/authors')
 
 
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Author class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-create_or_update_author = lambda: {'first_name':        (str,   (),         request.json.get('first_name')),
-                                   'last_name':         (str,   (),         request.json.get('last_name'))}
-
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Book class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-create_or_update_book = lambda: {'editor_id':           (int,   (0,),       request.json.get('editor_id')),
-                                 'series_id':           (int,   (0,),       request.json.get('series_id')),
-                                 'title':               (str,   (),         request.json.get('title')),
-                                 'publication_date':    (str,   (),         request.json.get('publication_date')),
-                                 'edition_number':      (str,   (1, 10),    request.json.get('edition_number')),
-                                 'is_in_print':         (bool,  (),         request.json.get('is_in_print'))}
-
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Manuscript class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-create_or_update_manuscript = lambda: {'editor_id':     (int, (0,),         request.json.get('editor_id')),
-                                       'series_id':     (int, (0,),         request.json.get('series_id')),
-                                       'working_title': (str, (),           request.json.get('working_title')),
-                                       'due_date':      (date, ((date.today() + timedelta(days=1)).isoformat(),
-                                                                "2023-07-01"),
-                                                                            request.json.get('due_date')),
-                                       'advance':       (int, (5e3, 1e5),   request.json.get('advance'))}
-
-
+author_by_id_shower = show_class_obj_by_id(Author)
+author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
+author_creator = create_class_obj_factory(Author)
 authors_indexer = show_class_index(Author)
 
 
@@ -60,9 +30,6 @@ def index():
     :return:    A flask.Response object.
     """
     return authors_indexer()
-
-
-author_by_id_shower = show_class_obj_by_id(Author)
 
 
 @blueprint.route('/<int:author_id>', methods=['GET'])
@@ -97,7 +64,7 @@ def show_author_books(author_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -127,7 +94,7 @@ def show_author_book_by_id(author_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -151,7 +118,7 @@ def show_author_manuscripts(author_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -182,7 +149,7 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -211,7 +178,7 @@ def show_authors_by_ids(author1_id: int, author2_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -219,8 +186,8 @@ def show_authors_by_ids(author1_id: int, author2_id: int):
 # show_authors_book_by_id() to generate a list of Book objects with book_ids
 # that are associated with both author_ids in the authors_books table.
 def _authors_shared_book_ids(author1_id: int, author2_id: int) -> set:
-    Author.query.get_or_404(author1_id)
-    Author.query.get_or_404(author2_id)
+    author1_obj = Author.query.get_or_404(author1_id)
+    author2_obj = Author.query.get_or_404(author2_id)
     # The books attribute on an Author object comprises the Book
     # objects whose book_ids are associated with its author_id in the
     # authors_books table.
@@ -260,7 +227,7 @@ def show_authors_books(author1_id: int, author2_id: int):
         return jsonify(retval)
     except Exception as exception:
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -295,7 +262,7 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -304,8 +271,8 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
 def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> set:
-    Author.query.get_or_404(author1_id)
-    Author.query.get_or_404(author2_id)
+    author1_obj = Author.query.get_or_404(author1_id)
+    author2_obj = Author.query.get_or_404(author2_id)
     # The manuscripts attribute on an Author object comprises the Manuscript
     # objects whose manuscript_ids are associated with its author_id in the
     # authors_manuscripts table.
@@ -342,14 +309,14 @@ def show_authors_manuscripts(author1_id: int, author2_id: int):
     try:
         # This utility function looks up which manuscript_ids are associated
         # with both author_ids in authors_manuscripts and returns Manuscript()
-        # objects for those manuscript_ids. 
+        # objects for those manuscript_ids.
         shared_manuscripts = _authors_shared_manuscript_ids(author1_id, author2_id)
         # A list of serializations is built # and returned via jsonify.
         retval = [manuscript_obj.serialize() for manuscript_obj in shared_manuscripts]
         return jsonify(retval)
     except Exception as exception:
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -386,11 +353,8 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
-
-
-author_creator = create_class_obj_factory(Author)
 
 
 @blueprint.route('', methods=['POST'])
@@ -419,9 +383,11 @@ def create_author_book(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
+        create_model_param_factory = create_or_update_param_tab_factory(Book)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
+        book_obj = create_model_obj(Book, create_model_param_factory.generate_param_tab(request.json),
+                                    optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
         # Associating the new book_id with both author_ids in the
@@ -434,7 +400,7 @@ def create_author_book(author_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -456,9 +422,11 @@ def create_authors_book(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        create_model_param_factory = create_or_update_param_tab_factory(Book)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book, create_or_update_book(), optional_params={'series_id'})
+        book_obj = create_model_obj(Book, create_model_param_factory.generate_param_tab(request.json),
+                                    optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
         # Associating the new book_id with both author_ids in the authors_books
@@ -473,7 +441,7 @@ def create_authors_book(author1_id: int, author2_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -492,9 +460,11 @@ def create_author_manuscript(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
+        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
+        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_param_tab(request.json),
+                                          optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
         # Associating the new manuscript_id with the author_id in the
@@ -507,7 +477,7 @@ def create_author_manuscript(author_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -529,9 +499,11 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript, create_or_update_manuscript(), optional_params={'series_id'})
+        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_param_tab(request.json),
+                                          optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
         # Associating the new manuscript_id with both author_ids in the
@@ -548,11 +520,8 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
-
-
-author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
 
 
 @blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
@@ -581,6 +550,7 @@ def update_author_book(author_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
+        create_model_param_factory = create_or_update_param_tab_factory(Book)
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
         # Verifying that this author_id is associated with this book_id in
@@ -589,7 +559,7 @@ def update_author_book(author_id: int, book_id: int):
             return abort(404)
         # Using update_model_obj() to fetch the Book object and update it
         # against request.json.
-        book_obj = update_model_obj(book_id, Book, create_or_update_book())
+        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_param_tab(request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -597,7 +567,7 @@ def update_author_book(author_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -616,6 +586,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
     :return:     A flask.Response object.
     """
     try:
+        create_model_param_factory = create_or_update_param_tab_factory(Book)
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
@@ -624,9 +595,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         # authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        # Using create_model_obj() to process request.json into a Book()
-        # argument dict and instance a Book() object.
-        book_obj = update_model_obj(book_id, Book, create_or_update_book())
+        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_param_tab(request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -634,7 +603,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -652,6 +621,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
+        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
         author_obj = Author.query.get_or_404(author_id)
         manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
         # Verifying that this author_id is associated with this manuscript_id in
@@ -660,7 +630,8 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
-        manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
+        manuscript_obj = update_model_obj(manuscript_id, Manuscript,
+                                          create_model_param_factory.generate_param_tab(request.json))
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -668,7 +639,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -689,6 +660,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
     :return:        A flask.Response object.
     """
     try:
+        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
@@ -699,7 +671,8 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
-        manuscript_obj = update_model_obj(manuscript_id, Manuscript, create_or_update_manuscript())
+        manuscript_obj = update_model_obj(manuscript_id, Manuscript,
+                                          create_model_param_factory.generate_param_tab(request.json))
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -707,12 +680,12 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
 @blueprint.route('/<int:author_id>', methods=['DELETE'])
-def delete_author(author_id: int):
+def delete_author_by_id(author_id: int):
     """
     Implements a DELETE /authors/<id> endpoint. The row in the authors
     table with that author_id is deleted. The row(s) in authors_books and
@@ -735,7 +708,7 @@ def delete_author(author_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -772,7 +745,7 @@ def delete_author_book(author_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -813,7 +786,7 @@ def delete_authors_book(author1_id: int, author2_id: int, book_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -850,7 +823,7 @@ def delete_author_manuscript(author_id: int, manuscript_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -892,5 +865,5 @@ def delete_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))

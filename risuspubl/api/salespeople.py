@@ -1,43 +1,31 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/1-SQL/week3/venv/bin/python3
 
-from werkzeug.exceptions import NotFound
+from flask import Blueprint, request
 
-from flask import abort, Blueprint, jsonify, request, Response
-
-from risuspubl.api.commons import *
-from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
-        update_one_classes_other_class_obj_by_id_factory, update_class_obj_by_id_factory, create_class_obj_factory, \
-        show_one_classes_other_class_obj_by_id, show_all_of_one_classes_other_class_objs, show_class_obj_by_id, \
-        show_class_index
-from risuspubl.dbmodels import *
+from risuspubl.api.commons import create_model_obj
+from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_param_tab_factory, \
+        delete_class_obj_by_id_factory, delete_one_classes_other_class_obj_by_id_factory, \
+        show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
+        show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
+        update_one_classes_other_class_obj_by_id_factory
+from risuspubl.dbmodels import Client, Salesperson, db
 
 
 blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Salesperson class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-salesperson_update_or_create_args = lambda: {'first_name':      (str,   (),         request.json.get('first_name')),
-                                             'last_name':       (str,   (),         request.json.get('last_name')),
-                                             'salary':          (str,   (),         request.json.get('salary'))}
-
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Client class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-client_update_or_create_args = lambda: {'email_address':        (str,   (),         request.json.get('email_address')),
-                                        'phone_number':         (str,   (11, 11),   request.json.get('phone_number')),
-                                        'business_name':        (str,   (),         request.json.get('business_name')),
-                                        'street_address':       (str,   (),         request.json.get('street_address')),
-                                        'city':                 (str,   (),         request.json.get('city')),
-                                        'state_or_province':    (str,   (2, 4),     request.json.get('state_or_province')),
-                                        'zipcode':              (str,   (9, 9),     request.json.get('zipcode')),
-                                        'country':              (str,   (),         request.json.get('country'))}
-
-
 salespeople_indexer = show_class_index(Salesperson)
+salesperson_by_id_deleter = delete_class_obj_by_id_factory(Salesperson, 'salesperson_id')
+salesperson_by_id_shower = show_class_obj_by_id(Salesperson)
+salesperson_by_id_updater = update_class_obj_by_id_factory(Salesperson, 'salesperson_id')
+salesperson_client_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id',
+                                                                                    Client, 'client_id')
+salesperson_client_by_id_shower = show_one_classes_other_class_obj_by_id(Salesperson, 'salesperson_id', Client,
+                                                                         'client_id')
+salesperson_clients_shower = show_all_of_one_classes_other_class_objs(Salesperson, 'salesperson_id', Client)
+salesperson_creator = create_class_obj_factory(Salesperson)
+series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id', Client,
+                                                                             'client_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -49,9 +37,6 @@ def index():
     :return:    A flask.Response object.
     """
     return salespeople_indexer()
-
-
-salesperson_by_id_shower = show_class_obj_by_id(Salesperson)
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
@@ -67,9 +52,6 @@ def show_salesperson_by_id(salesperson_id: int):
     return salesperson_by_id_shower(salesperson_id)
 
 
-salesperson_clients_shower = show_all_of_one_classes_other_class_objs(Salesperson, 'salesperson_id', Client)
-
-
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
 def show_salesperson_clients(salesperson_id: int):
     """
@@ -83,10 +65,6 @@ def show_salesperson_clients(salesperson_id: int):
     return salesperson_clients_shower(salesperson_id)
 
 
-salesperson_client_by_id_shower = show_one_classes_other_class_obj_by_id(Salesperson, 'salesperson_id', Client,
-                                                                         'client_id')
-
-
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
 def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
     """
@@ -98,9 +76,6 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
     :return:    A flask.Response object.
     """
     return salesperson_client_by_id_shower(salesperson_id, client_id)
-
-
-salesperson_creator = create_class_obj_factory(Salesperson)
 
 
 @blueprint.route('', methods=['POST'])
@@ -123,14 +98,15 @@ def create_salesperson_client(salesperson_id: int):
 
     :salesperson_id: The salesperson_id to save to the new row in the clients
                      table.
-    :client_id:      The client_id of the row in the clients table to update.
     :return:         A flask.Response object.
     """
     try:
+        create_model_param_factory = create_or_update_param_tab_factory(Client, 'salesperson_id')
         Salesperson.query.get_or_404(salesperson_id)
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
-        client_obj = create_model_obj(Client, client_update_or_create_args())
+        client_obj = create_model_obj(Client, create_model_param_factory.generate_param_tab(request.json,
+                                                                                            salesperson_id))
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
         db.session.commit()
@@ -139,11 +115,8 @@ def create_salesperson_client(salesperson_id: int):
         if isinstance(exception, NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
-
-
-salesperson_by_id_updater = update_class_obj_by_id_factory(Salesperson, 'salesperson_id')
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
@@ -157,9 +130,6 @@ def update_salesperson_by_id(salesperson_id: int):
     :return:         A flask.Response object.
     """
     return salesperson_by_id_updater(salesperson_id, request.json)
-
-
-series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id', Client, 'client_id')
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
@@ -177,11 +147,8 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     return series_book_by_id_updater(salesperson_id, client_id, request.json)
 
 
-salesperson_by_id_deleter = delete_class_obj_by_id_factory(Salesperson, 'salesperson_id')
-
-
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
-def delete_salesperson(salesperson_id: int):
+def delete_salesperson_by_id(salesperson_id: int):
     """
     Implements a DELETE /salespeople/<id> endpoint. The row in the salespeople
     table with that salesperson_id is deleted.
@@ -190,10 +157,6 @@ def delete_salesperson(salesperson_id: int):
     :return:         A flask.Response object.
     """
     return salesperson_by_id_deleter(salesperson_id)
-
-
-salesperson_client_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(
-                                       Salesperson, 'salesperson_id', Client, 'client_id')
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])

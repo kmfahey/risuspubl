@@ -1,20 +1,18 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from werkzeug.exceptions import NotFound
+from flask import Blueprint, request
 
-from datetime import date
-
-from flask import abort, Blueprint, jsonify, request, Response
-
-from risuspubl.api.commons import *
-from risuspubl.api.endpfact import delete_class_obj_by_id_factory, update_class_obj_by_id_factory, \
-        show_class_obj_by_id, show_class_index
-from risuspubl.dbmodels import *
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
+        update_class_obj_by_id_factory
+from risuspubl.dbmodels import Book
 
 
 blueprint = Blueprint('books', __name__, url_prefix='/books')
 
 
+book_by_id_deleter = delete_class_obj_by_id_factory(Book, 'book_id')
+book_by_id_shower = show_class_obj_by_id(Book)
+book_by_id_updater = update_class_obj_by_id_factory(Book, 'book_id')
 books_indexer = show_class_index(Book)
 
 
@@ -27,9 +25,6 @@ def index():
     :return:    A flask.Response object.
     """
     return books_indexer()
-
-
-book_by_id_shower = show_class_obj_by_id(Book)
 
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
@@ -54,9 +49,6 @@ def show_book_by_id(book_id: int):
 # appropriately.
 
 
-book_by_id_updater = update_class_obj_by_id_factory(Book, 'book_id')
-
-
 @blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_book_by_id(book_id: int):
     """
@@ -69,11 +61,8 @@ def update_book_by_id(book_id: int):
     return book_by_id_updater(book_id, request.json)
 
 
-book_by_id_deleter = delete_class_obj_by_id_factory(Book, 'book_id')
-
-
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
-def delete_book(book_id: int):
+def delete_book_by_id(book_id: int):
     """
     Implements a DELETE /books/<id> endpoint. The row in the books table with
     that book_id is deleted.

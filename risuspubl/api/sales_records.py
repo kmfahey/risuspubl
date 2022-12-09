@@ -1,28 +1,12 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from werkzeug.exceptions import NotFound
+from flask import Blueprint, Response, jsonify, abort
 
-from flask import Blueprint, jsonify, request, Response, abort
-
-from risuspubl.api.commons import *
 from risuspubl.api.endpfact import show_class_obj_by_id
-from risuspubl.dbmodels import *
+from risuspubl.dbmodels import SalesRecord
 
 
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
-
-
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the SalesRecord class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-update_or_create_args = lambda: {'sales_record_id': (int,   (0,),           request.json.get('sales_record_id')),
-                                 'book_id':         (int,   (0,),           request.json.get('book_id')),
-                                 'year':            (int,   (1900, 2022),   request.json.get('year')),
-                                 'month':           (int,   (1, 12),        request.json.get('month')),
-                                 'copies_sold':     (int,   (1,),           request.json.get('copies_sold')),
-                                 'gross_profit':    (float, (0.01,),        request.json.get('gross_profit')),
-                                 'net_profit':      (float, (0.01,),        request.json.get('net_profit'))}
 
 
 sales_record_by_id_shower = show_class_obj_by_id(SalesRecord)
@@ -52,14 +36,14 @@ def show_sales_records_by_year(year: int):
     try:
         retval = list()
         if not (1990 <= year <= 2022):
-            raise ValueError(f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year")
+            raise ValueError(f'year parameter value {year} not in the range [1990, 2022]: no sales in specified year')
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
             retval.append(sales_record_obj.serialize())
         retval.sort(key=lambda dictval: (dictval['month'], dictval['book_id']))
         return jsonify(retval)
     except Exception as exception:
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 
@@ -77,15 +61,15 @@ def show_sales_records_by_year_and_month(year: int, month: int):
     try:
         retval = list()
         if not (1990 <= year <= 2022):
-            raise ValueError(f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year")
+            raise ValueError(f'year parameter value {year} not in the range [1990, 2022]: no sales in specified year')
         elif not (1 <= month <= 12):
-            raise ValueError(f"month parameter value {month} not in the range [1, 12]: invalid month parameter")
+            raise ValueError(f'month parameter value {month} not in the range [1, 12]: invalid month parameter')
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year).where(SalesRecord.month == month):
             retval.append(sales_record_obj.serialize())
         return jsonify(retval)
     except Exception as exception:
         status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
+        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                 if len(exception.args) else abort(status))
 
 

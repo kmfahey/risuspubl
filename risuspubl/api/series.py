@@ -1,32 +1,31 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-import sys, pprint
+from flask import Blueprint, request
 
-from werkzeug.exceptions import NotFound
+from risuspubl.api.endpfact import create_class_obj_factory, delete_class_obj_by_id_factory, \
+        show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
+        show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
+        update_one_classes_other_class_obj_by_id_factory
 
-from flask import abort, Blueprint, jsonify, request, Response
-
-from risuspubl.api.commons import *
-from risuspubl.api.endpfact import delete_one_classes_other_class_obj_by_id_factory, \
-        update_one_classes_other_class_obj_by_id_factory, delete_class_obj_by_id_factory, \
-        update_class_obj_by_id_factory, create_class_obj_factory, show_one_classes_other_class_obj_by_id, \
-        show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id
-
-from risuspubl.dbmodels import *
+from risuspubl.dbmodels import Book, Manuscript, Series
 
 
 blueprint = Blueprint('series', __name__, url_prefix='/series')
 
 
-# This lambda holds the dict needed as an argument to create_model_obj() or
-# update_model_obj() when called for the Series class. By wrapping it in a
-# zero-argument lambda, the embedded request.json variable isn't evaluated until
-# the function is called within the context of an endpoint function.
-update_or_create_args = lambda: {'title':   (str,   (),     request.json.get('title')),
-                                 'volumes': (int,   (2, 5), request.json.get('volumes'))}
-
-
+series_book_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Book, 'book_id')
+series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Series, 'series_id', Book, 'book_id')
+series_books_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Book)
+series_by_id_deleter = delete_class_obj_by_id_factory(Series, 'series_id')
+series_by_id_shower = show_class_obj_by_id(Series)
+series_by_id_updater = update_class_obj_by_id_factory(Series, 'series_id')
+series_creator = create_class_obj_factory(Series)
 series_indexer = show_class_index(Series)
+series_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Manuscript,
+                                                                        'manuscript_id')
+series_manuscript_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Series, 'series_id', Manuscript,
+                                                                                   'manuscript_id')
+series_manuscripts_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Manuscript)
 
 
 @blueprint.route('', methods=['GET'])
@@ -38,9 +37,6 @@ def index():
     :return: A flask.Response object.
     """
     return series_indexer()
-
-
-series_by_id_shower = show_class_obj_by_id(Series)
 
 
 @blueprint.route('/<int:series_id>', methods=['GET'])
@@ -56,9 +52,6 @@ def show_series_by_id(series_id: int):
     return series_by_id_shower(series_id)
 
 
-series_books_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Book)
-
-
 @blueprint.route('/<int:series_id>/books', methods=['GET'])
 def show_series_books(series_id: int):
     """
@@ -70,9 +63,6 @@ def show_series_books(series_id: int):
     :return:    A flask.Response object.
     """
     return series_books_shower(series_id)
-
-
-series_book_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Book, 'book_id')
 
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['GET'])
@@ -88,9 +78,6 @@ def show_series_book_by_id(series_id: int, book_id: int):
     return series_book_by_id_shower(series_id, book_id)
 
 
-series_manuscripts_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Manuscript)
-
-
 @blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
 def show_series_manuscripts(series_id: int):
     """
@@ -103,10 +90,6 @@ def show_series_manuscripts(series_id: int):
     :return:    A flask.Response object.
     """
     return series_manuscripts_shower(series_id)
-
-
-series_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Manuscript,
-                                                                        'manuscript_id')
 
 
 @blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
@@ -125,9 +108,6 @@ def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
     return series_manuscript_by_id_shower(series_id, manuscript_id)
 
 
-series_creator = create_class_obj_factory(Series)
-
-
 @blueprint.route('', methods=['POST'])
 def create_series():
     """
@@ -137,9 +117,6 @@ def create_series():
     :return:    A flask.Response object.
     """
     return series_creator(request.json)
-
-
-series_by_id_updater = update_class_obj_by_id_factory(Series, 'series_id')
 
 
 @blueprint.route('/<int:series_id>', methods=['PATCH', 'PUT'])
@@ -152,9 +129,6 @@ def update_series_by_id(series_id: int):
     :return:    A flask.Response object.
     """
     return series_by_id_updater(series_id, request.json)
-
-
-series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Series, 'series_id', Book, 'book_id')
 
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
@@ -171,10 +145,6 @@ def update_series_book_by_id(series_id: int, book_id: int):
     return series_book_by_id_updater(series_id, book_id, request.json)
 
 
-series_manuscript_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Series, 'series_id',
-                                                                                   Manuscript, 'manuscript_id')
-
-
 @blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
     """
@@ -189,11 +159,8 @@ def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
     return series_manuscript_by_id_updater(series_id, manuscript_id, request.json)
 
 
-series_by_id_deleter = delete_class_obj_by_id_factory(Series, 'series_id')
-
-
 @blueprint.route('/<int:series_id>', methods=['DELETE'])
-def delete_series(series_id: int):
+def delete_series_by_id(series_id: int):
     """
     Implements a DELETE /series/<id> endpoint. The row in the series table
     with that series_id is deleted.

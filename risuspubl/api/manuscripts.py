@@ -4,14 +4,17 @@ from werkzeug.exceptions import NotFound
 
 from flask import abort, Blueprint, jsonify, request, Response
 
-from risuspubl.api.commons import *
-from risuspubl.api.endpfact import update_class_obj_by_id_factory, show_class_obj_by_id, show_class_index
-from risuspubl.dbmodels import *
+from risuspubl.api.endpfact import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
+        update_class_obj_by_id_factory
+from risuspubl.dbmodels import Manuscript
 
 
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 
+manuscript_by_id_deleter = delete_class_obj_by_id_factory(Manuscript, 'manuscript_id')
+manuscript_by_id_shower = show_class_obj_by_id(Manuscript)
+manuscript_by_id_updater = update_class_obj_by_id_factory(Manuscript, 'manuscript_id')
 manuscripts_indexer = show_class_index(Manuscript)
 
 
@@ -24,9 +27,6 @@ def index():
     :return:    A flask.Response object.
     """
     return manuscripts_indexer()
-
-
-manuscript_by_id_shower = show_class_obj_by_id(Manuscript)
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
@@ -51,9 +51,6 @@ def show_manuscript_by_id(manuscript_id: int):
 # appropriately.
 
 
-manuscript_by_id_updater = update_class_obj_by_id_factory(Manuscript, 'manuscript_id')
-
-
 @blueprint.route('/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_manuscript_by_id(manuscript_id: int):
     """
@@ -68,7 +65,7 @@ def update_manuscript_by_id(manuscript_id: int):
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
-def delete_manuscript(manuscript_id: int):
+def delete_manuscript_by_id(manuscript_id: int):
     """
     Implements a DELETE /manuscripts/<id> endpoint. The row in the manuscripts
     table with that manuscript_id is deleted.
@@ -77,17 +74,4 @@ def delete_manuscript(manuscript_id: int):
                     delete.
     :return:        A flask.Response object.
     """
-    try:
-        manuscript_obj = Manuscript.query.get_or_404(manuscript_id)
-        # A delete expression for row in the authors_manuscripts table with the
-        # given manuscript_id, which need to be deleted as well.
-        am_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
-        db.session.execute(am_del)
-        db.session.commit()
-        db.session.delete(manuscript_obj)
-        db.session.commit()
-        return jsonify(True)
-    except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                if len(exception.args) else abort(status))
+    return manuscript_by_id_deleter(manuscript_id)

@@ -1,16 +1,15 @@
 #!/usr/bin/python3
 
 import abc
-import math
+
+import werkzeug.exceptions
 from datetime import date, timedelta
 
 from flask import Response, abort, jsonify
 
-from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, SalesRecord, \
-        Salesperson, Series, db
-from risuspubl.api.commons import create_model_obj, update_model_obj, delete_model_obj
+from risuspubl.dbmodels import Author, Book, Client, Editor, Manuscript, Salesperson, SalesRecord, Series, db
+from risuspubl.api.commons import create_model_obj, delete_model_obj, update_model_obj
 
-import werkzeug.exceptions
 
 
 class create_or_update_param_tab_factory(object):
@@ -30,7 +29,7 @@ class create_or_update_param_tab_factory(object):
         Manuscript:  {'editor_id':         (int,  (0,)),
                       'series_id':         (int,  (0,)),
                       'working_title':     (str,  ()),
-                      'due_date':          (date, ((date.today() + timedelta(days=1)).isoformat(), "2024-07-01")),
+                      'due_date':          (date, ((date.today() + timedelta(days=1)).isoformat(), '2024-07-01')),
                       'advance':           (int,  (5000, 100000))},
 
         Client:      {'salesperson_id':    (int,  (0,)),
@@ -86,6 +85,52 @@ class endpoint_factory(abc.ABC):
     id_params_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor,
                                      'manuscript_id': Manuscript, 'sales_record_id': SalesRecord,
                                      'salesperson_id': Salesperson, 'series_id': Series}
+
+
+class create_class_obj_factory(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, model_class):
+        self.model_class = model_class
+        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
+
+    def __call__(self, request_json):
+        try:
+            # Using create_model_obj() to process request.json into a model_class
+            # argument dict and instance a model_class object.
+            model_class_obj = create_model_obj(self.model_class,
+                                               self.param_tab_factory.generate_param_tab(request_json))
+            db.session.add(model_class_obj)
+            db.session.commit()
+            return jsonify(model_class_obj.serialize())
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            status = 400 if isinstance(exception, ValueError) else 500
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class delete_class_obj_by_id_factory(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, model_class, model_id_column):
+        self.model_class = model_class
+        self.model_id_column = model_id_column
+
+    def __call__(self, model_id):
+        try:
+            delete_model_obj(model_id, self.model_class)
+            return jsonify(True)
+        except Exception as exception:
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
 
 
 class delete_one_classes_other_class_obj_by_id_factory(endpoint_factory):
@@ -156,8 +201,143 @@ class delete_one_classes_other_class_obj_by_id_factory(endpoint_factory):
             # anything else is a coding error, a 500.
             status = 400 if isinstance(exception, ValueError) else 500
 
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
             return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_all_of_one_classes_other_class_objs(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, outer_class, outer_id_column, inner_class):
+        self.outer_class = outer_class
+        self.outer_id_column = outer_id_column
+        self.inner_class = inner_class
+
+    def __call__(self, outer_id):
+        try:
+            self.outer_class.query.get_or_404(outer_id)
+            # A outer_class object for every row in the inner_class table with
+            # the given outer_id.
+            retval = [inner_class_obj.serialize() for inner_class_obj
+                      in self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column) == outer_id)]
+            if not len(retval):
+                return abort(404)
+            return jsonify(retval)
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, werkzeug.exceptions.NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            status = 400 if isinstance(exception, ValueError) else 500
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
+
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_class_index(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, model_class):
+        self.model_class = model_class
+
+    def __call__(self):
+        try:
+            result = [model_class_obj.serialize() for model_class_obj in self.model_class.query.all()]
+            return jsonify(result)
+        except Exception as exception:
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_class_obj_by_id(endpoint_factory):
+    __slots__ = 'model_class',
+
+    def __init__(self, model_class):
+        self.model_class = model_class
+
+    def __call__(self, model_id):
+        try:
+            model_class_obj = self.model_class.query.get_or_404(model_id)
+            return jsonify(model_class_obj.serialize())
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, werkzeug.exceptions.NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class show_one_classes_other_class_obj_by_id(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
+        self.outer_class = outer_class
+        self.outer_id_column = outer_id_column
+        self.inner_class = inner_class
+        self.inner_id_column = inner_id_column
+
+    def __call__(self, outer_id, inner_id):
+        try:
+            self.outer_class.query.get_or_404(outer_id)
+            # An inner_class object for every row in the inner_class table with
+            # the given outer_id.
+            inner_class_objs = list(self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column)
+                                                                 == outer_id))
+            # Iterating across the list looking for the self.inner_class object with
+            # the given inner_class_id. If it's found, it's serialized and
+            # returned. Otherwise, a 404 error is raised.
+            for inner_class_obj in inner_class_objs:
+                if getattr(inner_class_obj, self.inner_id_column) == inner_id:
+                    return jsonify(inner_class_obj.serialize())
+            return abort(404)
+        except Exception as exception:
+            # The validation logic that checks arguments uses ValueError to
+            # indicate an invalid argument. So if it's a ValueError, that's a 400;
+            # anything else is a coding error, a 500.
+            if isinstance(exception, werkzeug.exceptions.NotFound):
+                raise exception from None
+
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+                    # otherwise a messageless error is raised.
+                    if len(exception.args) else abort(status))
+
+
+class update_class_obj_by_id_factory(endpoint_factory):
+    __slots__ = 'model_class', 'model_id_column'
+
+    def __init__(self, model_class, model_id_column):
+        self.model_class = model_class
+        self.model_id_column = model_id_column
+        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
+
+    def __call__(self, model_id, request_json):
+        try:
+            # update_model_obj is used to fetch and update the model class
+            # object indicates by the model_class object and its id value
+            # model_id. create_or_update_param_tab_factory.generate_param_tab()
+            # is used to build its param dict argument.
+            model_class_obj = update_model_obj(model_id, self.model_class,
+                                               self.param_tab_factory.generate_param_tab(request_json))
+            db.session.add(model_class_obj)
+            db.session.commit()
+            return jsonify(model_class_obj.serialize())
+        except Exception as exception:
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
@@ -203,188 +383,7 @@ class update_one_classes_other_class_obj_by_id_factory(endpoint_factory):
             # anything else is a coding error, a 500.
             status = 400 if isinstance(exception, ValueError) else 500
 
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
+            # If the exception has a message, it's extracted and built into a helpful text for the error;
             return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class delete_class_obj_by_id_factory(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, model_class, model_id_column):
-        self.model_class = model_class
-        self.model_id_column = model_id_column
-
-    def __call__(self, model_id):
-        try:
-            delete_model_obj(model_id, self.model_class)
-            return jsonify(True)
-        except Exception as exception:
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class update_class_obj_by_id_factory(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, model_class, model_id_column):
-        self.model_class = model_class
-        self.model_id_column = model_id_column
-        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
-
-    def __call__(self, model_id, request_json):
-        try:
-            # update_model_obj is used to fetch and update the model class
-            # object indicates by the model_class object and its id value
-            # model_id. create_or_update_param_tab_factory.generate_param_tab()
-            # is used to build its param dict argument.
-            model_class_obj = update_model_obj(model_id, self.model_class,
-                                               self.param_tab_factory.generate_param_tab(request_json))
-            db.session.add(model_class_obj)
-            db.session.commit()
-            return jsonify(model_class_obj.serialize())
-        except Exception as exception:
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class create_class_obj_factory(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, model_class):
-        self.model_class = model_class
-        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
-
-    def __call__(self, request_json):
-        try:
-            # Using create_model_obj() to process request.json into a model_class
-            # argument dict and instance a model_class object.
-            model_class_obj = create_model_obj(self.model_class,
-                                               self.param_tab_factory.generate_param_tab(request_json))
-            db.session.add(model_class_obj)
-            db.session.commit()
-            return jsonify(model_class_obj.serialize())
-        except Exception as exception:
-            # The validation logic that checks arguments uses ValueError to
-            # indicate an invalid argument. So if it's a ValueError, that's a 400;
-            # anything else is a coding error, a 500.
-            status = 400 if isinstance(exception, ValueError) else 500
-
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class show_one_classes_other_class_obj_by_id(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
-        self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
-        self.inner_class = inner_class
-        self.inner_id_column = inner_id_column
-
-    def __call__(self, outer_id, inner_id):
-        try:
-            self.outer_class.query.get_or_404(outer_id)
-            # An inner_class object for every row in the inner_class table with
-            # the given outer_id.
-            inner_class_objs = list(self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column)
-                                                                 == outer_id))
-            # Iterating across the list looking for the self.inner_class object with
-            # the given inner_class_id. If it's found, it's serialized and
-            # returned. Otherwise, a 404 error is raised.
-            for inner_class_obj in inner_class_objs:
-                if getattr(inner_class_obj, self.inner_id_column) == inner_id:
-                    return jsonify(inner_class_obj.serialize())
-            return abort(404)
-        except Exception as exception:
-            # The validation logic that checks arguments uses ValueError to
-            # indicate an invalid argument. So if it's a ValueError, that's a 400;
-            # anything else is a coding error, a 500.
-            if isinstance(exception, werkzeug.exceptions.NotFound):
-                raise exception from None
-
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class show_all_of_one_classes_other_class_objs(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, outer_class, outer_id_column, inner_class):
-        self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
-        self.inner_class = inner_class
-
-    def __call__(self, outer_id):
-        try:
-            self.outer_class.query.get_or_404(outer_id)
-            # A outer_class object for every row in the inner_class table with
-            # the given outer_id.
-            retval = [inner_class_obj.serialize() for inner_class_obj
-                      in self.inner_class.query.where(getattr(self.inner_class, self.outer_id_column) == outer_id)]
-            if not len(retval):
-                return abort(404)
-            return jsonify(retval)
-        except Exception as exception:
-            # The validation logic that checks arguments uses ValueError to
-            # indicate an invalid argument. So if it's a ValueError, that's a 400;
-            # anything else is a coding error, a 500.
-            if isinstance(exception, werkzeug.exceptions.NotFound):
-                raise exception from None
-
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            status = 400 if isinstance(exception, ValueError) else 500
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=status)
-
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class show_class_obj_by_id(endpoint_factory):
-    __slots__ = 'model_class',
-
-    def __init__(self, model_class):
-        self.model_class = model_class
-
-    def __call__(self, model_id):
-        try:
-            model_class_obj = self.model_class.query.get_or_404(model_id)
-            return jsonify(model_class_obj.serialize())
-        except Exception as exception:
-            # The validation logic that checks arguments uses ValueError to
-            # indicate an invalid argument. So if it's a ValueError, that's a 400;
-            # anything else is a coding error, a 500.
-            if isinstance(exception, NotFound):
-                raise exception from None
-
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
-                    # otherwise a messageless error is raised.
-                    if len(exception.args) else abort(status))
-
-
-class show_class_index(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
-
-    def __init__(self, model_class):
-        self.model_class = model_class
-
-    def __call__(self):
-        try:
-            result = [model_class_obj.serialize() for model_class_obj in self.model_class.query.all()]
-            return jsonify(result) # return JSON response
-        except Exception as exception:
-            # If the exception has a message, it's extracted and built into a helpful text for the error; 
-            return (Response(f"{exception.__class__.__name__}: {exception.args[0]}", status=500)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))

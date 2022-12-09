@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 
 import math
-import re
 
 from datetime import date
 
-from ..dbmodels import *
+from risuspubl.dbmodels import Authors_Manuscripts, Authors_Books, Book, Client, Editor, Manuscript, Salesperson, SalesRecord, Series, db
 
 
 # This lookup table associates a *_id param name with the SQLAlchemy.Model
@@ -23,7 +22,7 @@ def update_model_obj(id_val, model_subclass, params_to_types_args_values):
     uses the dict of parameter names, values, and validator instructions to
     update the column values on that object. Then the object is returned.
 
-    :model_subclass:              An SQLAlchemy.Model subclass class object, 
+    :model_subclass:              An SQLAlchemy.Model subclass class object,
                                   the class to instance an object of.
     :params_to_types_args_values: A dict whose keys are param names and whose
                                   values are 3-tuples comprised of the type of
@@ -49,7 +48,7 @@ def update_model_obj(id_val, model_subclass, params_to_types_args_values):
             id_model_subclass = id_params_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
-                                 f"the `{id_model_subclass.__tablename__}` table")
+                                 f'the `{id_model_subclass.__tablename__}` table')
         # The validator for this data type is located and applied with the given
         # arguments. All of this module's validators are passthroughs: they
         # accept the value as an argument and return the value after processing;
@@ -68,7 +67,7 @@ def create_model_obj(model_subclass, params_to_types_args_values, optional_param
     instructions to build a dict of arguments to the Model subclass constructor,
     instantiates an object and returns it.
 
-    :model_subclass:              An SQLAlchemy.Model subclass class object, 
+    :model_subclass:              An SQLAlchemy.Model subclass class object,
                                   the class to instance an object of.
     :params_to_types_args_values: A dict whose keys are param names and whose
                                   values are 3-tuples comprised of the type of
@@ -100,7 +99,7 @@ def create_model_obj(model_subclass, params_to_types_args_values, optional_param
             id_model_subclass = id_params_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
-                                 f"the `{id_model_subclass.__tablename__}` table")
+                                 f'the `{id_model_subclass.__tablename__}` table')
         # The validator for this data type is located and applied with the given
         # arguments. All of this module's validators are passthroughs: they
         # accept the value as an argument and return the value after processing;
@@ -163,15 +162,15 @@ def validate_date(param_name, param_value, lower_bound='1900-01-01', upper_bound
         # the fastest way to find out if it's a legal date. Its error message
         # is fine to use, but the parameter name and value are prepended so the
         # message is up to standards.
-        message = f", {exception.args[0]}" if len(exception.args) else ""
+        message = f', {exception.args[0]}' if len(exception.args) else ""
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a date{message}") from None
     lower_bound_date = date.fromisoformat(lower_bound)
     upper_bound_date = date.fromisoformat(upper_bound)
     # datetime.date objects support comparisons so the values are converted to
     # date objects and a two-sided comparison is used.
     if not (lower_bound_date <= param_date_obj <= upper_bound_date):
-        raise ValueError(f"parameter {param_name}: supplied date value {param_value} does not fall within "
-                         f"[{lower_bound}, {upper_bound}]")
+        raise ValueError(f'parameter {param_name}: supplied date value {param_value} does not fall within '
+                         f'[{lower_bound}, {upper_bound}]')
     return param_value
 
 
@@ -193,7 +192,7 @@ def validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=mat
     param_int_value = int(param_value)
     if not (lower_bound <= param_int_value <= upper_bound):
         raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' does not fall between "
-                         f"[{lower_bound}, {upper_bound}]")
+                         f'[{lower_bound}, {upper_bound}]')
     return param_int_value
 
 
@@ -218,7 +217,7 @@ def validate_float(param_name, param_value, lower_bound=-math.inf, upper_bound=m
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a floating point number")
     if not (lower_bound <= param_float_value <= upper_bound):
         raise ValueError(f"parameter {param_name}: supplied float value '{param_float_value}' does not fall between "
-                         f"[{lower_bound}, {upper_bound}]")
+                         f'[{lower_bound}, {upper_bound}]')
     return param_float_value
 
 
@@ -239,17 +238,16 @@ def validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
         # If the reason for failure is the str is length zero, a more specific
         # error message is used.
         if len(param_value) == 0:
-            raise ValueError(f"parameter {param_name}: may not be zero-length")
+            raise ValueError(f'parameter {param_name}: may not be zero-length')
         # If the upper and lower bounds are equal, that's a requirement the
         # string be that length, so the error message states that.
         elif lower_bound == upper_bound:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
-                             f"equal to {lower_bound}")
+                             f'equal to {lower_bound}')
         else:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does not "
-                             f"fall between [{lower_bound}, {upper_bound}]")
+                             f'fall between [{lower_bound}, {upper_bound}]')
     return param_value
-
 
 
 def validate_bool(param_name, param_value):
@@ -262,13 +260,15 @@ def validate_bool(param_name, param_value):
     :param_value: The value of the JSON parameter, a string.
     :return:      A boolean, parsed from the param_value.
     """
-    if param_value.lower() in ('true', 't', 'yes', '1'):    # Tries to accept a variety 
-        return True                                         # of conventions for a True 
+    if isinstance(param_value, bool):
+        return param_value
+    elif param_value.lower() in ('true', 't', 'yes', '1'):    # Tries to accept a variety
+        return True                                         # of conventions for a True
     elif param_value.lower() in ('false', 'f', 'no', '0'):  # boolean or a False boolean.
         return False
     else:
         raise ValueError(f"parameter {param_name}: the supplied parameter value '{param_value}' does not parse as either "
-                         "True or False")
+                         'True or False')
 
 
 # This lookup table associates a type object to the validator function for that
