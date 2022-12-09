@@ -3,7 +3,8 @@
 import math
 from datetime import date
 
-from risuspubl.dbmodels import Authors_Manuscripts, Authors_Books, Book, Client, Editor, Manuscript, Salesperson, SalesRecord, Series, db
+from risuspubl.dbmodels import Authors_Manuscripts, Authors_Books, Book, Client, Editor, Manuscript, Salesperson, \
+        SalesRecord, Series, db
 
 
 # This lookup table associates a *_id param name with the SQLAlchemy.Model
@@ -99,12 +100,11 @@ def create_model_obj(model_subclass, params_to_types_args_values, optional_param
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
                                  f'the `{id_model_subclass.__tablename__}` table')
-        # The validator for this data type is located and applied with the given
-        # arguments. All of this module's validators are passthroughs: they
-        # accept the value as an argument and return the value after processing;
-        # in the case of int and float they've casted the value to its proper
-        # type. date values are returned as strings because that's the format
-        # that a SQLAlchemy.Model subclass's Date columns accept values in.
+        # The validator for this data type is located and applied with the
+        # given arguments. All of this module's validators are passthroughs:
+        # they accept the value as an argument and return the value after
+        # processing. Int, float and bools are casted to type. Strings and dates
+        # are returned as strs.
         validator = types_to_validators[param_type]
         model_obj_args[param_name] = validator(param_name, param_value, *validator_args)
     return model_subclass(**model_obj_args)
@@ -159,8 +159,7 @@ def validate_date(param_name, param_value, lower_bound='1900-01-01', upper_bound
     except ValueError as exception:
         # Attempting to parse the date using datetime.date.fromisoformat() is
         # the fastest way to find out if it's a legal date. Its error message
-        # is fine to use, but the parameter name and value are prepended so the
-        # message is up to standards.
+        # is fine to use, but the parameter name and value are prepended.
         message = f', {exception.args[0]}' if len(exception.args) else ''
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a date{message}") from None
     lower_bound_date = date.fromisoformat(lower_bound)
@@ -188,8 +187,18 @@ def validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=mat
                   be less than or equal to. Defaults to +Infinity.
     :return:      An int, parsed from the param value.
     """
-    param_int_value = int(param_value)
+    # If it's already an int, just return it.
+    if isinstance(param_value, int):
+        return param_value
+    try:
+        param_int_value = int(param_value)
+    except ValueError:
+        # A different ValueError is raised with a more explicit error message
+        # that makes the 400 Bad Request output informative.
+        raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as an integer")
     if not (lower_bound <= param_int_value <= upper_bound):
+        # Checking against the bounds. By default these are (-inf, +int), which
+        # are impossible to fall outside of.
         raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' does not fall between "
                          f'[{lower_bound}, {upper_bound}]')
     return param_int_value
@@ -210,11 +219,18 @@ def validate_float(param_name, param_value, lower_bound=-math.inf, upper_bound=m
                   be less than or equal to. Defaults to +Infinity.
     :return:      A float, parsed from the param value.
     """
+    # If it's already a float, just return it.
+    if isinstance(param_value, float):
+        return param_value
     try:
         param_float_value = float(param_value)
     except ValueError:
+        # A different ValueError is raised with a more explicit error message
+        # that makes the 400 Bad Request output informative.
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a floating point number")
     if not (lower_bound <= param_float_value <= upper_bound):
+        # Checking against the bounds. By default these are (-inf, +int), which
+        # are impossible to fall outside of.
         raise ValueError(f"parameter {param_name}: supplied float value '{param_float_value}' does not fall between "
                          f'[{lower_bound}, {upper_bound}]')
     return param_float_value
@@ -243,6 +259,7 @@ def validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
         elif lower_bound == upper_bound:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
                              f'equal to {lower_bound}')
+        # Otherwise use the full error message.
         else:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does not "
                              f'fall between [{lower_bound}, {upper_bound}]')
@@ -259,15 +276,16 @@ def validate_bool(param_name, param_value):
     :param_value: The value of the JSON parameter, a string.
     :return:      A boolean, parsed from the param_value.
     """
+    # If it's already a boolean, just return it.
     if isinstance(param_value, bool):
         return param_value
-    elif param_value.lower() in ('true', 't', 'yes', '1'):    # Tries to accept a variety
+    elif param_value.lower() in ('true', 't', 'yes', '1'):  # Tries to accept a variety
         return True                                         # of conventions for a True
     elif param_value.lower() in ('false', 'f', 'no', '0'):  # boolean or a False boolean.
         return False
     else:
-        raise ValueError(f"parameter {param_name}: the supplied parameter value '{param_value}' does not parse as either "
-                         'True or False')
+        raise ValueError(f"parameter {param_name}: the supplied parameter value '{param_value}' does not parse as "
+                         'either True or False')
 
 
 # This lookup table associates a type object to the validator function for that

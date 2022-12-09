@@ -1,10 +1,11 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
 import itertools
+import werkzeug.exceptions
 
 from flask import Blueprint, Response, abort, jsonify, request
 
-from werkzeug.exceptions import NotFound
+
 
 from risuspubl.api.commons import create_model_obj, update_model_obj
 from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_model_obj_argd_factory, \
@@ -28,6 +29,13 @@ author_by_id_shower = show_class_obj_by_id(Author)
 author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
 author_creator = create_class_obj_factory(Author)
 authors_indexer = show_class_index(Author)
+
+# risuspubl.api.authors is the one module where the majority of endpoint
+# functions are not handled using .api.endpfact classes. Because of the
+# Author model class's unique relationship with the Authors_Manuscripts and
+# Authors_Books table classes, and this endpoint's support for dual author_ids,
+# most of its endpoint functions have unique implementations that don't
+# generalize.
 
 
 @blueprint.route('', methods=['GET'])
@@ -70,7 +78,7 @@ def show_author_books(author_id: int):
         retval = [book_obj.serialize() for book_obj in author_obj.books]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -100,7 +108,7 @@ def show_author_book_by_id(author_id: int, book_id: int):
             return jsonify(book_obj.serialize())
         return Response(f'author with author_id {author_id} does not have a book with book_id {book_id}', status=400)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -124,7 +132,7 @@ def show_author_manuscripts(author_id: int):
         retval = [manuscript_obj.serialize() for manuscript_obj in author_obj.manuscripts]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -155,7 +163,7 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
             return jsonify(manuscript_obj.serialize())
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -184,7 +192,7 @@ def show_authors_by_ids(author1_id: int, author2_id: int):
         retval = [author1_obj.serialize(), author2_obj.serialize()]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -268,7 +276,7 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
         # If the book_id wasn't found, that's a 404.
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -359,7 +367,7 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
         # a 404.
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -406,7 +414,7 @@ def create_author_book(author_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -447,7 +455,7 @@ def create_authors_book(author1_id: int, author2_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -483,7 +491,7 @@ def create_author_manuscript(author_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -526,7 +534,7 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -573,7 +581,7 @@ def update_author_book(author_id: int, book_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -609,7 +617,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -645,7 +653,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -686,7 +694,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -714,7 +722,7 @@ def delete_author_by_id(author_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -751,7 +759,7 @@ def delete_author_book(author_id: int, book_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -792,7 +800,7 @@ def delete_authors_book(author1_id: int, author2_id: int, book_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -829,7 +837,7 @@ def delete_author_manuscript(author_id: int, manuscript_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
@@ -871,7 +879,7 @@ def delete_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
