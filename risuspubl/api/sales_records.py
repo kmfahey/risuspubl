@@ -2,7 +2,7 @@
 
 from flask import Blueprint, Response, abort, jsonify
 
-from risuspubl.api.utility import show_class_obj_by_id
+from risuspubl.api.utility import display_table_row_by_id
 from risuspubl.dbmodels import SalesRecord
 
 
@@ -11,7 +11,7 @@ blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 # This is a callable object being instanced from classes imported from
 # risuspubl.api.utility. See that module for the classes.
-sales_record_by_id_shower = show_class_obj_by_id(SalesRecord)
+display_sales_record_by_id = display_table_row_by_id(SalesRecord)
 
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
@@ -23,7 +23,7 @@ def show_sales_record(sales_record_id: int):
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
-    return sales_record_by_id_shower(sales_record_id)
+    return display_sales_record_by_id(sales_record_id)
 
 
 @blueprint.route('/year/<int:year>', methods=['GET'])

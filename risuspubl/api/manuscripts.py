@@ -2,8 +2,8 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
-        update_class_obj_by_id_factory
+from risuspubl.api.utility import delete_table_row_by_id, display_table_row_by_id, display_table_rows, \
+        update_table_row_by_id
 from risuspubl.dbmodels import Manuscript
 
 
@@ -18,10 +18,10 @@ blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-manuscript_by_id_deleter = delete_class_obj_by_id_factory(Manuscript, 'manuscript_id')
-manuscript_by_id_shower = show_class_obj_by_id(Manuscript)
-manuscript_by_id_updater = update_class_obj_by_id_factory(Manuscript, 'manuscript_id')
-manuscripts_indexer = show_class_index(Manuscript)
+delete_manuscript_by_id = delete_table_row_by_id(Manuscript, 'manuscript_id')
+display_manuscript_by_id = display_table_row_by_id(Manuscript)
+display_manuscripts = display_table_rows(Manuscript)
+update_manuscript_by_Id = update_table_row_by_id(Manuscript, 'manuscript_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -32,7 +32,7 @@ def index():
 
     :return:    A flask.Response object.
     """
-    return manuscripts_indexer()
+    return display_manuscripts()
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
@@ -45,7 +45,7 @@ def show_manuscript_by_id(manuscript_id: int):
                     load and display.
     :return:        A flask.Response object.
     """
-    return manuscript_by_id_shower(manuscript_id)
+    return display_manuscript_by_id(manuscript_id)
 
 
 # A Create endpoint is deliberately not implemented, because without a way
@@ -67,7 +67,7 @@ def update_manuscript_by_id(manuscript_id: int):
                     update.
     :return:        A flask.Response object.
     """
-    return manuscript_by_id_updater(manuscript_id, request.json)
+    return update_manuscript_by_Id(manuscript_id, request.json)
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
@@ -80,4 +80,4 @@ def delete_manuscript_by_id(manuscript_id: int):
                     delete.
     :return:        A flask.Response object.
     """
-    return manuscript_by_id_deleter(manuscript_id)
+    return delete_manuscript_by_id(manuscript_id)

@@ -2,10 +2,9 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_class_obj_factory, delete_class_obj_by_id_factory, \
-        delete_one_classes_other_class_obj_by_id_factory, show_all_of_one_classes_other_class_objs, show_class_index, \
-        show_class_obj_by_id, show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
-        update_one_classes_other_class_obj_by_id_factory
+from risuspubl.api.utility import create_table_row, delete_table_row_by_id, delete_table_row_by_id_w_foreign_key, \
+        display_table_row_by_id, display_table_row_by_id_w_foreign_key, display_table_rows, \
+        display_table_rows_w_foreign_id, update_table_row_by_id, update_table_row_by_id_w_foreign_key
 from risuspubl.dbmodels import Book, Editor, Manuscript
 
 
@@ -20,22 +19,22 @@ blueprint = Blueprint('editors', __name__, url_prefix='/editors')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-editor_book_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Book, 'book_id')
-editor_book_by_id_shower = show_one_classes_other_class_obj_by_id(Editor, 'editor_id', Book, 'book_id')
-editor_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Book, 'book_id')
-editor_books_shower = show_all_of_one_classes_other_class_objs(Editor, 'editor_id', Book)
-editor_by_id_deleter = delete_class_obj_by_id_factory(Editor, 'editor_id')
-editor_by_id_shower = show_class_obj_by_id(Editor)
-editor_by_id_updater = update_class_obj_by_id_factory(Editor, 'editor_id')
-editor_creator = create_class_obj_factory(Editor)
-editor_manuscript_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Manuscript,
-                                                                                   'manuscript_id')
-editor_manuscript_by_id_shower = show_one_classes_other_class_obj_by_id(Editor, 'editor_id', Manuscript,
-                                                                        'manuscript_id')
-editor_manuscript_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Manuscript,
-                                                                                   'manuscript_id')
-editor_manuscripts_shower = show_all_of_one_classes_other_class_objs(Editor, 'editor_id', Manuscript)
-editors_indexer = show_class_index(Editor)
+create_editor = create_table_row(Editor)
+delete_book_by_book_id_and_editor_id = delete_table_row_by_id_w_foreign_key(Editor, 'editor_id', Book, 'book_id')
+delete_editor_by_id = delete_table_row_by_id(Editor, 'editor_id')
+delete_manuscript_by_manuscript_id_and_editor_id = delete_table_row_by_id_w_foreign_key(Editor, 'editor_id',
+                                                                                        Manuscript, 'manuscript_id')
+display_book_by_book_id_and_editor_id = display_table_row_by_id_w_foreign_key(Editor, 'editor_id', Book, 'book_id')
+display_books_by_editor_id = display_table_rows_w_foreign_id(Editor, 'editor_id', Book)
+display_editor_by_id = display_table_row_by_id(Editor)
+display_editors = display_table_rows(Editor)
+display_manuscript_by_manuscript_id_and_editor_id = display_table_row_by_id_w_foreign_key(Editor, 'editor_id',
+                                                                                          Manuscript, 'manuscript_id')
+display_manuscripts_by_editor_id = display_table_rows_w_foreign_id(Editor, 'editor_id', Manuscript)
+update_book_by_book_id_and_editor_id = update_table_row_by_id_w_foreign_key(Editor, 'editor_id', Book, 'book_id')
+update_editor_by_id = update_table_row_by_id(Editor, 'editor_id')
+update_manuscript_by_manuscript_id_and_editor_id = update_table_row_by_id_w_foreign_key(Editor, 'editor_id',
+                                                                                        Manuscript, 'manuscript_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -46,7 +45,7 @@ def index():
 
     :return: A flask.Response object.
     """
-    return editors_indexer()
+    return display_editors()
 
 
 @blueprint.route('/<int:editor_id>', methods=['GET'])
@@ -59,7 +58,7 @@ def show_editor_by_id(editor_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return editor_by_id_shower(editor_id)
+    return display_editor_by_id(editor_id)
 
 
 @blueprint.route('/<int:editor_id>/books', methods=['GET'])
@@ -72,7 +71,7 @@ def show_editor_books(editor_id: int):
                 editors_books table of rows from the books table to display.
     :return:    A flask.Response object.
     """
-    return editor_books_shower(editor_id)
+    return display_books_by_editor_id(editor_id)
 
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['GET'])
@@ -85,7 +84,7 @@ def show_editor_book_by_id(editor_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to load and display.
     :return:    A flask.Response object.
     """
-    return editor_book_by_id_shower(editor_id, book_id)
+    return display_book_by_book_id_and_editor_id(editor_id, book_id)
 
 
 @blueprint.route('/<int:editor_id>/manuscripts', methods=['GET'])
@@ -99,7 +98,7 @@ def show_editor_manuscripts(editor_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return editor_manuscripts_shower(editor_id)
+    return display_manuscripts_by_editor_id(editor_id)
 
 
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
@@ -115,7 +114,7 @@ def show_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
                       load and display.
     :return:          A flask.Response object.
     """
-    return editor_manuscript_by_id_shower(editor_id, manuscript_id)
+    return display_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id)
 
 
 @blueprint.route('', methods=['POST'])
@@ -126,7 +125,7 @@ def create_editor():
 
     :return:    A flask.Response object.
     """
-    return editor_creator(request.json)
+    return create_editor(request.json)
 
 
 @blueprint.route('/<int:editor_id>', methods=['PATCH', 'PUT'])
@@ -138,7 +137,7 @@ def update_editor_by_id(editor_id: int):
     :editor_id: The editor_id of the row in the editors table to update.
     :return:    A flask.Response object.
     """
-    return editor_by_id_updater(editor_id, request.json)
+    return update_editor_by_id(editor_id, request.json)
 
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
@@ -152,7 +151,7 @@ def update_editor_book_by_id(editor_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to update.
     :return:    A flask.Response object.
     """
-    return editor_book_by_id_updater(editor_id, book_id, request.json)
+    return update_book_by_book_id_and_editor_id(editor_id, book_id, request.json)
 
 
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
@@ -167,7 +166,7 @@ def update_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
                     update.
     :return:        A flask.Response object.
     """
-    return editor_manuscript_by_id_updater(editor_id, manuscript_id, request.json)
+    return update_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id, request.json)
 
 
 @blueprint.route('/<int:editor_id>', methods=['DELETE'])
@@ -179,7 +178,7 @@ def delete_editor_by_id(editor_id: int):
     :editor_id: The editor_id of the row in the editors table to delete.
     :return:    A flask.Response object.
     """
-    return editor_by_id_deleter(editor_id)
+    return delete_editor_by_id(editor_id)
 
 
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['DELETE'])
@@ -192,7 +191,7 @@ def delete_editor_book_by_id(editor_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to delete.
     :return:    A flask.Response object.
     """
-    return editor_book_by_id_deleter(editor_id, book_id)
+    return delete_book_by_book_id_and_editor_id(editor_id, book_id)
 
 
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
@@ -206,4 +205,4 @@ def delete_editor_manuscript_by_id(editor_id: int, manuscript_id: int):
                     delete.
     :return:        A flask.Response object.
     """
-    return editor_manuscript_by_id_deleter(editor_id, manuscript_id)
+    return delete_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id)

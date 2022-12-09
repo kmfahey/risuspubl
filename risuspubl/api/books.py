@@ -2,8 +2,8 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
-        update_class_obj_by_id_factory
+from risuspubl.api.utility import delete_table_row_by_id, display_table_row_by_id, display_table_rows, \
+        update_table_row_by_id
 from risuspubl.dbmodels import Book
 
 
@@ -18,10 +18,10 @@ blueprint = Blueprint('books', __name__, url_prefix='/books')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-book_by_id_deleter = delete_class_obj_by_id_factory(Book, 'book_id')
-book_by_id_shower = show_class_obj_by_id(Book)
-book_by_id_updater = update_class_obj_by_id_factory(Book, 'book_id')
-books_indexer = show_class_index(Book)
+delete_book_by_id = delete_table_row_by_id(Book, 'book_id')
+display_book_by_id = display_table_row_by_id(Book)
+display_books = display_table_rows(Book)
+update_book_by_id = update_table_row_by_id(Book, 'book_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -32,7 +32,7 @@ def index():
 
     :return:    A flask.Response object.
     """
-    return books_indexer()
+    return display_books()
 
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
@@ -45,7 +45,7 @@ def show_book_by_id(book_id: int):
               display.
     :return:  A flask.Response object.
     """
-    return book_by_id_shower(book_id)
+    return display_book_by_id(book_id)
 
 
 # A Create endpoint is deliberately not implemented, because without
@@ -66,7 +66,7 @@ def update_book_by_id(book_id: int):
     :book_id: The book_id of the row in the books table to update.
     :return:  A flask.Response object.
     """
-    return book_by_id_updater(book_id, request.json)
+    return update_book_by_id(book_id, request.json)
 
 
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
@@ -78,4 +78,4 @@ def delete_book_by_id(book_id: int):
     :book_id: The book_id of the row in the books table to delete.
     :return:  A flask.Response object.
     """
-    return book_by_id_deleter(book_id)
+    return delete_book_by_id(book_id)

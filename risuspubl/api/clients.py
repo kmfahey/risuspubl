@@ -2,8 +2,8 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_class_obj_factory, delete_class_obj_by_id_factory, show_class_index, \
-        show_class_obj_by_id, update_class_obj_by_id_factory
+from risuspubl.api.utility import create_table_row, delete_table_row_by_id, display_table_rows, \
+        display_table_row_by_id, update_table_row_by_id
 from risuspubl.dbmodels import Client
 
 
@@ -18,11 +18,11 @@ blueprint = Blueprint('clients', __name__, url_prefix='/clients')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-client_by_id_deleter = delete_class_obj_by_id_factory(Client, 'client_id')
-client_by_id_shower = show_class_obj_by_id(Client)
-client_by_id_updater = update_class_obj_by_id_factory(Client, 'client_id')
-client_creator = create_class_obj_factory(Client)
-clients_indexer = show_class_index(Client)
+create_client = create_table_row(Client)
+delete_client_by_id = delete_table_row_by_id(Client, 'client_id')
+display_client_by_id = display_table_row_by_id(Client)
+display_clients = display_table_rows(Client)
+update_client_by_id = update_table_row_by_id(Client, 'client_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -33,7 +33,7 @@ def index():
 
     :return: A flask.Response object.
     """
-    return clients_indexer()
+    return display_clients()
 
 
 @blueprint.route('/<int:client_id>', methods=['GET'])
@@ -46,7 +46,7 @@ def show_client_by_id(client_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return client_by_id_shower(client_id)
+    return display_client_by_id(client_id)
 
 
 @blueprint.route('', methods=['POST'])
@@ -57,7 +57,7 @@ def create_client():
 
     :return:    A flask.Response object.
     """
-    return client_creator(request.json)
+    return create_client(request.json)
 
 
 @blueprint.route('/<int:client_id>', methods=['PATCH', 'PUT'])
@@ -69,7 +69,7 @@ def update_client_by_id(client_id: int):
     :client_id: The client_id of the row in the clients table to update.
     :return:    A flask.Response object.
     """
-    return client_by_id_updater(client_id, request.json)
+    return update_client_by_id(client_id, request.json)
 
 
 @blueprint.route('/<int:client_id>', methods=['DELETE'])
@@ -81,4 +81,4 @@ def delete_client_by_id(client_id: int):
     :client_id: The client_id of the row in the clients table to delete.
     :return:    A flask.Response object.
     """
-    return client_by_id_deleter(client_id)
+    return delete_client_by_id(client_id)

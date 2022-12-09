@@ -4,11 +4,10 @@ from flask import Blueprint, Response, abort, jsonify, request
 
 import werkzeug.exceptions
 
-from risuspubl.api.utility import create_class_obj_factory, create_model_obj, create_or_update_argd_gen, \
-        delete_class_obj_by_id_factory, delete_one_classes_other_class_obj_by_id_factory, \
-        show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
-        show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
-        update_one_classes_other_class_obj_by_id_factory
+from risuspubl.api.utility import create_model_obj, create_or_update_argd_gen, create_table_row, \
+        delete_table_row_by_id, delete_table_row_by_id_w_foreign_key, display_table_row_by_id, \
+        display_table_row_by_id_w_foreign_key, display_table_rows, display_table_rows_w_foreign_id, \
+        update_table_row_by_id, update_table_row_by_id_w_foreign_key
 from risuspubl.dbmodels import Client, Salesperson, db
 
 
@@ -23,18 +22,18 @@ blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-salespeople_indexer = show_class_index(Salesperson)
-salesperson_by_id_deleter = delete_class_obj_by_id_factory(Salesperson, 'salesperson_id')
-salesperson_by_id_shower = show_class_obj_by_id(Salesperson)
-salesperson_by_id_updater = update_class_obj_by_id_factory(Salesperson, 'salesperson_id')
-salesperson_client_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id',
-                                                                                    Client, 'client_id')
-salesperson_client_by_id_shower = show_one_classes_other_class_obj_by_id(Salesperson, 'salesperson_id', Client,
-                                                                         'client_id')
-salesperson_clients_shower = show_all_of_one_classes_other_class_objs(Salesperson, 'salesperson_id', Client)
-salesperson_creator = create_class_obj_factory(Salesperson)
-series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Salesperson, 'salesperson_id', Client,
-                                                                             'client_id')
+create_salesperson = create_table_row(Salesperson)
+delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+                                                                                     Client, 'client_id')
+delete_salesperson_by_id = delete_table_row_by_id(Salesperson, 'salesperson_id')
+display_client_by_client_id_and_salesperson_id = display_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+                                                                                       Client, 'client_id')
+display_clients_by_salesperson_id = display_table_rows_w_foreign_id(Salesperson, 'salesperson_id', Client)
+display_salespeople = display_table_rows(Salesperson)
+display_salesperson_by_id = display_table_row_by_id(Salesperson)
+update_client_by_client_id_and_salesperson_id = update_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+                                                                                     Client, 'client_id')
+update_salesperson_by_id = update_table_row_by_id(Salesperson, 'salesperson_id')
 
 
 @blueprint.route('', methods=['GET'])
@@ -45,7 +44,7 @@ def index():
 
     :return:    A flask.Response object.
     """
-    return salespeople_indexer()
+    return display_salespeople()
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
@@ -58,7 +57,7 @@ def show_salesperson_by_id(salesperson_id: int):
                      load and display.
     :return:         A flask.Response object.
     """
-    return salesperson_by_id_shower(salesperson_id)
+    return display_salesperson_by_id(salesperson_id)
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
@@ -71,7 +70,7 @@ def show_salesperson_clients(salesperson_id: int):
                      display.
     :return:    A flask.Response object.
     """
-    return salesperson_clients_shower(salesperson_id)
+    return display_clients_by_salesperson_id(salesperson_id)
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
@@ -84,7 +83,7 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
                      display.
     :return:    A flask.Response object.
     """
-    return salesperson_client_by_id_shower(salesperson_id, client_id)
+    return display_client_by_client_id_and_salesperson_id(salesperson_id, client_id)
 
 
 @blueprint.route('', methods=['POST'])
@@ -95,7 +94,7 @@ def create_salesperson():
 
     :return:    A flask.Response object.
     """
-    return salesperson_creator(request.json)
+    return create_salesperson(request.json)
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
@@ -138,7 +137,7 @@ def update_salesperson_by_id(salesperson_id: int):
                      update.
     :return:         A flask.Response object.
     """
-    return salesperson_by_id_updater(salesperson_id, request.json)
+    return update_salesperson_by_id(salesperson_id, request.json)
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
@@ -153,7 +152,7 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
     :client_id:      The client_id of the row in the clients table to update.
     :return:         A flask.Response object.
     """
-    return series_book_by_id_updater(salesperson_id, client_id, request.json)
+    return update_client_by_client_id_and_salesperson_id(salesperson_id, client_id, request.json)
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
@@ -165,7 +164,7 @@ def delete_salesperson_by_id(salesperson_id: int):
     :salesperson_id: The salesperson_id of the row in the salespeople table to delete.
     :return:         A flask.Response object.
     """
-    return salesperson_by_id_deleter(salesperson_id)
+    return delete_salesperson_by_id(salesperson_id)
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
@@ -180,4 +179,4 @@ def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
                      delete.
     :return:         A flask.Response object.
     """
-    return salesperson_client_by_id_deleter(salesperson_id, client_id)
+    return delete_client_by_client_id_and_salesperson_id(salesperson_id, client_id)

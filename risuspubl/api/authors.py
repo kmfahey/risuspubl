@@ -6,8 +6,8 @@ from flask import Blueprint, Response, abort, jsonify, request
 
 import werkzeug.exceptions
 
-from risuspubl.api.utility import create_class_obj_factory, create_model_obj, create_or_update_argd_gen, \
-        show_class_index, show_class_obj_by_id, update_class_obj_by_id_factory, update_model_obj
+from risuspubl.api.utility import create_table_row, create_model_obj, create_or_update_argd_gen, \
+        display_table_row_by_id, display_table_rows, update_model_obj, update_table_row_by_id
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Manuscript, db
 
 
@@ -23,10 +23,10 @@ blueprint = Blueprint('authors', __name__, url_prefix='/authors')
 # such that an endpoint function just tail calls the corresponding one of
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
-author_by_id_shower = show_class_obj_by_id(Author)
-author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
-author_creator = create_class_obj_factory(Author)
-authors_indexer = show_class_index(Author)
+create_author = create_table_row(Author)
+display_author_by_id = display_table_row_by_id(Author)
+display_authors = display_table_rows(Author)
+update_author_by_id = update_table_row_by_id(Author, 'author_id')
 
 # risuspubl.api.authors is the one module where the majority of endpoint
 # functions are not handled using .api.utility classes. Because of the
@@ -44,7 +44,7 @@ def index():
 
     :return:    A flask.Response object.
     """
-    return authors_indexer()
+    return display_authors()
 
 
 @blueprint.route('/<int:author_id>', methods=['GET'])
@@ -57,7 +57,7 @@ def show_author_by_id(author_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return author_by_id_shower(author_id)
+    return display_author_by_id(author_id)
 
 
 @blueprint.route('/<int:author_id>/books', methods=['GET'])
@@ -374,14 +374,14 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
 
 
 @blueprint.route('', methods=['POST'])
-def create_author():
+def author_create():
     """
     Implements a POST /authors endpoint. A new row in the authors table is
     constituted from the JSON parameters and saved to that table.
 
     :return:    A flask.Response object.
     """
-    return author_creator(request.json)
+    return create_author(request.json)
 
 
 @blueprint.route('/<int:author_id>/books', methods=['POST'])
@@ -545,7 +545,7 @@ def update_author_by_id(author_id: int):
     :author_id: The author_id of the row in the authors table to update.
     :return:    A flask.Response object.
     """
-    return author_by_id_updater(author_id, request.json)
+    return update_author_by_id(author_id, request.json)
 
 
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
