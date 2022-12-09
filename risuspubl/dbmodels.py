@@ -179,6 +179,7 @@ class Series(db.Model):
             'volumes': self.volumes,
             }
 
+
 # Defining these late because the 2nd Model subclass didn't exist until now.
 Book.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
 

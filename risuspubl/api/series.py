@@ -6,13 +6,20 @@ from risuspubl.api.endpfact import create_class_obj_factory, delete_class_obj_by
         show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
         show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
         update_one_classes_other_class_obj_by_id_factory
-
 from risuspubl.dbmodels import Book, Manuscript, Series
 
 
 blueprint = Blueprint('series', __name__, url_prefix='/series')
 
 
+# These are callable objects being instanced from classes imported from
+# risuspubl.api.endpfact. See that module for the classes.
+#
+# These callables were derived from duplicated code across the risuspubl.api.*
+# codebase. Each one implements the entirety of a specific endpoint function,
+# such that an endpoint function just tail calls the corresponding one of
+# these callables. The large majority of code reuse was eliminated by this
+# refactoring.
 series_book_by_id_shower = show_one_classes_other_class_obj_by_id(Series, 'series_id', Book, 'book_id')
 series_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Series, 'series_id', Book, 'book_id')
 series_books_shower = show_all_of_one_classes_other_class_objs(Series, 'series_id', Book)

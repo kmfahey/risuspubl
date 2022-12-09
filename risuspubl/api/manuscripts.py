@@ -1,8 +1,6 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from werkzeug.exceptions import NotFound
-
-from flask import abort, Blueprint, jsonify, request, Response
+from flask import Blueprint, request
 
 from risuspubl.api.endpfact import delete_class_obj_by_id_factory, show_class_index, show_class_obj_by_id, \
         update_class_obj_by_id_factory
@@ -12,6 +10,14 @@ from risuspubl.dbmodels import Manuscript
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 
+# These are callable objects being instanced from classes imported from
+# risuspubl.api.endpfact. See that module for the classes.
+# 
+# These callables were derived from duplicated code across the risuspubl.api.*
+# codebase. Each one implements the entirety of a specific endpoint function,
+# such that an endpoint function just tail calls the corresponding one of
+# these callables. The large majority of code reuse was eliminated by this
+# refactoring.
 manuscript_by_id_deleter = delete_class_obj_by_id_factory(Manuscript, 'manuscript_id')
 manuscript_by_id_shower = show_class_obj_by_id(Manuscript)
 manuscript_by_id_updater = update_class_obj_by_id_factory(Manuscript, 'manuscript_id')

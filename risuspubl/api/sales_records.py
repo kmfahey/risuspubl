@@ -1,6 +1,6 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from flask import Blueprint, Response, jsonify, abort
+from flask import Blueprint, Response, abort, jsonify
 
 from risuspubl.api.endpfact import show_class_obj_by_id
 from risuspubl.dbmodels import SalesRecord
@@ -9,6 +9,8 @@ from risuspubl.dbmodels import SalesRecord
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 
+# This is a callable object being instanced from classes imported from
+# risuspubl.api.endpfact. See that module for the classes.
 sales_record_by_id_shower = show_class_obj_by_id(SalesRecord)
 
 

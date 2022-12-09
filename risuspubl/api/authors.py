@@ -2,19 +2,28 @@
 
 import itertools
 
-from flask import abort, Blueprint, jsonify, request, Response
+from flask import Blueprint, Response, abort, jsonify, request
 
 from werkzeug.exceptions import NotFound
 
 from risuspubl.api.commons import create_model_obj, update_model_obj
-from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_param_tab_factory, show_class_index, \
-        show_class_obj_by_id, update_class_obj_by_id_factory
+from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_model_obj_argd_factory, \
+        show_class_index, show_class_obj_by_id, update_class_obj_by_id_factory
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Manuscript, db
 
 
 blueprint = Blueprint('authors', __name__, url_prefix='/authors')
 
 
+# These are callable objects-- basically functions with state-- being instanced
+# from classes imported from risuspubl.api.endpfact. See that module for the
+# classes.
+#
+# These callables were derived from duplicated code across the risuspubl.api.*
+# codebase. Each one implements the entirety of a specific endpoint function,
+# such that an endpoint function just tail calls the corresponding one of
+# these callables. The large majority of code reuse was eliminated by this
+# refactoring.
 author_by_id_shower = show_class_obj_by_id(Author)
 author_by_id_updater = update_class_obj_by_id_factory(Author, 'author_id')
 author_creator = create_class_obj_factory(Author)
@@ -383,10 +392,10 @@ def create_author_book(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
-        create_model_param_factory = create_or_update_param_tab_factory(Book)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Book)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book, create_model_param_factory.generate_param_tab(request.json),
+        book_obj = create_model_obj(Book, create_model_param_factory.generate_argd(request.json),
                                     optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
@@ -422,10 +431,10 @@ def create_authors_book(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        create_model_param_factory = create_or_update_param_tab_factory(Book)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Book)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book, create_model_param_factory.generate_param_tab(request.json),
+        book_obj = create_model_obj(Book, create_model_param_factory.generate_argd(request.json),
                                     optional_params={'series_id'})
         db.session.add(book_obj)
         db.session.commit()
@@ -460,10 +469,10 @@ def create_author_manuscript(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
-        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Manuscript)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_param_tab(request.json),
+        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_argd(request.json),
                                           optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -499,10 +508,10 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Manuscript)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_param_tab(request.json),
+        manuscript_obj = create_model_obj(Manuscript, create_model_param_factory.generate_argd(request.json),
                                           optional_params={'series_id'})
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -550,7 +559,7 @@ def update_author_book(author_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_param_tab_factory(Book)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Book)
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
         # Verifying that this author_id is associated with this book_id in
@@ -559,7 +568,7 @@ def update_author_book(author_id: int, book_id: int):
             return abort(404)
         # Using update_model_obj() to fetch the Book object and update it
         # against request.json.
-        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_param_tab(request.json))
+        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_argd(request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -586,7 +595,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
     :return:     A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_param_tab_factory(Book)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Book)
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
@@ -595,7 +604,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         # authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_param_tab(request.json))
+        book_obj = update_model_obj(book_id, Book, create_model_param_factory.generate_argd(request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -621,7 +630,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Manuscript)
         author_obj = Author.query.get_or_404(author_id)
         manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
         # Verifying that this author_id is associated with this manuscript_id in
@@ -631,7 +640,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
-                                          create_model_param_factory.generate_param_tab(request.json))
+                                          create_model_param_factory.generate_argd(request.json))
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -660,7 +669,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
     :return:        A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_param_tab_factory(Manuscript)
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Manuscript)
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
@@ -672,7 +681,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
         manuscript_obj = update_model_obj(manuscript_id, Manuscript,
-                                          create_model_param_factory.generate_param_tab(request.json))
+                                          create_model_param_factory.generate_argd(request.json))
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())

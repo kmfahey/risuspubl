@@ -1,9 +1,11 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/1-SQL/week3/venv/bin/python3
 
-from flask import Blueprint, request
+from flask import Blueprint, Response, abort, jsonify, request
+
+import werkzeug.exceptions
 
 from risuspubl.api.commons import create_model_obj
-from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_param_tab_factory, \
+from risuspubl.api.endpfact import create_class_obj_factory, create_or_update_model_obj_argd_factory, \
         delete_class_obj_by_id_factory, delete_one_classes_other_class_obj_by_id_factory, \
         show_all_of_one_classes_other_class_objs, show_class_index, show_class_obj_by_id, \
         show_one_classes_other_class_obj_by_id, update_class_obj_by_id_factory, \
@@ -14,6 +16,14 @@ from risuspubl.dbmodels import Client, Salesperson, db
 blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 
+# These are callable objects being instanced from classes imported from
+# risuspubl.api.endpfact. See that module for the classes.
+#
+# These callables were derived from duplicated code across the risuspubl.api.*
+# codebase. Each one implements the entirety of a specific endpoint function,
+# such that an endpoint function just tail calls the corresponding one of
+# these callables. The large majority of code reuse was eliminated by this
+# refactoring.
 salespeople_indexer = show_class_index(Salesperson)
 salesperson_by_id_deleter = delete_class_obj_by_id_factory(Salesperson, 'salesperson_id')
 salesperson_by_id_shower = show_class_obj_by_id(Salesperson)
@@ -101,18 +111,18 @@ def create_salesperson_client(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
-        create_model_param_factory = create_or_update_param_tab_factory(Client, 'salesperson_id')
+        create_model_param_factory = create_or_update_model_obj_argd_factory(Client, 'salesperson_id')
         Salesperson.query.get_or_404(salesperson_id)
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
-        client_obj = create_model_obj(Client, create_model_param_factory.generate_param_tab(request.json,
-                                                                                            salesperson_id))
+        client_obj = create_model_obj(Client, create_model_param_factory.generate_argd(request.json,
+                                                                                       salesperson_id))
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
         db.session.commit()
         return jsonify(client_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, NotFound):
+        if isinstance(exception, werkzeug.exceptions.NotFound):
             raise exception from None
         status = 400 if isinstance(exception, ValueError) else 500
         return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)

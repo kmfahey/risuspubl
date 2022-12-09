@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import math
-
 from datetime import date
 
 from risuspubl.dbmodels import Authors_Manuscripts, Authors_Books, Book, Client, Editor, Manuscript, Salesperson, SalesRecord, Series, db
@@ -162,7 +161,7 @@ def validate_date(param_name, param_value, lower_bound='1900-01-01', upper_bound
         # the fastest way to find out if it's a legal date. Its error message
         # is fine to use, but the parameter name and value are prepended so the
         # message is up to standards.
-        message = f', {exception.args[0]}' if len(exception.args) else ""
+        message = f', {exception.args[0]}' if len(exception.args) else ''
         raise ValueError(f"parameter {param_name}: value {param_value} doesn't parse as a date{message}") from None
     lower_bound_date = date.fromisoformat(lower_bound)
     upper_bound_date = date.fromisoformat(upper_bound)

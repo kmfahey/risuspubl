@@ -12,6 +12,14 @@ from risuspubl.dbmodels import Book, Editor, Manuscript
 blueprint = Blueprint('editors', __name__, url_prefix='/editors')
 
 
+# These are callable objects being instanced from classes imported from
+# risuspubl.api.endpfact. See that module for the classes.
+# 
+# These callables were derived from duplicated code across the risuspubl.api.*
+# codebase. Each one implements the entirety of a specific endpoint function,
+# such that an endpoint function just tail calls the corresponding one of
+# these callables. The large majority of code reuse was eliminated by this
+# refactoring.
 editor_book_by_id_deleter = delete_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Book, 'book_id')
 editor_book_by_id_shower = show_one_classes_other_class_obj_by_id(Editor, 'editor_id', Book, 'book_id')
 editor_book_by_id_updater = update_one_classes_other_class_obj_by_id_factory(Editor, 'editor_id', Book, 'book_id')

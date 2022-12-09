@@ -1,105 +1,123 @@
 #!/usr/bin/python3
 
-import abc
+from datetime import date, timedelta
 
 import werkzeug.exceptions
-from datetime import date, timedelta
 
 from flask import Response, abort, jsonify
 
-from risuspubl.dbmodels import Author, Book, Client, Editor, Manuscript, Salesperson, SalesRecord, Series, db
 from risuspubl.api.commons import create_model_obj, delete_model_obj, update_model_obj
+from risuspubl.dbmodels import Author, Book, Client, Editor, Manuscript, Salesperson, Series, db
 
 
-
-class create_or_update_param_tab_factory(object):
-    __slots__ = 'model_class', 'param_tab_prototype', 'model_id_column'
-
-    param_tab_prototypes = {
-        Author:      {'first_name':        (str,  ()),
-                      'last_name':         (str,  ())},
-
-        Book:        {'editor_id':         (int,  (0,)),
-                      'series_id':         (int,  (0,)),
-                      'title':             (str,  ()),
-                      'publication_date':  (str,  ()),
-                      'edition_number':    (int,  (1, 10)),
-                      'is_in_print':       (bool, ())},
-
-        Manuscript:  {'editor_id':         (int,  (0,)),
-                      'series_id':         (int,  (0,)),
-                      'working_title':     (str,  ()),
-                      'due_date':          (date, ((date.today() + timedelta(days=1)).isoformat(), '2024-07-01')),
-                      'advance':           (int,  (5000, 100000))},
-
-        Client:      {'salesperson_id':    (int,  (0,)),
-                      'email_address':     (str,  ()),
-                      'phone_number':      (str,  (11, 11)),
-                      'business_name':     (str,  ()),
-                      'street_address':    (str,  ()),
-                      'city':              (str,  ()),
-                      'state_or_province': (str,  (2, 4)),
-                      'zipcode':           (str,  (9, 9)),
-                      'country':           (str,  ())},
-
-        Editor:      {'first_name':        (str,  ()),
-                      'last_name':         (str,  ()),
-                      'salary':            (int,  ())},
-
-        Salesperson: {'first_name':        (str,  ()),
-                      'last_name':         (str,  ()),
-                      'salary':            (int,  ())},
-
-        Series:      {'title':             (str,  ()),
-                      'volumes':           (int,  (2, 5))}
-        }
+class create_or_update_model_obj_argd_factory(object):
+    """
+    This class serves as a source for the complex dict argument to
+    create_model_obj or update_model_obj.
+    """
+    __slots__ = 'model_class', 'argd_prototype', 'model_id_column'
 
     def __init__(self, model_class, model_id_column=None):
+        """
+        This constructor initializes the object, and selects the
+        """
         self.model_class = model_class
         self.model_id_column = model_id_column
-        self.param_tab_prototype = self.param_tab_prototypes[model_class].copy()
 
-    def generate_param_tab(self, request_json, id_value=None):
-        param_tab = dict()
-        for param_name, type_validargs_tuple in self.param_tab_prototype.items():
-            if param_name == self.model_id_column:
-                param_tab[param_name] = type_validargs_tuple + (id_value,)
-            else:
-                param_tab[param_name] = type_validargs_tuple + (request_json.get(param_name),)
-        return param_tab
+    # These are the argds needed to execute create_model_obj or update_model_obj. They're stored in functions so that
+    # request_json doesn't evaluate until they're called with a reference to the value that response.json has during the
+    # execution of an endpoint function.
+    def author_argd(self, request_json):
+        return {'first_name':        [str,  (),         request_json.get('first_name')],
+                'last_name':         [str,  (),         request_json.get('last_name')]}
+
+    def book_argd(self, request_json):
+        return {'editor_id':         [int,  (0,),       request_json.get('editor_id')],
+                'series_id':         [int,  (0,),       request_json.get('series_id')],
+                'title':             [str,  (),         request_json.get('title')],
+                'publication_date':  [str,  (),         request_json.get('publication_date')],
+                'edition_number':    [int,  (1, 10),    request_json.get('edition_number')],
+                'is_in_print':       [bool, (),         request_json.get('is_in_print')]}
+
+    def manuscript_argd(self, request_json):
+        return {'editor_id':         [int,  (0,),       request_json.get('editor_id')],
+                'series_id':         [int,  (0,),       request_json.get('series_id')],
+                'working_title':     [str,  (),         request_json.get('working_title')],
+                'due_date':          [date, ((date.today() + timedelta(days=1)).isoformat(), '2024-07-01'),
+                                                        request_json.get('due_date')],
+                'advance':           [int,  (5e3, 1e5), request_json.get('advance')]}
+
+    def client_argd(self, request_json):
+        return {'salesperson_id':    [int,  (0,),       request_json.get('salesperson_id')],
+                'email_address':     [str,  (),         request_json.get('email_address')],
+                'phone_number':      [str,  (11, 11),   request_json.get('phone_number')],
+                'business_name':     [str,  (),         request_json.get('business_name')],
+                'street_address':    [str,  (),         request_json.get('street_address')],
+                'city':              [str,  (),         request_json.get('city')],
+                'state_or_province': [str,  (2, 4),     request_json.get('state_or_province')],
+                'zipcode':           [str,  (9, 9),     request_json.get('zipcode')],
+                'country':           [str,  (),         request_json.get('country')]}
+
+    def editor_argd(self, request_json):
+        return {'first_name':        [str,  (),         request_json.get('first_name')],
+                'last_name':         [str,  (),         request_json.get('last_name')],
+                'salary':            [int,  (),         request_json.get('salary')]}
+
+    def salesperson_argd(self, request_json):
+        return {'first_name':        [str,  (),         request_json.get('first_name')],
+                'last_name':         [str,  (),         request_json.get('last_name')],
+                'salary':            [int,  (),         request_json.get('salary')]}
+
+    def series_argd(self, request_json):
+        return {'title':             [str,  (),         request_json.get('title')],
+                'volumes':           [int,  (2, 5),     request_json.get('volumes')]}
+
+    def generate_argd(self, request_json, id_value=None):
+        classes_to_argds = {Author: self.author_argd, Book: self.book_argd,
+                            Manuscript: self.manuscript_argd, Client: self.client_argd,
+                            Editor: self.editor_argd, Salesperson: self.salesperson_argd,
+                            Series: self.series_argd}
+        # The method with the correct argd is located, and called with
+        # request_json so it evaluates.
+        argd = classes_to_argds[self.model_class](request_json)
+
+        # If the id_column and its value id_value are defined, then it's set
+        # under the matching parameter name if its value is None. (This way if
+        # the JSON argument contains a different value than the one included
+        # from the URL argument, it can override.)
+        if self.id_column is not None and id_value is not None:
+            for param_name, param_list in argd.items():
+                if param_name != self.id_column:
+                    continue
+                if param_list[2] is None:
+                    param_list[2] = id_value
+        return argd
 
 
-class endpoint_factory(abc.ABC):
+class create_class_obj_factory(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function POST /{table}. Its constructor accepts this argument:
 
-    __abstractmethods__ = frozenset({'__init__', '__call__'})
+    :model_class:  the Model subclass for outer table
 
-    # This lookup table associates a type object to the validator static method
-    # for that data type. This dict is populated during the class definition
-    # using the register_validator decorator.
-    types_to_validators = {}
+    Its __call__ method accepts this argument:
 
-    # This lookup table associates a *_id param name with the SQLAlchemy.Model
-    # subclass class object representing the table where a column by that name
-    # is the primary key. Used to validate whether a parameter with such a name
-    # has a value that is associated with a row in that table.
-    id_params_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor,
-                                     'manuscript_id': Manuscript, 'sales_record_id': SalesRecord,
-                                     'salesperson_id': Salesperson, 'series_id': Series}
-
-
-class create_class_obj_factory(endpoint_factory):
+    :request_json: a reference to the request.json object available within the
+                   endpoint function
+    """
     __slots__ = 'model_class', 'model_id_column'
 
     def __init__(self, model_class):
         self.model_class = model_class
-        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
 
     def __call__(self, request_json):
         try:
+            argd_factory = create_or_update_model_obj_argd_factory(self.model_class)
             # Using create_model_obj() to process request.json into a model_class
             # argument dict and instance a model_class object.
             model_class_obj = create_model_obj(self.model_class,
-                                               self.param_tab_factory.generate_param_tab(request_json))
+                                               argd_factory.generate_argd(request_json))
             db.session.add(model_class_obj)
             db.session.commit()
             return jsonify(model_class_obj.serialize())
@@ -115,7 +133,18 @@ class create_class_obj_factory(endpoint_factory):
                     if len(exception.args) else abort(status))
 
 
-class delete_class_obj_by_id_factory(endpoint_factory):
+class delete_class_obj_by_id_factory(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function DELETE /{table}/{id}. Its constructor accepts this argument:
+
+    :model_class:     the Model subclass for the table
+    :model_id_column: the name of the primary key column in the table
+
+    Its __call__ method accepts these arguments:
+
+    :model_id:        a value for the primary key column in the table
+    """
     __slots__ = 'model_class', 'model_id_column'
 
     def __init__(self, model_class, model_id_column):
@@ -127,17 +156,18 @@ class delete_class_obj_by_id_factory(endpoint_factory):
             delete_model_obj(model_id, self.model_class)
             return jsonify(True)
         except Exception as exception:
+            status = 500
             # If the exception has a message, it's extracted and built into a helpful text for the error;
-            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
 
-class delete_one_classes_other_class_obj_by_id_factory(endpoint_factory):
+class delete_one_classes_other_class_obj_by_id_factory(object):
     """
-    This class implements via its __call_ method an abstracted endpoint function
-    DELETE /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its constructor
-    accepts these arguments:
+    This class implements a callable object that executes an abstracted endpoint
+    function DELETE /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its
+    constructor accepts these arguments:
 
     :outer_class:     the Model subclass for the outer table
     :outer_id_column: the name of the primary key column in the outer table
@@ -149,18 +179,6 @@ class delete_one_classes_other_class_obj_by_id_factory(endpoint_factory):
     :outer_id:        a value for the primary key column in the outer table
     :inner_id:        a value for the primary key column in the inner table; this row
                       will be deleted
-
-    The __call__ method, intended to power a flask.blueprint()ed function,
-    verifies that a row exists in the outer table by the outer_id argument,
-    and verifies that a row exists in the inner table with its primary key
-    column set to the inner_id value and its column with the same name as the
-    outer table's id column set to the outer_id value. This second row is then
-    deleted.
-
-    If the inner_table is books or manuscripts, then inner_id_column is
-    either book_id or manuscript_id, and the rows in authors_books or
-    authors_manuscripts with the given book_id or manuscript_id are also
-    deleted.
     """
     __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column'
 
@@ -207,8 +225,21 @@ class delete_one_classes_other_class_obj_by_id_factory(endpoint_factory):
                     if len(exception.args) else abort(status))
 
 
-class show_all_of_one_classes_other_class_objs(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
+class show_all_of_one_classes_other_class_objs(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function GET /{outer_table}/{outer_id}/{inner_table}. Its constructor
+    accepts these arguments:
+
+    :outer_class:     the Model subclass for the outer table
+    :outer_id_column: the name of the primary key column in the outer table
+    :inner_class:     the Model subclass for the inner table
+
+    Its __call__ method accepts this argument:
+
+    :outer_id:        a value for the primary key column in the outer table
+    """
+    __slots__ = 'outer_class', 'outer_id_column', 'inner_class',
 
     def __init__(self, outer_class, outer_id_column, inner_class):
         self.outer_class = outer_class
@@ -240,7 +271,15 @@ class show_all_of_one_classes_other_class_objs(endpoint_factory):
                     if len(exception.args) else abort(status))
 
 
-class show_class_index(endpoint_factory):
+class show_class_index(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function GET /{table}. Its constructor accepts this argument:
+
+    :model_class:     the Model subclass for the outer table
+
+    Its __call__ method takes no arguments.
+    """
     __slots__ = 'model_class', 'model_id_column'
 
     def __init__(self, model_class):
@@ -251,13 +290,25 @@ class show_class_index(endpoint_factory):
             result = [model_class_obj.serialize() for model_class_obj in self.model_class.query.all()]
             return jsonify(result)
         except Exception as exception:
+            status = 500
             # If the exception has a message, it's extracted and built into a helpful text for the error;
-            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
 
-class show_class_obj_by_id(endpoint_factory):
+class show_class_obj_by_id(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function GET /{table}/{id}. Its constructor
+    accepts this argument:
+
+    :model_class: the Model subclass for the table
+
+    Its __call__ method accepts this argument:
+
+    :model_id:    a value for the primary key column in the table
+    """
     __slots__ = 'model_class',
 
     def __init__(self, model_class):
@@ -274,14 +325,31 @@ class show_class_obj_by_id(endpoint_factory):
             if isinstance(exception, werkzeug.exceptions.NotFound):
                 raise exception from None
 
+            status = 500
             # If the exception has a message, it's extracted and built into a helpful text for the error;
-            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
 
-class show_one_classes_other_class_obj_by_id(endpoint_factory):
-    __slots__ = 'model_class', 'model_id_column'
+class show_one_classes_other_class_obj_by_id(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function GET /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its
+    constructor accepts these arguments:
+
+    :outer_class:     the Model subclass for the outer table
+    :outer_id_column: the name of the primary key column in the outer table
+    :inner_class:     the Model subclass for the inner table
+    :inner_id_column: the name of the primary key column in the inner table
+
+    Its __call__ method accepts these arguments:
+
+    :outer_id:        a value for the primary key column in the outer table
+    :inner_id:        a value for the primary key column in the inner table; this row
+                      will be deleted
+    """
+    __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column'
 
     def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
         self.outer_class = outer_class
@@ -310,50 +378,83 @@ class show_one_classes_other_class_obj_by_id(endpoint_factory):
             if isinstance(exception, werkzeug.exceptions.NotFound):
                 raise exception from None
 
+            status = 500
             # If the exception has a message, it's extracted and built into a helpful text for the error;
-            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
 
-class update_class_obj_by_id_factory(endpoint_factory):
+class update_class_obj_by_id_factory(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function PATCH /{table}/{id}. Its constructor accepts these arguments:
+
+    :model_class:     the Model subclass for the outer table
+    :model_id_column: the name of the primary key column in the outer table
+
+    Its __call__ method accepts these arguments:
+
+    :model_id:        a value for the primary key column in the outer table
+    :request_json:    a reference to the request.json object available within the
+                      endpoint function
+    """
     __slots__ = 'model_class', 'model_id_column'
 
     def __init__(self, model_class, model_id_column):
         self.model_class = model_class
         self.model_id_column = model_id_column
-        self.param_tab_factory = create_or_update_param_tab_factory(model_class)
 
     def __call__(self, model_id, request_json):
         try:
+            argd_factory = create_or_update_model_obj_argd_factory(self.model_class)
             # update_model_obj is used to fetch and update the model class
             # object indicates by the model_class object and its id value
-            # model_id. create_or_update_param_tab_factory.generate_param_tab()
+            # model_id. create_or_update_model_obj_argd_factory.generate_argd()
             # is used to build its param dict argument.
             model_class_obj = update_model_obj(model_id, self.model_class,
-                                               self.param_tab_factory.generate_param_tab(request_json))
+                                               argd_factory.generate_argd(request_json))
             db.session.add(model_class_obj)
             db.session.commit()
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
             # If the exception has a message, it's extracted and built into a helpful text for the error;
-            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=500)
+            status = 500
+            return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
                     # otherwise a messageless error is raised.
                     if len(exception.args) else abort(status))
 
 
-class update_one_classes_other_class_obj_by_id_factory(endpoint_factory):
-    __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column', 'param_tab'
+class update_one_classes_other_class_obj_by_id_factory(object):
+    """
+    This class implements a callable object that executes an abstracted endpoint
+    function PATCH /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its
+    constructor accepts these arguments:
+
+    :outer_class:     the Model subclass for the outer table
+    :outer_id_column: the name of the primary key column in the outer table
+    :inner_class:     the Model subclass for the inner table
+    :inner_id_column: the name of the primary key column in the inner table
+
+    Its __call__ method accepts these arguments:
+
+    :outer_id:        a value for the primary key column in the outer table
+    :inner_id:        a value for the primary key column in the inner table; this row
+                      will be deleted
+    :request_json:    a reference to the request.json object available within the
+                      endpoint function
+    """
+    __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column', 'argd'
 
     def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
         self.outer_class = outer_class
         self.outer_id_column = outer_id_column
         self.inner_class = inner_class
         self.inner_id_column = inner_id_column
-        self.param_tab_factory = create_or_update_param_tab_factory(inner_class, outer_id_column)
 
     def __call__(self, outer_id, inner_id, request_json):
         try:
+            argd_factory = create_or_update_model_obj_argd_factory(self.inner_class, self.outer_id_column)
             # Verifying that a row in the outer table with a primary key equal
             # to outer_id exists, else it's a 404.
             self.outer_class.query.get_or_404(outer_id)
@@ -367,7 +468,7 @@ class update_one_classes_other_class_obj_by_id_factory(endpoint_factory):
             # Using update_model_obj() to fetch the inner_class object and update it
             # against request.json.
             inner_class_obj = update_model_obj(inner_id, self.inner_class,
-                                               self.param_tab_factory.generate_param_tab(request_json, outer_id))
+                                               argd_factory.generate_argd(request_json, outer_id))
             db.session.add(inner_class_obj)
             db.session.commit()
             return jsonify(inner_class_obj.serialize())
