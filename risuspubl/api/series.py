@@ -3,8 +3,8 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import create_table_row, delete_table_row_by_id, display_table_row_by_id, \
-        display_table_row_by_id_w_foreign_key, display_table_rows, display_table_rows_w_foreign_id, \
-        update_table_row_by_id, update_table_row_by_id_w_foreign_key
+        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_and_foreign_id, \
+        update_table_row_by_id, update_table_row_by_id_and_foreign_key
 from risuspubl.dbmodels import Book, Manuscript, Series
 
 
@@ -21,15 +21,15 @@ blueprint = Blueprint('series', __name__, url_prefix='/series')
 # refactoring.
 create_series = create_table_row(Series)
 delete_series_by_id = delete_table_row_by_id(Series, 'series_id')
-display_book_by_book_id_and_series_id = display_table_row_by_id_w_foreign_key(Series, 'series_id', Book, 'book_id')
-display_books_by_series_id = display_table_rows_w_foreign_id(Series, 'series_id', Book)
-display_manuscript_by_manuscript_id_and_series_id = display_table_row_by_id_w_foreign_key(Series, 'series_id',
+display_book_by_book_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, 'series_id', Book, 'book_id')
+display_books_by_series_id = display_table_rows_and_foreign_id(Series, 'series_id', Book)
+display_manuscript_by_manuscript_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, 'series_id',
                                                                                           Manuscript, 'manuscript_id')
-display_manuscripts_by_series_id = display_table_rows_w_foreign_id(Series, 'series_id', Manuscript)
+display_manuscripts_by_series_id = display_table_rows_and_foreign_id(Series, 'series_id', Manuscript)
 display_series_by_id = display_table_row_by_id(Series)
 display_series = display_table_rows(Series)
-update_book_by_book_id_and_series_id = update_table_row_by_id_w_foreign_key(Series, 'series_id', Book, 'book_id')
-update_manuscript_by_manuscript_id_and_series_idr = update_table_row_by_id_w_foreign_key(Series, 'series_id',
+update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key(Series, 'series_id', Book, 'book_id')
+update_manuscript_by_manuscript_id_and_series_idr = update_table_row_by_id_and_foreign_key(Series, 'series_id',
                                                                                          Manuscript, 'manuscript_id')
 update_series_by_id = update_table_row_by_id(Series, 'series_id')
 

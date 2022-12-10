@@ -5,9 +5,9 @@ from flask import Blueprint, Response, abort, jsonify, request
 import werkzeug.exceptions
 
 from risuspubl.api.utility import create_model_obj, create_or_update_argd_gen, create_table_row, \
-        delete_table_row_by_id, delete_table_row_by_id_w_foreign_key, display_table_row_by_id, \
-        display_table_row_by_id_w_foreign_key, display_table_rows, display_table_rows_w_foreign_id, \
-        update_table_row_by_id, update_table_row_by_id_w_foreign_key
+        delete_table_row_by_id, delete_table_row_by_id_and_foreign_key, display_table_row_by_id, \
+        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_and_foreign_id, \
+        update_table_row_by_id, update_table_row_by_id_and_foreign_key
 from risuspubl.dbmodels import Client, Salesperson, db
 
 
@@ -23,15 +23,15 @@ blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 # these callables. The large majority of code reuse was eliminated by this
 # refactoring.
 create_salesperson = create_table_row(Salesperson)
-delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
                                                                                      Client, 'client_id')
 delete_salesperson_by_id = delete_table_row_by_id(Salesperson, 'salesperson_id')
-display_client_by_client_id_and_salesperson_id = display_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
                                                                                        Client, 'client_id')
-display_clients_by_salesperson_id = display_table_rows_w_foreign_id(Salesperson, 'salesperson_id', Client)
+display_clients_by_salesperson_id = display_table_rows_and_foreign_id(Salesperson, 'salesperson_id', Client)
 display_salespeople = display_table_rows(Salesperson)
 display_salesperson_by_id = display_table_row_by_id(Salesperson)
-update_client_by_client_id_and_salesperson_id = update_table_row_by_id_w_foreign_key(Salesperson, 'salesperson_id',
+update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
                                                                                      Client, 'client_id')
 update_salesperson_by_id = update_table_row_by_id(Salesperson, 'salesperson_id')
 
@@ -100,9 +100,9 @@ def create_salesperson():
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
 def create_salesperson_client(salesperson_id: int):
     """
-    Implements a POST /salespeople/<id>/<id>/clients endpoint. A new row in the
-    clients table is constituted from the JSON parameters and that salesperson_id
-    and saved to that table.
+    Implements a POST /salespeople/<id>/clients endpoint. A new row in
+    the clients table is constituted from the JSON parameters and that
+    salesperson_id and saved to that table.
 
     :salesperson_id: The salesperson_id to save to the new row in the clients
                      table.

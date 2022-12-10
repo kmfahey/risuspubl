@@ -397,7 +397,7 @@ class delete_table_row_by_id(endpoint_action):
             return self.handle_exception(exception)
 
 
-class delete_table_row_by_id_w_foreign_key(endpoint_action):
+class delete_table_row_by_id_and_foreign_key(endpoint_action):
     """
     This class implements a callable object that executes an abstracted endpoint
     function DELETE /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its
@@ -445,7 +445,7 @@ class delete_table_row_by_id_w_foreign_key(endpoint_action):
             return self.handle_exception(exception)
 
 
-class display_table_rows_w_foreign_id(endpoint_action):
+class display_table_rows_and_foreign_id(endpoint_action):
     """
     This class implements a callable object that executes an abstracted endpoint
     function GET /{outer_table}/{outer_id}/{inner_table}. Its constructor
@@ -527,7 +527,7 @@ class display_table_row_by_id(endpoint_action):
             return self.handle_exception(exception)
 
 
-class display_table_row_by_id_w_foreign_key(endpoint_action):
+class display_table_row_by_id_and_foreign_key(endpoint_action):
     """
     This class implements a callable object that executes an abstracted endpoint
     function GET /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its
@@ -605,7 +605,7 @@ class update_table_row_by_id(endpoint_action):
             return self.handle_exception(exception)
 
 
-class update_table_row_by_id_w_foreign_key(endpoint_action):
+class update_table_row_by_id_and_foreign_key(endpoint_action):
     """
     This class implements a callable object that executes an abstracted endpoint
     function PATCH /{outer_table}/{outer_id}/{inner_table}/{inner_id}. Its

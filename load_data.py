@@ -11,9 +11,8 @@ from datetime import date, timedelta
 
 from flask_sqlalchemy import SQLAlchemy
 
-from risuspubl.flaskapp import create_app
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, db
+        SalesRecord, Salesperson, Series, create_app, db
 
 
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
