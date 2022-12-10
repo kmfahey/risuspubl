@@ -120,11 +120,7 @@ def create_salesperson_client(salesperson_id: int):
         db.session.commit()
         return jsonify(client_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])

@@ -44,9 +44,7 @@ def show_sales_records_by_year(year: int):
         retval.sort(key=lambda dictval: (dictval['month'], dictval['book_id']))
         return jsonify(retval)
     except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
@@ -70,9 +68,7 @@ def show_sales_records_by_year_and_month(year: int, month: int):
             retval.append(sales_record_obj.serialize())
         return jsonify(retval)
     except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 # Adding, updating and deleting sales records is deliberately made impossible

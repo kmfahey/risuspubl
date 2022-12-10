@@ -5,8 +5,9 @@ import os
 
 from flask import abort
 
-from risuspubl import create_app
-from risuspubl.dbmodels import *
+from risuspubl.flaskapp import create_app
+from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
+        SalesRecord, Salesperson, Series
 
 
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
@@ -16,8 +17,8 @@ table_to_id_column = {'authors': 'author_id', 'books': 'book_id', 'clients': 'cl
                       'manuscripts': 'manuscript_id', 'sales_records': 'sales_record_id',
                       'salespeople': 'salesperson_id', 'series': 'series_id'}
 
-table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor, 
-                        'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson, 
+table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor,
+                        'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson,
                         'series': Series}
 
 model_objs = collections.defaultdict(list)

@@ -1,25 +1,36 @@
 #!/usr/bin/python3
 
+import math
 import collections
 import csv
-import datetime
 import os
 import os.path
 import random
 
-from risuspubl import create_app
-from risuspubl.dbmodels import *
+from datetime import date, timedelta
+
+from flask_sqlalchemy import SQLAlchemy
+
+from risuspubl.flaskapp import create_app
+from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
+        SalesRecord, Salesperson, Series, db
 
 
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
                'salespeople', 'sales_records', 'series']
 
+# Associates table names with the primary key column for each. Used by
+# commit_model_objs_get_ids() to know where to find a primary key attribute on a
+# db.Model subclass object.
 table_to_id_column = {'authors': 'author_id', 'books': 'book_id', 'clients': 'client_id', 'editors': 'editor_id',
                       'manuscripts': 'manuscript_id', 'sales_records': 'sales_record_id',
                       'salespeople': 'salesperson_id', 'series': 'series_id'}
 
-table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor, 
-                        'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson, 
+# Associates table names with the db.Model subclasses that implement them. Used
+# when calling commit_model_objs_get_ids() to know what db.Model subclass object
+# to pass in as a 2nd argument.
+table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor,
+                        'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson,
                         'series': Series}
 
 model_objs = collections.defaultdict(list)
@@ -33,170 +44,197 @@ def main():
     app = create_app()
     app.app_context().push()
 
-    db = SQLAlchemy(app)
+    delete_from_tables(db)
 
-    truncate_tables(db)
-
+    # Loads the tsv data in data/authors.tsv and instantiate one Author object
+    # per line, returning them as a list. They're stored to the model_objs dict.
     model_objs['authors'].extend(read_file_get_model_objs('authors', table_to_model_class['authors']))
+
+    # Takes every Author object from the previous step and stores them in the
+    # database, returning a list of their newly assigned author_ids.
     model_ids['authors'].extend(commit_model_objs_get_ids('authors', model_objs['authors'], db))
 
+    # Same again, with data/editors.tsv and the Editor class.
     model_objs['editors'].extend(read_file_get_model_objs('editors', table_to_model_class['editors']))
     model_ids['editors'].extend(commit_model_objs_get_ids('editors', model_objs['editors'], db))
 
+    # Same again, with data/series.tsv and the Series class.
     model_objs['series'].extend(read_file_get_model_objs('series', table_to_model_class['series']))
     model_ids['series'].extend(commit_model_objs_get_ids('series', model_objs['series'], db))
 
+    # Converts data/books.tsv to an array of Book objects.
     model_objs['books'].extend(read_file_get_model_objs('books', table_to_model_class['books']))
     for book_obj in model_objs['books']:
-        editor_obj = random.choice(model_objs['editors'])
-        book_obj.editor_id = editor_obj.editor_id
+        # Selects a random editor id and assigns it to the Book object. That
+        # column is required for a Book object.
+        book_obj.editor_id = random.choice(model_ids['editors'])
         db.session.add(book_obj)
+    # Saves the Book objects to the database.
     db.session.commit()
 
+    # Iterates across the list of existing Series objects, picking Book objects
+    # at random and setting the optional series_id column to that Series
+    # object's series_id. Then saves the Book objects again.
     used_book_objs_ids = set()
     for series_obj in model_objs['series']:
         series_obj.volumes = random.randint(2, 5)
         for i in range(0, series_obj.volumes):
             book_obj = random.choice(model_objs['books'])
+            # Can't reuse a Book object or use one that already has a series_id,
+            # pick again.
             while book_obj.book_id in used_book_objs_ids or book_obj.series_id is not None:
                 book_obj = random.choice(model_objs['books'])
+            # Save used Book object ids to a set to track the objects that have
+            # already been used.
             used_book_objs_ids.add(book_obj.book_id)
-            book_obj.series_id = series_obj.series_id
+            book_obj.series_id = random.choice(model_ids['series'])
             db.session.add(book_obj)
         db.session.commit()
 
+    # Creates a row in authors_books for every book, picking a random author_id (if
+    # random() < 0.85) or a pair of random author_ids (otherwise).
     for book_obj in model_objs['books']:
-        author_objs = ((random.choice(model_objs['authors']),) if random.random() < 0.85 else
-                           (random.choice(model_objs['authors']), random.choice(model_objs['authors'])))
-        while len(author_objs) == 2 and author_objs[0].author_id == author_objs[1].author_id:
-            author_objs = (random.choice(model_objs['authors']), random.choice(model_objs['authors']))
-        for author_obj in author_objs:
-            ab_insert = Authors_Books.insert().values(author_id=author_obj.author_id, book_id=book_obj.book_id)
+        author_ids = ((random.choice(model_ids['authors']),) if random.random() < 0.85 else
+                           (random.choice(model_ids['authors']), random.choice(model_ids['authors'])))
+        # If two author_ids were picked but they're the same value, repeat until
+        # two different values are picked.
+        while len(author_ids) == 2 and author_ids[0] == author_ids[1]:
+            author_ids = (random.choice(model_ids['authors']), random.choice(model_ids['authors']))
+        # Create each new row in Authors_Books.
+        for author_id in author_ids:
+            ab_insert = Authors_Books.insert().values(author_id=author_id, book_id=book_obj.book_id)
             db.session.execute(ab_insert)
     db.session.commit()
 
+    # Converts data/manuscripts.tsv to an array of Manuscript objects.
     model_objs['manuscripts'].extend(read_file_get_model_objs('manuscripts', table_to_model_class['manuscripts']))
 
+    # Assigns a random editor_id to each Manuscript object, and (if random() <
+    # ~0.166666) assigns a random series_id as well.
     for manuscript_obj in model_objs['manuscripts']:
+        # If random() < 0.166666, assign a manuscript a series_id.
         if random.random() < 1/6:
-            series_obj = random.choice(model_objs['series'])
-            manuscript_obj.series_id = series_obj.series_id
-        editor_obj = random.choice(model_objs['editors'])
-        manuscript_obj.editor_id = editor_obj.editor_id
+            manuscript_obj.series_id = random.choice(model_ids['series'])
+        manuscript_obj.editor_id = random.choice(model_ids['editors'])
         db.session.add(manuscript_obj)
     db.session.commit()
 
+    # Creates a row in authors_manuscripts for every manuscript, picking a random author_id (if
+    # random() < 0.85) or a pair of random author_ids (otherwise).
     for manuscript_obj in model_objs['manuscripts']:
-        author_objs = ((random.choice(model_objs['authors']),) if random.random() < 0.85 else
-                           (random.choice(model_objs['authors']), random.choice(model_objs['authors'])))
-        while len(author_objs) == 2 and author_objs[0].author_id == author_objs[1].author_id:
-            author_objs = (random.choice(model_objs['authors']), random.choice(model_objs['authors']))
-        for author_obj in author_objs:
-            am_insert = Authors_Manuscripts.insert().values(author_id=author_obj.author_id, manuscript_id=manuscript_obj.manuscript_id)
+        author_ids = ((random.choice(model_ids['authors']),) if random.random() < 0.85 else
+                           (random.choice(model_ids['authors']), random.choice(model_ids['authors'])))
+        # If two author_ids were picked but they're the same value, repeat until
+        # two different values are picked.
+        while len(author_ids) == 2 and author_ids[0] == author_ids[1]:
+            author_ids = (random.choice(model_ids['authors']), random.choice(model_ids['authors']))
+        # Create each new row in Authors_Manuscripts.
+        for author_id in author_ids:
+            am_insert = Authors_Manuscripts.insert().values(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
             db.session.execute(am_insert)
     db.session.commit()
 
+    # Converts data/salespeople.tsv to an array of Salesperson objects, saves them, and records their ids.
     model_objs['salespeople'].extend(read_file_get_model_objs('salespeople', table_to_model_class['salespeople']))
     model_ids['salespeople'].extend(commit_model_objs_get_ids('salespeople', model_objs['salespeople'], db))
 
     model_objs['clients'].extend(read_file_get_model_objs('clients', table_to_model_class['clients']))
 
+    # Assigns a random salesperson_id to each Client object, then saves them.
     for client_obj in model_objs['clients']:
-        salesperson_obj = random.choice(model_objs['salespeople'])
-        client_obj.salesperson_id = salesperson_obj.salesperson_id
+        client_obj.salesperson_id = random.choice(model_ids['salespeople'])
         db.session.add(client_obj)
     db.session.commit()
 
+    # Generates a set of rows in sales_records for every book.
     for book_obj in model_objs['books']:
-        start_date = datetime.date.fromisoformat(str(book_obj.publication_date))
-        if book_obj.is_in_print:
-            end_date = datetime.date.today()
-        else:
-            end_date = datetime.date.fromisoformat(generate_random_date(1)[0])
-        profit_margin = random.uniform(0.075, 0.125)
-        for year, month in generate_year_month_span(start_date.year, start_date.month, end_date.year, end_date.month):
-            copies_sold = round(random.gauss(1050/12, 250/12))
+        start_date = date.fromisoformat(str(book_obj.publication_date))
+        # If the book has is_in_print == True, generates records up to the
+        # current month. Otherwise, picks a random "went out of print" date and
+        # generates up to that point.
+        end_date = date.today() if book_obj.is_in_print else generate_random_date(start_date)
+        sales_records_objs = generate_sales_record_objs(book_obj.book_id, start_date, end_date)
+        commit_model_objs_get_ids('sales_records', sales_records_objs, db)
+
+# Generates sales records for a given book_id, between the given start date and
+# end date. A row is generated for each valid year-month pair between the two
+# dates, inclusive.
+def generate_sales_record_objs(book_id, start_date, end_date):
+    sales_record_objs = list()
+    profit_margin = random.uniform(0.075, 0.125)
+    for year in range(start_date.year, end_date.year + 1):
+        # Starts at the month of the start date if the year is the starting
+        # year, else at 1. Ends at the month of the end date if the year is the
+        # ending year, else at 13.
+        for month in range(start_date.month if year == start_date.year else 1,
+                           end_date.month + 1 if year == end_date.year else 13):
+            # Picks a random number sold from a normal distribution.
+            copies_sold = round(random.gauss(87.5, 20))
             gross_profit = copies_sold_to_gross_profit(copies_sold)
             net_profit = round(gross_profit*profit_margin, 2)
-            sales_record_args = dict(book_id=book_obj.book_id, year=year, month=month, copies_sold=copies_sold,
+            # The arguments for a SalesRecord object.
+            sales_record_args = dict(book_id=book_id, year=year, month=month, copies_sold=copies_sold,
                                      gross_profit=gross_profit, net_profit=net_profit)
             sales_record_obj = SalesRecord(**sales_record_args)
-            model_objs['sales_records'].append(sales_record_obj)
-            db.session.add(sales_record_obj)
-        db.session.commit()
+            sales_record_objs.append(sales_record_obj)
+    return sales_record_objs
 
 
-def generate_year_month_span(startyear, startmonth, endyear, endmonth):
-    year_month_pairs = list()
-    for this_year in range(startyear, endyear+1):
-        this_startmonth = startmonth if this_year == startyear else 1
-        this_endmonth = endmonth if this_year == endyear else 12
-        for this_month in range(this_startmonth, this_endmonth+1):
-            year_month_pairs.append((this_year, this_month))
-    return year_month_pairs
-
-
+# Generates a random price paid for each copy sold and sums them.
 def copies_sold_to_gross_profit(copies_sold):
     gross_profit = 0
-    for i in range(0, copies_sold):
-        gross_profit += round(random.gauss((20+5)/2, 5), 2)
-    gross_profit = round(gross_profit, 2)
-    return gross_profit
+    i = 0
+    while i < copies_sold:
+        single_sale_profit = round(random.gauss(12.5, 5), 2)
+        if single_sale_profit <= 0:
+            continue
+        gross_profit += single_sale_profit
+        i += 1
+    return round(gross_profit, 2)
 
 
-def generate_random_date(number):
-    month_length = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    is_leap_year = (lambda year: False if year % 4 != 0 else
-                                 True if year % 100 != 0 else
-                                 False if year % 400 != 0 else True)
-    retval = list()
-    for i in range(0, number):
-        month = random.randint(1, 18)
-        year = random.randint(1990, 2022)
-        month = month % 12
-        month = 12 if month == 0 else month
-        if month == 2 and is_leap_year(year):
-            day = random.randint(1, 29)
-        elif year == 2022 and month == 12:
-            today = datetime.date.today()
-            day = random.randint(1, today.day)
-        else:
-            day = random.randint(1, month_length[month-1])
-        retval.append('%04i-%02i-%02i' % (year, month, day))
-    return retval
+# Calculates the days elapsed between the date object argument and today,
+# generates a random value between 1 and that value, then adds it to the date
+# arguments using datetime.timedelta and returns the new date object.
+def generate_random_date(lowerb_date):
+    upperb_date = date.today()
+    days_diff = (upperb_date - lowerb_date).days
+    rand_day = random.randint(1, days_diff)
+    return lowerb_date + timedelta(days=rand_day)
 
 
+# Reads a tsv file of testing data for the given table, forms an argd from each
+# line, instances an object from the given class from each argd, and returns a
+# list of the arguments.
 def read_file_get_model_objs(table_name, model_class):
-    csv_args = {'quotechar': '"', 'delimiter': '\t', 'skipinitialspace': True, 'lineterminator': '\n',
-                'quoting': csv.QUOTE_MINIMAL, 'doublequote': True}
+    model_objs = list()
     file_path = os.path.join(data_dir, table_name + '.tsv')
     if not os.path.exists(file_path):
         raise FileNotFoundError(f'unable to locate file {file_path}')
-    file_obj = open(file_path, 'r')
-    model_objs = list()
-    tsv_reader = csv.reader(file_obj, **csv_args)
+    tsv_reader = csv.reader(open(file_path, 'r'), quotechar='"', delimiter='\t', skipinitialspace=True,
+                                                  lineterminator='\n', quoting=csv.QUOTE_MINIMAL, doublequote=True)
     columns = next(tsv_reader)
     for row in tsv_reader:
         model_args = dict(zip(columns, row))
-        if table_name == 'books':
+        if 'is_in_print' in model_args:
             model_args['is_in_print'] = True if model_args['is_in_print'] == 'True' else False
-        model_obj = model_class(**model_args)
-        model_objs.append(model_obj)
+        model_objs.append(model_class(**model_args))
     return model_objs
 
 
+# Commits the given db.Model subclass objects to the db object, collects the
+# values for their primary key, and returns the ids as a list.
 def commit_model_objs_get_ids(table_name, model_objs, db):
     ids = list()
     for model_obj in model_objs:
         db.session.add(model_obj)
     db.session.commit()
     id_column = table_to_id_column[table_name]
-    for model_obj in model_objs:
-        ids.append(getattr(model_obj, id_column))
-    return ids
+    return [getattr(model_obj, id_column) for model_obj in model_objs]
 
 
-def truncate_tables(db):
+# Iterates down the table_names list, deleting all rows from each table.
+def delete_from_tables(db):
     #Delete all rows from database tables
     for table_name in table_names:
         db.session.execute(f'DELETE FROM {table_name};')

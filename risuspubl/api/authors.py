@@ -7,7 +7,8 @@ from flask import Blueprint, Response, abort, jsonify, request
 import werkzeug.exceptions
 
 from risuspubl.api.utility import create_table_row, create_model_obj, create_or_update_argd_gen, \
-        display_table_row_by_id, display_table_rows, update_model_obj, update_table_row_by_id
+        display_table_row_by_id, display_table_rows, endpoint_action, update_model_obj, \
+        update_table_row_by_id
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Manuscript, db
 
 
@@ -76,11 +77,7 @@ def show_author_books(author_id: int):
         retval = [book_obj.serialize() for book_obj in author_obj.books]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['GET'])
@@ -106,11 +103,7 @@ def show_author_book_by_id(author_id: int, book_id: int):
             return jsonify(book_obj.serialize())
         return Response(f'author with author_id {author_id} does not have a book with book_id {book_id}', status=400)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/manuscripts', methods=['GET'])
@@ -130,11 +123,7 @@ def show_author_manuscripts(author_id: int):
         retval = [manuscript_obj.serialize() for manuscript_obj in author_obj.manuscripts]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
@@ -161,11 +150,7 @@ def show_author_manuscript_by_id(author_id: int, manuscript_id: int):
             return jsonify(manuscript_obj.serialize())
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 # To be frank this endpoint doesn't have much of a reason to exist, save that
@@ -191,11 +176,7 @@ def show_authors_by_ids(author1_id: int, author2_id: int):
         retval = [author1_obj.serialize(), author2_obj.serialize()]
         return jsonify(retval)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 # This private utility function is used by show_authors_books() and
@@ -242,9 +223,7 @@ def show_authors_books(author1_id: int, author2_id: int):
         retval = [book_obj.serialize() for book_obj in shared_books]
         return jsonify(retval)
     except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['GET'])
@@ -275,11 +254,7 @@ def show_authors_book_by_id(author1_id: int, author2_id: int, book_id: int):
         # If the book_id wasn't found, that's a 404.
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 # This private utility function is used by show_authors_manuscripts()
@@ -331,9 +306,7 @@ def show_authors_manuscripts(author1_id: int, author2_id: int):
         retval = [manuscript_obj.serialize() for manuscript_obj in shared_manuscripts]
         return jsonify(retval)
     except Exception as exception:
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
@@ -366,11 +339,7 @@ def show_authors_manuscript_by_id(author1_id: int, author2_id: int, manuscript_i
         # a 404.
         return abort(404)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('', methods=['POST'])
@@ -412,11 +381,7 @@ def create_author_book(author_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['POST'])
@@ -452,11 +417,7 @@ def create_authors_book(author1_id: int, author2_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/manuscripts', methods=['POST'])
@@ -487,11 +448,7 @@ def create_author_manuscript(author_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['POST'])
@@ -529,11 +486,7 @@ def create_authors_manuscript(author1_id: int, author2_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
@@ -575,11 +528,7 @@ def update_author_book(author_id: int, book_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
@@ -610,11 +559,7 @@ def update_authors_book(author1_id: int, author2_id: int, book_id: int):
         db.session.commit()
         return jsonify(book_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
@@ -645,11 +590,7 @@ def update_author_manuscript(author_id: int, manuscript_id: int):
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
@@ -685,11 +626,7 @@ def update_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>', methods=['DELETE'])
@@ -713,11 +650,7 @@ def delete_author_by_id(author_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['DELETE'])
@@ -750,11 +683,7 @@ def delete_author_book(author_id: int, book_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['DELETE'])
@@ -791,11 +720,7 @@ def delete_authors_book(author1_id: int, author2_id: int, book_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
@@ -828,11 +753,7 @@ def delete_author_manuscript(author_id: int, manuscript_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
 
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
@@ -870,8 +791,4 @@ def delete_authors_manuscript(author1_id: int, author2_id: int, manuscript_id: i
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        if isinstance(exception, werkzeug.exceptions.NotFound):
-            raise exception from None
-        status = 400 if isinstance(exception, ValueError) else 500
-        return (Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
-                if len(exception.args) else abort(status))
+        return endpoint_action.handle_exception(exception)
