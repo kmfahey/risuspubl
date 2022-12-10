@@ -1,39 +1,30 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/1-SQL/week3/venv/bin/python3
 
-from flask import Blueprint, Response, abort, jsonify, request
-
-import werkzeug.exceptions
+from flask import Blueprint, jsonify, request
 
 from risuspubl.api.utility import create_model_obj, create_or_update_argd_gen, create_table_row, \
         delete_table_row_by_id, delete_table_row_by_id_and_foreign_key, display_table_row_by_id, \
-        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_and_foreign_id, \
-        update_table_row_by_id, update_table_row_by_id_and_foreign_key
+        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_by_foreign_id, \
+        endpoint_action, update_table_row_by_id, update_table_row_by_id_and_foreign_key
 from risuspubl.dbmodels import Client, Salesperson, db
 
 
 blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 
-# These are callable objects being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in the endpoint functions
+# this package implements.
 create_salesperson = create_table_row(Salesperson)
-delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
-                                                                                     Client, 'client_id')
-delete_salesperson_by_id = delete_table_row_by_id(Salesperson, 'salesperson_id')
-display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
-                                                                                       Client, 'client_id')
-display_clients_by_salesperson_id = display_table_rows_and_foreign_id(Salesperson, 'salesperson_id', Client)
+delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key(Salesperson, Client)
+delete_salesperson_by_id = delete_table_row_by_id(Salesperson)
+display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key(Salesperson, Client)
+display_clients_by_salesperson_id = display_table_rows_by_foreign_id(Salesperson, Client)
 display_salespeople = display_table_rows(Salesperson)
 display_salesperson_by_id = display_table_row_by_id(Salesperson)
-update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key(Salesperson, 'salesperson_id',
-                                                                                     Client, 'client_id')
-update_salesperson_by_id = update_table_row_by_id(Salesperson, 'salesperson_id')
+update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key(Salesperson, Client)
+update_salesperson_by_id = update_table_row_by_id(Salesperson)
 
 
 @blueprint.route('', methods=['GET'])

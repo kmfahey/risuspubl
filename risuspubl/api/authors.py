@@ -4,8 +4,6 @@ import itertools
 
 from flask import Blueprint, Response, abort, jsonify, request
 
-import werkzeug.exceptions
-
 from risuspubl.api.utility import create_table_row, create_model_obj, create_or_update_argd_gen, \
         display_table_row_by_id, display_table_rows, endpoint_action, update_model_obj, \
         update_table_row_by_id
@@ -15,26 +13,21 @@ from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book,
 blueprint = Blueprint('authors', __name__, url_prefix='/authors')
 
 
-# These are callable objects-- basically functions with state-- being instanced
-# from classes imported from risuspubl.api.utility. See that module for the
-# classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in this package's endpoint
+# functions.
 create_author = create_table_row(Author)
 display_author_by_id = display_table_row_by_id(Author)
 display_authors = display_table_rows(Author)
-update_author_by_id = update_table_row_by_id(Author, 'author_id')
+update_author_by_id = update_table_row_by_id(Author)
 
-# risuspubl.api.authors is the one module where the majority of endpoint
-# functions are not handled using .api.utility classes. Because of the
-# Author model class's unique relationship with the Authors_Manuscripts and
-# Authors_Books table classes, and this endpoint's support for dual author_ids,
-# most of its endpoint functions have unique implementations that don't
-# generalize.
+# Unlike the other risuspubl.api.* modules, in risuspubl.api.authors the
+# majority of endpoint functions are not handled using endpoint_action
+# subclasses. This is because of the Author model class's unique relationship
+# with the Authors_Manuscripts and Authors_Books table classes, and this
+# endpoint's support for dual author_ids. Most of its endpoint functions have
+# unique implementations that don't generalize.
 
 
 @blueprint.route('', methods=['GET'])

@@ -8,10 +8,9 @@ import risuspubl.api.books
 import risuspubl.api.clients
 import risuspubl.api.editors
 import risuspubl.api.manuscripts
-import risuspubl.api.salespeople
 import risuspubl.api.sales_records
+import risuspubl.api.salespeople
 import risuspubl.api.series
-
 from risuspubl.dbmodels import db
 
 

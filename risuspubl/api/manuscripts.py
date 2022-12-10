@@ -10,18 +10,14 @@ from risuspubl.dbmodels import Manuscript
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 
-# These are callable objects being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
-delete_manuscript_by_id = delete_table_row_by_id(Manuscript, 'manuscript_id')
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in the endpoint functions
+# this package implements.
+delete_manuscript_by_id = delete_table_row_by_id(Manuscript)
 display_manuscript_by_id = display_table_row_by_id(Manuscript)
 display_manuscripts = display_table_rows(Manuscript)
-update_manuscript_by_Id = update_table_row_by_id(Manuscript, 'manuscript_id')
+update_manuscript_by_Id = update_table_row_by_id(Manuscript)
 
 
 @blueprint.route('', methods=['GET'])

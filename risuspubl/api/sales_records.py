@@ -1,16 +1,17 @@
 #!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
 
-from flask import Blueprint, Response, abort, jsonify
+from flask import Blueprint, jsonify
 
-from risuspubl.api.utility import display_table_row_by_id
+from risuspubl.api.utility import display_table_row_by_id, endpoint_action
 from risuspubl.dbmodels import SalesRecord
 
 
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 
-# This is a callable object being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
+# This is a callable object-- a function with state-- instanced from a
+# risuspubl.api.utility.endpoint_action subclass. See that module for the
+# class.
 display_sales_record_by_id = display_table_row_by_id(SalesRecord)
 
 

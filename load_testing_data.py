@@ -1,29 +1,24 @@
 #!/usr/bin/python3
 
-import math
 import collections
 import csv
 import os
 import os.path
 import random
-
 from datetime import date, timedelta
 
-from flask_sqlalchemy import SQLAlchemy
-
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, create_app, db
+        SalesRecord, Salesperson, Series, db
+from risuspubl.flaskapp import create_app
 
 
+# This list is used by delete_from_tables(). These names are in a particular
+# order such that each table which has a foriegn key dependency on another table
+# is *later in the list* than that table. That way, this list can be iterated
+# across, executing DELETE FROM {table} for each one, without getting fouled up
+# on a foreign key dependency error.
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
                'salespeople', 'sales_records', 'series']
-
-# Associates table names with the primary key column for each. Used by
-# commit_model_objs_get_ids() to know where to find a primary key attribute on a
-# db.Model subclass object.
-table_to_id_column = {'authors': 'author_id', 'books': 'book_id', 'clients': 'client_id', 'editors': 'editor_id',
-                      'manuscripts': 'manuscript_id', 'sales_records': 'sales_record_id',
-                      'salespeople': 'salesperson_id', 'series': 'series_id'}
 
 # Associates table names with the db.Model subclasses that implement them. Used
 # when calling commit_model_objs_get_ids() to know what db.Model subclass object
@@ -47,22 +42,22 @@ def main():
 
     # Loads the tsv data in data/authors.tsv and instantiate one Author object
     # per line, returning them as a list. They're stored to the model_objs dict.
-    model_objs['authors'].extend(read_file_get_model_objs('authors', table_to_model_class['authors']))
+    model_objs['authors'].extend(read_file_get_model_objs('authors'))
 
     # Takes every Author object from the previous step and stores them in the
     # database, returning a list of their newly assigned author_ids.
-    model_ids['authors'].extend(commit_model_objs_get_ids('authors', model_objs['authors'], db))
+    model_ids['authors'].extend(commit_model_objs_get_ids('authors', model_objs['authors']))
 
     # Same again, with data/editors.tsv and the Editor class.
-    model_objs['editors'].extend(read_file_get_model_objs('editors', table_to_model_class['editors']))
-    model_ids['editors'].extend(commit_model_objs_get_ids('editors', model_objs['editors'], db))
+    model_objs['editors'].extend(read_file_get_model_objs('editors'))
+    model_ids['editors'].extend(commit_model_objs_get_ids('editors', model_objs['editors']))
 
     # Same again, with data/series.tsv and the Series class.
-    model_objs['series'].extend(read_file_get_model_objs('series', table_to_model_class['series']))
-    model_ids['series'].extend(commit_model_objs_get_ids('series', model_objs['series'], db))
+    model_objs['series'].extend(read_file_get_model_objs('series'))
+    model_ids['series'].extend(commit_model_objs_get_ids('series', model_objs['series']))
 
     # Converts data/books.tsv to an array of Book objects.
-    model_objs['books'].extend(read_file_get_model_objs('books', table_to_model_class['books']))
+    model_objs['books'].extend(read_file_get_model_objs('books'))
     for book_obj in model_objs['books']:
         # Selects a random editor id and assigns it to the Book object. That
         # column is required for a Book object.
@@ -106,7 +101,7 @@ def main():
     db.session.commit()
 
     # Converts data/manuscripts.tsv to an array of Manuscript objects.
-    model_objs['manuscripts'].extend(read_file_get_model_objs('manuscripts', table_to_model_class['manuscripts']))
+    model_objs['manuscripts'].extend(read_file_get_model_objs('manuscripts'))
 
     # Assigns a random editor_id to each Manuscript object, and (if random() <
     # ~0.166666) assigns a random series_id as well.
@@ -134,10 +129,10 @@ def main():
     db.session.commit()
 
     # Converts data/salespeople.tsv to an array of Salesperson objects, saves them, and records their ids.
-    model_objs['salespeople'].extend(read_file_get_model_objs('salespeople', table_to_model_class['salespeople']))
-    model_ids['salespeople'].extend(commit_model_objs_get_ids('salespeople', model_objs['salespeople'], db))
+    model_objs['salespeople'].extend(read_file_get_model_objs('salespeople'))
+    model_ids['salespeople'].extend(commit_model_objs_get_ids('salespeople', model_objs['salespeople']))
 
-    model_objs['clients'].extend(read_file_get_model_objs('clients', table_to_model_class['clients']))
+    model_objs['clients'].extend(read_file_get_model_objs('clients'))
 
     # Assigns a random salesperson_id to each Client object, then saves them.
     for client_obj in model_objs['clients']:
@@ -153,7 +148,55 @@ def main():
         # generates up to that point.
         end_date = date.today() if book_obj.is_in_print else generate_random_date(start_date)
         sales_records_objs = generate_sales_record_objs(book_obj.book_id, start_date, end_date)
-        commit_model_objs_get_ids('sales_records', sales_records_objs, db)
+        commit_model_objs_get_ids('sales_records', sales_records_objs)
+
+
+# Iterates down the table_names list, deleting all rows from each table.
+def delete_from_tables(db):
+    # Delete all rows from database tables
+    for table_name in table_names:
+        db.session.execute(f'DELETE FROM {table_name};')
+    db.session.commit()
+
+
+# Reads a tsv file of testing data for the given table, forms an argd from each
+# line, instances an object from the given class from each argd, and returns a
+# list of the arguments.
+def read_file_get_model_objs(table_name):
+    model_class = table_to_model_class[table_name]
+    file_path = os.path.join(data_dir, table_name + '.tsv')
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f'unable to locate file {file_path}')
+    tsv_reader = csv.reader(open(file_path, 'r'), quotechar='"', delimiter='\t', skipinitialspace=True,
+                                                  lineterminator='\n', quoting=csv.QUOTE_MINIMAL, doublequote=True)
+    columns = next(tsv_reader)
+    for row in tsv_reader:
+        model_args = dict(zip(columns, row))
+        if 'is_in_print' in model_args:
+            model_args['is_in_print'] = True if model_args['is_in_print'] == 'True' else False
+        model_objs.append(model_class(**model_args))
+    return model_objs
+
+
+# Commits the given db.Model subclass objects to the db object, collects the
+# values for their primary key, and returns the ids as a list.
+def commit_model_objs_get_ids(table_name, model_objs):
+    for model_obj in model_objs:
+        db.session.add(model_obj)
+    db.session.commit()
+    id_column = table_to_model_class[table_name].__primary_key__
+    return [getattr(model_obj, id_column) for model_obj in model_objs]
+
+
+# Calculates the days elapsed between the date object argument and today,
+# generates a random value between 1 and that value, then adds it to the date
+# arguments using datetime.timedelta and returns the new date object.
+def generate_random_date(lowerb_date):
+    upperb_date = date.today()
+    days_diff = (upperb_date - lowerb_date).days
+    rand_day = random.randint(1, days_diff)
+    return lowerb_date + timedelta(days=rand_day)
+
 
 # Generates sales records for a given book_id, between the given start date and
 # end date. A row is generated for each valid year-month pair between the two
@@ -190,54 +233,6 @@ def copies_sold_to_gross_profit(copies_sold):
         gross_profit += single_sale_profit
         i += 1
     return round(gross_profit, 2)
-
-
-# Calculates the days elapsed between the date object argument and today,
-# generates a random value between 1 and that value, then adds it to the date
-# arguments using datetime.timedelta and returns the new date object.
-def generate_random_date(lowerb_date):
-    upperb_date = date.today()
-    days_diff = (upperb_date - lowerb_date).days
-    rand_day = random.randint(1, days_diff)
-    return lowerb_date + timedelta(days=rand_day)
-
-
-# Reads a tsv file of testing data for the given table, forms an argd from each
-# line, instances an object from the given class from each argd, and returns a
-# list of the arguments.
-def read_file_get_model_objs(table_name, model_class):
-    model_objs = list()
-    file_path = os.path.join(data_dir, table_name + '.tsv')
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f'unable to locate file {file_path}')
-    tsv_reader = csv.reader(open(file_path, 'r'), quotechar='"', delimiter='\t', skipinitialspace=True,
-                                                  lineterminator='\n', quoting=csv.QUOTE_MINIMAL, doublequote=True)
-    columns = next(tsv_reader)
-    for row in tsv_reader:
-        model_args = dict(zip(columns, row))
-        if 'is_in_print' in model_args:
-            model_args['is_in_print'] = True if model_args['is_in_print'] == 'True' else False
-        model_objs.append(model_class(**model_args))
-    return model_objs
-
-
-# Commits the given db.Model subclass objects to the db object, collects the
-# values for their primary key, and returns the ids as a list.
-def commit_model_objs_get_ids(table_name, model_objs, db):
-    ids = list()
-    for model_obj in model_objs:
-        db.session.add(model_obj)
-    db.session.commit()
-    id_column = table_to_id_column[table_name]
-    return [getattr(model_obj, id_column) for model_obj in model_objs]
-
-
-# Iterates down the table_names list, deleting all rows from each table.
-def delete_from_tables(db):
-    #Delete all rows from database tables
-    for table_name in table_names:
-        db.session.execute(f'DELETE FROM {table_name};')
-    db.session.commit()
 
 
 if __name__ == '__main__':

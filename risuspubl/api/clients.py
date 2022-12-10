@@ -2,27 +2,23 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_table_row, delete_table_row_by_id, display_table_rows, \
-        display_table_row_by_id, update_table_row_by_id
+from risuspubl.api.utility import create_table_row, delete_table_row_by_id, display_table_row_by_id, \
+        display_table_rows, update_table_row_by_id
 from risuspubl.dbmodels import Client
 
 
 blueprint = Blueprint('clients', __name__, url_prefix='/clients')
 
 
-# These are callable objects being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in the endpoint functions
+# this package implements.
 create_client = create_table_row(Client)
-delete_client_by_id = delete_table_row_by_id(Client, 'client_id')
+delete_client_by_id = delete_table_row_by_id(Client)
 display_client_by_id = display_table_row_by_id(Client)
 display_clients = display_table_rows(Client)
-update_client_by_id = update_table_row_by_id(Client, 'client_id')
+update_client_by_id = update_table_row_by_id(Client)
 
 
 @blueprint.route('', methods=['GET'])

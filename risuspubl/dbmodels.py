@@ -1,58 +1,8 @@
 #!/usr/bin/python3
 
-import os
-import flask
-
-import risuspubl.api.authors
-import risuspubl.api.books
-import risuspubl.api.clients
-import risuspubl.api.editors
-import risuspubl.api.manuscripts
-import risuspubl.api.salespeople
-import risuspubl.api.sales_records
-import risuspubl.api.series
-
-from risuspubl.dbmodels import db
-
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
-
-
-def create_app(test_config=None):
-    app = flask.Flask(__name__, instance_relative_config=True)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        SQLALCHEMY_DATABASE_URI='postgresql://postgres@localhost:5432/risuspublishing',
-        SQLALCHEMY_TRACK_MODIFICATIONS=False,
-        SQLALCHEMY_ECHO=True
-    )
-
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
-
-    db.init_app(app)
-
-    app.register_blueprint(risuspubl.api.authors.blueprint)
-    app.register_blueprint(risuspubl.api.books.blueprint)
-    app.register_blueprint(risuspubl.api.manuscripts.blueprint)
-    app.register_blueprint(risuspubl.api.clients.blueprint)
-    app.register_blueprint(risuspubl.api.editors.blueprint)
-    app.register_blueprint(risuspubl.api.salespeople.blueprint)
-    app.register_blueprint(risuspubl.api.series.blueprint)
-    app.register_blueprint(risuspubl.api.sales_records.blueprint)
-
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-    return app
 
 
 class Author(db.Model):
@@ -72,13 +22,14 @@ class Author(db.Model):
 
 class Book(db.Model):
     __tablename__ = 'books'
+    __primary_key__ = 'book_id'
 
     book_id = db.Column('book_id', db.Integer, primary_key=True, autoincrement=True)
     # These can't be defined now because the Editor and Series classes don't
-    # Theexist yet. y're assigned later once the Editor and Series classes have
-    # Thebeen defined.
-    #editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
-    #series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
+    # exist yet. They're assigned later once the Editor and Series classes have
+    # been defined.
+    # editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
+    # series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
     title = db.Column('title', db.String(64), nullable=False)
     publication_date = db.Column('publication_date', db.Date, nullable=False)
     edition_number = db.Column('edition_number', db.Integer, nullable=False)
@@ -98,11 +49,12 @@ class Book(db.Model):
 
 class Client(db.Model):
     __tablename__ = 'clients'
+    __primary_key__ = 'client_id'
 
     client_id = db.Column('client_id', db.Integer, primary_key=True, autoincrement=True)
     # This can't be defined now because the Salesperson table doesn't exist yet.
     # It's assigned later once Salesperson has been defined.
-    #salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
+    # salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
     email_address = db.Column('email_address', db.String(64), nullable=True)
     phone_number = db.Column('phone_number', db.String(11), nullable=False)
     business_name = db.Column('business_name', db.String(64), nullable=False)
@@ -129,6 +81,7 @@ class Client(db.Model):
 
 class Editor(db.Model):
     __tablename__ = 'editors'
+    __primary_key__ = 'editor_id'
 
     editor_id = db.Column('editor_id', db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column('first_name', db.String(64), nullable=False)
@@ -150,12 +103,13 @@ Book.editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullabl
 
 class Manuscript(db.Model):
     __tablename__ = 'manuscripts'
+    __primary_key__ = 'manuscript_id'
 
     manuscript_id = db.Column('manuscript_id', db.Integer, primary_key=True, autoincrement=True)
     editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
     # This can't be defined now because the Series table doesn't exist yet. It's
     # assigned later once Series has been defined.
-    #series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
+    # series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
     working_title = db.Column('working_title', db.String(64), nullable=False)
     due_date = db.Column('due_date', db.Date, nullable=False)
     advance = db.Column('advance', db.Integer, nullable=False)
@@ -173,6 +127,7 @@ class Manuscript(db.Model):
 
 class SalesRecord(db.Model):
     __tablename__ = 'sales_records'
+    __primary_key__ = 'sales_record_id'
 
     sales_record_id = db.Column('sales_record_id', db.Integer, primary_key=True, autoincrement=True)
     book_id = db.Column('book_id', db.Integer, nullable=False)
@@ -196,6 +151,7 @@ class SalesRecord(db.Model):
 
 class Salesperson(db.Model):
     __tablename__ = 'salespeople'
+    __primary_key__ = 'salesperson_id'
 
     salesperson_id = db.Column('salesperson_id', db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column('first_name', db.String(64), nullable=False)
@@ -217,6 +173,7 @@ Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.sa
 
 class Series(db.Model):
     __tablename__ = 'series'
+    __primary_key__ = 'series_id'
 
     series_id = db.Column('series_id', db.Integer, primary_key=True, autoincrement=True)
     title = db.Column('title', db.String(64), nullable=False)

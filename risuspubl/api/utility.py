@@ -6,18 +6,18 @@ from datetime import date, timedelta
 
 from flask import Response, abort, jsonify
 
-import werkzeug.exceptions
-
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
         SalesRecord, Salesperson, Series, db
+
+import werkzeug.exceptions
 
 
 # This lookup table associates a *_id param name with the SQLAlchemy.Model
 # subclass class object representing the table where a column by that name is
 # the primary key. Used to validate whether a parameter with such a name has a
 # value that is associated with a row in that table.
-_id_params_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor, 
-                                  'manuscript_id': Manuscript, 'sales_record_id': SalesRecord, 
+_id_params_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor,
+                                  'manuscript_id': Manuscript, 'sales_record_id': SalesRecord,
                                   'salesperson_id': Salesperson, 'series_id': Series}
 
 
@@ -299,7 +299,6 @@ class create_or_update_argd_gen(object):
         return argd
 
 
-
 class endpoint_action(abc.ABC):
     """
     This class is a base class to a suite of callable object classes which
@@ -338,7 +337,6 @@ class endpoint_action(abc.ABC):
             return Response(f'{exception.__class__.__name__}: {exception.args[0]}', status=status)
         else:
             return abort(status)
-
 
 
 class create_table_row(endpoint_action):
@@ -385,9 +383,9 @@ class delete_table_row_by_id(endpoint_action):
     """
     __slots__ = 'model_class', 'model_id_column'
 
-    def __init__(self, model_class, model_id_column):
+    def __init__(self, model_class):
         self.model_class = model_class
-        self.model_id_column = model_id_column
+        self.model_id_column = model_class.__primary_key__
 
     def __call__(self, model_id):
         try:
@@ -416,11 +414,11 @@ class delete_table_row_by_id_and_foreign_key(endpoint_action):
     """
     __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column'
 
-    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
+    def __init__(self, outer_class, inner_class):
         self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
+        self.outer_id_column = outer_class.__primary_key__
         self.inner_class = inner_class
-        self.inner_id_column = inner_id_column
+        self.inner_id_column = inner_class.__primary_key__
 
     def __call__(self, outer_id, inner_id):
         try:
@@ -445,7 +443,7 @@ class delete_table_row_by_id_and_foreign_key(endpoint_action):
             return self.handle_exception(exception)
 
 
-class display_table_rows_and_foreign_id(endpoint_action):
+class display_table_rows_by_foreign_id(endpoint_action):
     """
     This class implements a callable object that executes an abstracted endpoint
     function GET /{outer_table}/{outer_id}/{inner_table}. Its constructor
@@ -461,9 +459,9 @@ class display_table_rows_and_foreign_id(endpoint_action):
     """
     __slots__ = 'outer_class', 'outer_id_column', 'inner_class',
 
-    def __init__(self, outer_class, outer_id_column, inner_class):
+    def __init__(self, outer_class, inner_class):
         self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
+        self.outer_id_column = outer_class.__primary_key__
         self.inner_class = inner_class
 
     def __call__(self, outer_id):
@@ -546,11 +544,11 @@ class display_table_row_by_id_and_foreign_key(endpoint_action):
     """
     __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column'
 
-    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
+    def __init__(self, outer_class, inner_class):
         self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
+        self.outer_id_column = outer_class.__primary_key__
         self.inner_class = inner_class
-        self.inner_id_column = inner_id_column
+        self.inner_id_column = inner_class.__primary_key__
 
     def __call__(self, outer_id, inner_id):
         try:
@@ -586,9 +584,9 @@ class update_table_row_by_id(endpoint_action):
     """
     __slots__ = 'model_class', 'model_id_column'
 
-    def __init__(self, model_class, model_id_column):
+    def __init__(self, model_class):
         self.model_class = model_class
-        self.model_id_column = model_id_column
+        self.model_id_column = model_class.__primary_key__
 
     def __call__(self, model_id, request_json):
         try:
@@ -626,11 +624,11 @@ class update_table_row_by_id_and_foreign_key(endpoint_action):
     """
     __slots__ = 'outer_class', 'outer_id_column', 'inner_class', 'inner_id_column', 'argd'
 
-    def __init__(self, outer_class, outer_id_column, inner_class, inner_id_column):
+    def __init__(self, outer_class, inner_class):
         self.outer_class = outer_class
-        self.outer_id_column = outer_id_column
+        self.outer_id_column = outer_class.__primary_key__
         self.inner_class = inner_class
-        self.inner_id_column = inner_id_column
+        self.inner_id_column = inner_class.__primary_key__
 
     def __call__(self, outer_id, inner_id, request_json):
         try:

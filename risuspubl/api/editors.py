@@ -4,37 +4,30 @@ from flask import Blueprint, request
 
 from risuspubl.api.utility import create_table_row, delete_table_row_by_id, delete_table_row_by_id_and_foreign_key, \
         display_table_row_by_id, display_table_row_by_id_and_foreign_key, display_table_rows, \
-        display_table_rows_and_foreign_id, update_table_row_by_id, update_table_row_by_id_and_foreign_key
+        display_table_rows_by_foreign_id, update_table_row_by_id, update_table_row_by_id_and_foreign_key
 from risuspubl.dbmodels import Book, Editor, Manuscript
 
 
 blueprint = Blueprint('editors', __name__, url_prefix='/editors')
 
 
-# These are callable objects being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in the endpoint functions
+# this package implements.
 create_editor = create_table_row(Editor)
-delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key(Editor, 'editor_id', Book, 'book_id')
-delete_editor_by_id = delete_table_row_by_id(Editor, 'editor_id')
-delete_manuscript_by_manuscript_id_and_editor_id = delete_table_row_by_id_and_foreign_key(Editor, 'editor_id',
-                                                                                        Manuscript, 'manuscript_id')
-display_book_by_book_id_and_editor_id = display_table_row_by_id_and_foreign_key(Editor, 'editor_id', Book, 'book_id')
-display_books_by_editor_id = display_table_rows_and_foreign_id(Editor, 'editor_id', Book)
+delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key(Editor, Book)
+delete_editor_by_id = delete_table_row_by_id(Editor)
+delete_manuscript_by_manuscript_id_and_editor_id = delete_table_row_by_id_and_foreign_key(Editor, Manuscript)
+display_book_by_book_id_and_editor_id = display_table_row_by_id_and_foreign_key(Editor, Book)
+display_books_by_editor_id = display_table_rows_by_foreign_id(Editor, Book)
 display_editor_by_id = display_table_row_by_id(Editor)
 display_editors = display_table_rows(Editor)
-display_manuscript_by_manuscript_id_and_editor_id = display_table_row_by_id_and_foreign_key(Editor, 'editor_id',
-                                                                                          Manuscript, 'manuscript_id')
-display_manuscripts_by_editor_id = display_table_rows_and_foreign_id(Editor, 'editor_id', Manuscript)
-update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key(Editor, 'editor_id', Book, 'book_id')
-update_editor_by_id = update_table_row_by_id(Editor, 'editor_id')
-update_manuscript_by_manuscript_id_and_editor_id = update_table_row_by_id_and_foreign_key(Editor, 'editor_id',
-                                                                                        Manuscript, 'manuscript_id')
+display_manuscript_by_manuscript_id_and_editor_id = display_table_row_by_id_and_foreign_key(Editor, Manuscript)
+display_manuscripts_by_editor_id = display_table_rows_by_foreign_id(Editor, Manuscript)
+update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key(Editor, Book)
+update_editor_by_id = update_table_row_by_id(Editor)
+update_manuscript_by_manuscript_id_and_editor_id = update_table_row_by_id_and_foreign_key(Editor, Manuscript)
 
 
 @blueprint.route('', methods=['GET'])

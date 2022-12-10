@@ -3,7 +3,7 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import create_table_row, delete_table_row_by_id, display_table_row_by_id, \
-        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_and_foreign_id, \
+        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_by_foreign_id, \
         update_table_row_by_id, update_table_row_by_id_and_foreign_key
 from risuspubl.dbmodels import Book, Manuscript, Series
 
@@ -11,27 +11,21 @@ from risuspubl.dbmodels import Book, Manuscript, Series
 blueprint = Blueprint('series', __name__, url_prefix='/series')
 
 
-# These are callable objects being instanced from classes imported from
-# risuspubl.api.utility. See that module for the classes.
-#
-# These callables were derived from duplicated code across the risuspubl.api.*
-# codebase. Each one implements the entirety of a specific endpoint function,
-# such that an endpoint function just tail calls the corresponding one of
-# these callables. The large majority of code reuse was eliminated by this
-# refactoring.
+# These are callable objects-- functions with state-- instanced from
+# risuspubl.api.utility.endpoint_action subclasses. See that module for the
+# classes. Each implements a common design pattern in the endpoint functions
+# this package implements.
 create_series = create_table_row(Series)
-delete_series_by_id = delete_table_row_by_id(Series, 'series_id')
-display_book_by_book_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, 'series_id', Book, 'book_id')
-display_books_by_series_id = display_table_rows_and_foreign_id(Series, 'series_id', Book)
-display_manuscript_by_manuscript_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, 'series_id',
-                                                                                          Manuscript, 'manuscript_id')
-display_manuscripts_by_series_id = display_table_rows_and_foreign_id(Series, 'series_id', Manuscript)
+delete_series_by_id = delete_table_row_by_id(Series)
+display_book_by_book_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, Book)
+display_books_by_series_id = display_table_rows_by_foreign_id(Series, Book)
+display_manuscript_by_manuscript_id_and_series_id = display_table_row_by_id_and_foreign_key(Series, Manuscript)
+display_manuscripts_by_series_id = display_table_rows_by_foreign_id(Series, Manuscript)
 display_series_by_id = display_table_row_by_id(Series)
 display_series = display_table_rows(Series)
-update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key(Series, 'series_id', Book, 'book_id')
-update_manuscript_by_manuscript_id_and_series_idr = update_table_row_by_id_and_foreign_key(Series, 'series_id',
-                                                                                         Manuscript, 'manuscript_id')
-update_series_by_id = update_table_row_by_id(Series, 'series_id')
+update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key(Series, Book)
+update_manuscript_by_manuscript_id_and_series_idr = update_table_row_by_id_and_foreign_key(Series, Manuscript)
+update_series_by_id = update_table_row_by_id(Series)
 
 
 @blueprint.route('', methods=['GET'])
