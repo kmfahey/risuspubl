@@ -2,29 +2,28 @@
 
 from flask import Blueprint, jsonify, request
 
-from risuspubl.api.utility import create_model_obj, create_or_update_argd_gen, create_table_row, \
-        delete_table_row_by_id, delete_table_row_by_id_and_foreign_key, display_table_row_by_id, \
-        display_table_row_by_id_and_foreign_key, display_table_rows, display_table_rows_by_foreign_id, \
-        endpoint_action, update_table_row_by_id, update_table_row_by_id_and_foreign_key
+from risuspubl.api.utility import create_model_obj, create_table_row_function, delete_table_row_by_id_function, \
+        delete_table_row_by_id_and_foreign_key_function, display_table_row_by_id_function, \
+        display_table_row_by_id_and_foreign_key_function, display_table_rows_function, \
+        display_table_rows_by_foreign_id_function, generate_create_update_argd, handle_exception, \
+        update_table_row_by_id_function, update_table_row_by_id_and_foreign_key_function
 from risuspubl.dbmodels import Client, Salesperson, db
 
 
 blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
 
 
-# These are callable objects-- functions with state-- instanced from
-# risuspubl.api.utility.endpoint_action subclasses. See that module for the
-# classes. Each implements a common design pattern in the endpoint functions
-# this package implements.
-create_salesperson = create_table_row(Salesperson)
-delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key(Salesperson, Client)
-delete_salesperson_by_id = delete_table_row_by_id(Salesperson)
-display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key(Salesperson, Client)
-display_clients_by_salesperson_id = display_table_rows_by_foreign_id(Salesperson, Client)
-display_salespeople = display_table_rows(Salesperson)
-display_salesperson_by_id = display_table_row_by_id(Salesperson)
-update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key(Salesperson, Client)
-update_salesperson_by_id = update_table_row_by_id(Salesperson)
+# These functions return closures that implement the requested functions,
+# filling in the blank(s) with the provided class objects.
+create_salesperson = create_table_row_function(Salesperson)
+delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+delete_salesperson_by_id = delete_table_row_by_id_function(Salesperson)
+display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+display_clients_by_salesperson_id = display_table_rows_by_foreign_id_function(Salesperson, Client)
+display_salespeople = display_table_rows_function(Salesperson)
+display_salesperson_by_id = display_table_row_by_id_function(Salesperson)
+update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+update_salesperson_by_id = update_table_row_by_id_function(Salesperson)
 
 
 @blueprint.route('', methods=['GET'])
@@ -104,14 +103,13 @@ def create_salesperson_client(salesperson_id: int):
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
         client_obj = create_model_obj(Client,
-                                      create_or_update_argd_gen(Client, 'salesperson_id')
-                                             .generate_argd(request.json, salesperson_id))
+                                      generate_create_update_argd(Client, request.json, salesperson_id=salesperson_id))
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
         db.session.commit()
         return jsonify(client_obj.serialize())
     except Exception as exception:
-        return endpoint_action.handle_exception(exception)
+        return handle_exception(exception)
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])

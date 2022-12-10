@@ -2,22 +2,20 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import delete_table_row_by_id, display_table_row_by_id, display_table_rows, \
-        update_table_row_by_id
+from risuspubl.api.utility import delete_table_row_by_id_function, display_table_row_by_id_function, \
+        display_table_rows_function, update_table_row_by_id_function
 from risuspubl.dbmodels import Manuscript
 
 
 blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
 
 
-# These are callable objects-- functions with state-- instanced from
-# risuspubl.api.utility.endpoint_action subclasses. See that module for the
-# classes. Each implements a common design pattern in the endpoint functions
-# this package implements.
-delete_manuscript_by_id = delete_table_row_by_id(Manuscript)
-display_manuscript_by_id = display_table_row_by_id(Manuscript)
-display_manuscripts = display_table_rows(Manuscript)
-update_manuscript_by_Id = update_table_row_by_id(Manuscript)
+# These functions return closures that implement the requested functions,
+# filling in the blank(s) with the provided class objects.
+delete_manuscript_by_id = delete_table_row_by_id_function(Manuscript)
+display_manuscript_by_id = display_table_row_by_id_function(Manuscript)
+display_manuscripts = display_table_rows_function(Manuscript)
+update_manuscript_by_Id = update_table_row_by_id_function(Manuscript)
 
 
 @blueprint.route('', methods=['GET'])

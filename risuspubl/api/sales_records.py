@@ -2,17 +2,16 @@
 
 from flask import Blueprint, jsonify
 
-from risuspubl.api.utility import display_table_row_by_id, endpoint_action
+from risuspubl.api.utility import display_table_row_by_id_function, handle_exception
 from risuspubl.dbmodels import SalesRecord
 
 
 blueprint = Blueprint('sales_records', __name__, url_prefix='/sales_records')
 
 
-# This is a callable object-- a function with state-- instanced from a
-# risuspubl.api.utility.endpoint_action subclass. See that module for the
-# class.
-display_sales_record_by_id = display_table_row_by_id(SalesRecord)
+# This function returns a closure that implements the requested function,
+# filling in the blank with the provided class object.
+display_sales_record_by_id = display_table_row_by_id_function(SalesRecord)
 
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
@@ -45,7 +44,7 @@ def show_sales_records_by_year(year: int):
         retval.sort(key=lambda dictval: (dictval['month'], dictval['book_id']))
         return jsonify(retval)
     except Exception as exception:
-        return endpoint_action.handle_exception(exception)
+        return handle_exception(exception)
 
 
 @blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
@@ -69,7 +68,7 @@ def show_sales_records_by_year_and_month(year: int, month: int):
             retval.append(sales_record_obj.serialize())
         return jsonify(retval)
     except Exception as exception:
-        return endpoint_action.handle_exception(exception)
+        return handle_exception(exception)
 
 
 # Adding, updating and deleting sales records is deliberately made impossible

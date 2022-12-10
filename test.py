@@ -6,7 +6,8 @@ import os
 from flask import abort
 
 from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, create_app, db
+        SalesRecord, Salesperson, Series, db
+from risuspubl.flaskapp import create_app
 
 
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
@@ -29,5 +30,3 @@ data_dir = './data/'
 
 app = create_app()
 app.app_context().push()
-
-db = SQLAlchemy(app)

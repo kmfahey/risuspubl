@@ -20,9 +20,9 @@ from risuspubl.flaskapp import create_app
 table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
                'salespeople', 'sales_records', 'series']
 
-# Associates table names with the db.Model subclasses that implement them. Used
-# when calling commit_model_objs_get_ids() to know what db.Model subclass object
-# to pass in as a 2nd argument.
+# Associates table names with the SQLAlchemy.Model subclasses that implement
+# them. Used when calling commit_model_objs_get_ids() to know what
+# SQLAlchemy.Model subclass object to pass in as a 2nd argument.
 table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor,
                         'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson,
                         'series': Series}
@@ -178,8 +178,8 @@ def read_file_get_model_objs(table_name):
     return model_objs
 
 
-# Commits the given db.Model subclass objects to the db object, collects the
-# values for their primary key, and returns the ids as a list.
+# Commits the given SQLAlchemy.Model subclass objects to the db object, collects
+# the values for their primary key, and returns the ids as a list.
 def commit_model_objs_get_ids(table_name, model_objs):
     for model_obj in model_objs:
         db.session.add(model_obj)

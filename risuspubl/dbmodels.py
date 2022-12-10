@@ -7,6 +7,7 @@ db = SQLAlchemy()
 
 class Author(db.Model):
     __tablename__ = 'authors'
+    __primary_key__ = 'author_id'
 
     author_id = db.Column('author_id', db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column('first_name', db.String(64), nullable=False)

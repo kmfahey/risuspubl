@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from risuspubl import create_app
+from risuspubl.flaskapp import create_app
 
 
 app = create_app()
