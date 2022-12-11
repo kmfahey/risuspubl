@@ -1,0 +1,13 @@
+I chose to model a publishing company's database. The entities I came up with are:
+
+* book
+* author
+* manuscript
+* series
+* genre
+* imprint
+* warehouse\_building
+* warehouse\_shelf
+* warehouse\_location
+* stocking\_quantity
+* monthly\_sales\_record
