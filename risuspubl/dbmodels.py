@@ -61,7 +61,7 @@ class Client(db.Model):
     business_name = db.Column('business_name', db.String(64), nullable=False)
     street_address = db.Column('street_address', db.String(64), nullable=False)
     city = db.Column('city', db.String(64), nullable=False)
-    state_or_province = db.Column('state_or_province', db.String(4), nullable=False)
+    state = db.Column('state', db.String(2), nullable=False)
     zipcode = db.Column('zipcode', db.String(9), nullable=False)
     country = db.Column('country', db.String(64), nullable=False)
 
@@ -74,7 +74,7 @@ class Client(db.Model):
             'business_name': self.business_name,
             'street_address': self.street_address,
             'city': self.city,
-            'state_or_province': self.state_or_province,
+            'state': self.state,
             'zipcode': self.zipcode,
             'country': self.country,
             }

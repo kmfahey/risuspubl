@@ -169,13 +169,14 @@ def read_file_get_model_objs(table_name):
         raise FileNotFoundError(f'unable to locate file {file_path}')
     tsv_reader = csv.reader(open(file_path, 'r'), quotechar='"', delimiter='\t', skipinitialspace=True,
                                                   lineterminator='\n', quoting=csv.QUOTE_MINIMAL, doublequote=True)
+    new_objs = list()
     columns = next(tsv_reader)
     for row in tsv_reader:
         model_args = dict(zip(columns, row))
         if 'is_in_print' in model_args:
             model_args['is_in_print'] = True if model_args['is_in_print'] == 'True' else False
-        model_objs.append(model_class(**model_args))
-    return model_objs
+        new_objs.append(model_class(**model_args))
+    return new_objs
 
 
 # Commits the given SQLAlchemy.Model subclass objects to the db object, collects
