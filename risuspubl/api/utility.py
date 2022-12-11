@@ -256,7 +256,7 @@ def generate_create_update_argd(model_class, request_json, **argd):
                                    'business_name':     _validate_str(json.get('business_name')),
                                    'street_address':    _validate_str(json.get('street_address')),
                                    'city':              _validate_str(json.get('city')),
-                                   'state_or_province': _validate_str(json.get('state_or_province'), 2, 4),
+                                   'state':             _validate_str(json.get('state'), 2, 2),
                                    'zipcode':           _validate_str(json.get('zipcode'), 9, 9),
                                    'country':           _validate_str(json.get('country'))},
 
