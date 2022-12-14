@@ -22,7 +22,7 @@ CREATE TABLE sales_records (
     sales_record_id SERIAL PRIMARY KEY,
     book_id INT,
     year INTEGER NOT NULL,
-    month VARCHAR(64),
+    month INTEGER NOT NULL,
     copies_sold INTEGER,
     gross_profit NUMERIC,
     net_profit NUMERIC
