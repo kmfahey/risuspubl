@@ -16,7 +16,7 @@ import werkzeug.exceptions
 # representing the table where a column by that name is the primary key. Used to
 # validate whether a parameter with such a name has a value that is associated
 # with a row in that table.
-_foreign_keys_to_model_subclasses = {'book_id': Book, 'client_id': Client, 'editor_id': Editor,
+_foreign_keys_to_model_subclasses = {'author_id': Author, 'book_id': Book, 'client_id': Client, 'editor_id': Editor,
                                      'manuscript_id': Manuscript, 'sales_record_id': SalesRecord,
                                      'salesperson_id': Salesperson, 'series_id': Series}
 
@@ -73,7 +73,7 @@ def update_model_obj(id_val, model_subclass, params_argd):
     model_obj = model_subclass.query.get_or_404(id_val)
     # If all the dict's param_value slots are None, this update can't proceed bc
     # there's nothing to update, so a ValueError is raised.
-    if all(param_value is None for _, _, param_value in params_argd.values()):
+    if all(param_value is None for param_value in params_argd.values()):
         raise ValueError('update action executed with no parameters indicating fields to update')
     for param_name, param_value in params_argd.items():
         if param_value is None:
@@ -184,18 +184,21 @@ def _validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
         # error message is used.
         if len(param_value) == 0:
             raise ValueError(f'parameter {param_name}: may not be zero-length')
+        elif len(param_value) < lower_bound and upper_bound == math.inf:
+            raise ValueError(f"parameter {param_name}: the supplied string value '{param_value}' is not at least "
+                             f'{lower_bound} characters long')
+        elif lower_bound == 0 and len(param_value) > upper_bound:
+            raise ValueError(f"parameter {param_name}: the supplied string value '{param_value}' is more than "
+                             f'{upper_bound} characters in length')
         # If the upper and lower bounds are equal, that's a requirement the
         # string be that length, so the error message states that.
         elif lower_bound == upper_bound:
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
                              f'equal to {lower_bound}')
         # Otherwise use the full error message.
-    elif upper_bound == math.inf:
-        raise ValueError(f"parameter {param_name}: the supplied string value '{param_value}' is not at least "
-                         f'{lower_bound} characters long')
-    else:
-        raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does "
-                         f'not fall within [{lower_bound}, {upper_bound}]')
+        else:
+            raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does "
+                             f'not fall between [{lower_bound}, {upper_bound}]')
     return param_value
 
 
@@ -253,7 +256,7 @@ def generate_create_update_argd(model_class, request_json, **argd):
                  'age':               _validate_int('age', json.get('age'), 18, 120),
                  'biography':         _validate_str('biography', json.get('biography'), 1, math.inf),
                  'photo_res_horiz':   _validate_int('photo_res_horiz', json.get('photo_res_horiz'), 1),
-                 'photo_rest_vert':   _validate_int('photo_rest_vert', json.get('photo_rest_vert'), 1),
+                 'photo_res_vert':    _validate_int('photo_rest_vert', json.get('photo_res_vert'), 1),
                  'photo_url':         _validate_str('photo_url', json.get('photo_url'), 1, 256)},
         Book: \
             lambda json: \

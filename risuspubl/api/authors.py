@@ -359,8 +359,10 @@ def update_author_metadata_endpoint(author_id: int):
                                                generate_create_update_argd(AuthorMetadata, request.json))
         db.session.add(author_metadata_obj)
         db.session.commit()
+        return jsonify(author_metadata_obj.serialize())
     except Exception as exception:
         return handle_exception(exception)
+
 
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int):
@@ -514,6 +516,7 @@ def create_author_metadata_endpoint(author_id: int):
                                                                                            request.json))
         db.session.add(author_metadata_obj)
         db.session.commit()
+        return jsonify(author_metadata_obj.serialize())
     except Exception as exception:
         return handle_exception(exception)
 
