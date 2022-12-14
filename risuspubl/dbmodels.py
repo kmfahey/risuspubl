@@ -134,9 +134,9 @@ class SalesRecord(db.Model):
     book_id = db.Column('book_id', db.Integer, nullable=False)
     year = db.Column('year', db.Integer, nullable=False)
     month = db.Column('month', db.Integer, nullable=False)
-    copies_sold = db.Column('copies_sold', db.Numeric, nullable=False)
+    copies_sold = db.Column('copies_sold', db.Integer, nullable=False)
     gross_profit = db.Column('gross_profit', db.Numeric, nullable=False)
-    net_profit = db.Column('net_profit', db.Integer, nullable=False)
+    net_profit = db.Column('net_profit', db.Numeric, nullable=False)
 
     def serialize(self):
         return {
@@ -145,8 +145,8 @@ class SalesRecord(db.Model):
             'year': self.year,
             'month': self.month,
             'copies_sold': self.copies_sold,
-            'gross_profit': self.gross_profit,
-            'net_profit': self.net_profit,
+            'gross_profit': self.gross_profit.__float__(),
+            'net_profit': self.net_profit.__float__(),
             }
 
 
