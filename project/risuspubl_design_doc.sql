@@ -157,4 +157,18 @@ FOREIGN KEY (client_id)
 REFERENCES clients (client_id)
 ON DELETE RESTRICT;
 
+CREATE TABLE authors_metadata (
+    author_metadata_id SERIAL PRIMARY KEY,
+    author_id INT,
+    age INT NOT NULL,
+    biography TEXT NOT NULL,
+    photograph_url TEXT NOT NULL,
+    photo_res_horiz INT NOT NULL,
+    photo_res_vert INT NOT NULL,
+);
 
+ALTER TABLE author_metadata
+ADD CONSTRAINT fk_authors
+FOREIGN KEY (author_id_id)
+REFERENCES authors (author_id)
+ON DELETE RESTRICT;
