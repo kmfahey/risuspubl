@@ -20,7 +20,7 @@ def upgrade():
     op.execute("""
 CREATE TABLE books (
     book_id SERIAL PRIMARY KEY,
-    editor_id INT NOT NULL,
+    editor_id INT,
     series_id INT,
     title VARCHAR(64) UNIQUE NOT NULL,
     publication_date DATE NOT NULL,

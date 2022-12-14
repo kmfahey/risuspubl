@@ -20,7 +20,7 @@ def upgrade():
     op.execute("""
 CREATE TABLE manuscripts (
     manuscript_id SERIAL PRIMARY KEY,
-    editor_id INT NOT NULL,
+    editor_id INT,
     series_id INT,
     working_title VARCHAR(64) UNIQUE NOT NULL,
     due_date DATE NOT NULL,

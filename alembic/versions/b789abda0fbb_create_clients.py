@@ -20,7 +20,7 @@ def upgrade():
     op.execute("""
 CREATE TABLE clients (
     client_id SERIAL PRIMARY KEY,
-    salesperson_id INT NOT NULL,
+    salesperson_id INT,
     email_address VARCHAR(64) UNIQUE NOT NULL,
     phone_number VARCHAR(11) UNIQUE NOT NULL,
     business_name VARCHAR(64) UNIQUE NOT NULL,

@@ -19,8 +19,8 @@ depends_on = None
 def upgrade():
     op.execute("""
 CREATE TABLE authors_manuscripts (
-    author_id INT NOT NULL,
-    manuscript_id INT NOT NULL,
+    author_id INT,
+    manuscript_id INT,
     PRIMARY KEY (author_id, manuscript_id)
 );
 """)
