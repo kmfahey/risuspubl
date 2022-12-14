@@ -20,7 +20,7 @@ update_client_by_id = update_table_row_by_id_function(Client)
 
 
 @blueprint.route('', methods=['GET'])
-def index():
+def index_endpoint():
     """
     Implements a GET /clients endpoint. All rows in the clients table are loaded
     and output as a JSON list.
@@ -31,7 +31,7 @@ def index():
 
 
 @blueprint.route('/<int:client_id>', methods=['GET'])
-def show_client_by_id(client_id: int):
+def display_client_by_id_endpoint(client_id: int):
     """
     Implements a GET /clients/<id> endpoint. The row in the clients table with
     the given client_id is loaded and output in JSON.
@@ -44,7 +44,7 @@ def show_client_by_id(client_id: int):
 
 
 @blueprint.route('', methods=['POST'])
-def create_client():
+def create_client_endpoint():
     """
     Implements a POST /clients endpoint. A new row in the clients table is
     constituted from the JSON parameters and saved to that table.
@@ -55,7 +55,7 @@ def create_client():
 
 
 @blueprint.route('/<int:client_id>', methods=['PATCH', 'PUT'])
-def update_client_by_id(client_id: int):
+def update_client_by_id_endpoint(client_id: int):
     """
     Implements a PATCH /clients/<id> endpoint. The row in the clients table with
     that client_id is updated from the JSON parameters.
@@ -67,7 +67,7 @@ def update_client_by_id(client_id: int):
 
 
 @blueprint.route('/<int:client_id>', methods=['DELETE'])
-def delete_client_by_id(client_id: int):
+def delete_client_by_id_endpoint(client_id: int):
     """
     Implements a DELETE /clients/<id> endpoint. The row in the clients table
     with that client_id is deleted.

@@ -27,7 +27,7 @@ update_salesperson_by_id = update_table_row_by_id_function(Salesperson)
 
 
 @blueprint.route('', methods=['GET'])
-def index():
+def index_endpoint():
     """
     Implements a GET /salespeople endpoint. All rows in the salespeople table
     are loaded and output as a JSON list.
@@ -38,7 +38,7 @@ def index():
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
-def show_salesperson_by_id(salesperson_id: int):
+def display_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a GET /salespeople/<id> endpoint. The row in the salespeople
     table with the given salesperson_id is loaded and output in JSON.
@@ -51,7 +51,7 @@ def show_salesperson_by_id(salesperson_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
-def show_salesperson_clients(salesperson_id: int):
+def display_salesperson_clients_endpoint(salesperson_id: int):
     """
     Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
     table with that salesperson_id are loaded and output as a JSON list.
@@ -64,7 +64,7 @@ def show_salesperson_clients(salesperson_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
-def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
+def display_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
     table with that salesperson_id are loaded and output as a JSON list.
@@ -77,7 +77,7 @@ def show_salesperson_client_by_id(salesperson_id: int, client_id: int):
 
 
 @blueprint.route('', methods=['POST'])
-def create_salesperson():
+def create_salesperson_endpoint():
     """
     Implements a POST /salespeople endpoint. A new row in the salespeople table
     is constituted from the JSON parameters and saved to that table.
@@ -88,7 +88,7 @@ def create_salesperson():
 
 
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
-def create_salesperson_client(salesperson_id: int):
+def create_salesperson_client_endpoint(salesperson_id: int):
     """
     Implements a POST /salespeople/<id>/clients endpoint. A new row in
     the clients table is constituted from the JSON parameters and that
@@ -113,7 +113,7 @@ def create_salesperson_client(salesperson_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
-def update_salesperson_by_id(salesperson_id: int):
+def update_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
     table with that salesperson_id is updated from the JSON parameters.
@@ -126,7 +126,7 @@ def update_salesperson_by_id(salesperson_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
-def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
+def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a PATCH /salespeople/<id>/clients/<id> endpoint. The row in the
     clients table with that client_id and that salesperson_id is updated from
@@ -141,7 +141,7 @@ def update_salesperson_client_by_id(salesperson_id: int, client_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
-def delete_salesperson_by_id(salesperson_id: int):
+def delete_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a DELETE /salespeople/<id> endpoint. The row in the salespeople
     table with that salesperson_id is deleted.
@@ -153,7 +153,7 @@ def delete_salesperson_by_id(salesperson_id: int):
 
 
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
-def delete_salesperson_client_by_id(salesperson_id: int, client_id: int):
+def delete_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a DELETE /salespeople/<id>/clients/<id> endpoint. The row in the
     clients table with that client_id and that salesperson_id is deleted.

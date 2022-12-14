@@ -6,8 +6,8 @@ from datetime import date, timedelta
 
 from flask import Response, abort, jsonify
 
-from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, db
+from risuspubl.dbmodels import Author, AuthorMetadata, Authors_Books, Authors_Manuscripts, Book, Client, Editor, \
+        Manuscript, SalesRecord, Salesperson, Series, db
 
 import werkzeug.exceptions
 
@@ -160,8 +160,15 @@ def _validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=ma
     if not (lower_bound <= param_int_value <= upper_bound):
         # Checking against the bounds. By default these are (-inf, +int), which
         # are impossible to fall outside of.
-        raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' does not fall "
-                         f'between [{lower_bound}, {upper_bound}]')
+        if lower_bound == -math.inf and upper_bound != math.inf:
+            raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' is greater than "
+                             f'{upper_bound}')
+        elif lower_bound != -math.inf and upper_bound == math.inf:
+            raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' is less than "
+                             f'{lower_bound}')
+        else:
+            raise ValueError(f"parameter {param_name}: supplied integer value '{param_int_value}' does not fall "
+                             f'within [{lower_bound}, {upper_bound}]')
     return param_int_value
 
 
@@ -183,9 +190,12 @@ def _validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
             raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
                              f'equal to {lower_bound}')
         # Otherwise use the full error message.
-        else:
-            raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does "
-                             f'not fall between [{lower_bound}, {upper_bound}]')
+    elif upper_bound == math.inf:
+        raise ValueError(f"parameter {param_name}: the supplied string value '{param_value}' is not at least "
+                         f'{lower_bound} characters long')
+    else:
+        raise ValueError(f"parameter {param_name}: the length of supplied string value '{param_value}' does "
+                         f'not fall within [{lower_bound}, {upper_bound}]')
     return param_value
 
 
@@ -233,44 +243,58 @@ def generate_create_update_argd(model_class, request_json, **argd):
     # value of requests.json. Executing the lambda passes each value through the
     # correct _validate_*() function so the argd has valid parameter values.
     classes_to_argd_lambdas = {
-
-        Author: lambda json: {     'first_name':        _validate_str(json.get('first_name')),
-                                   'last_name':         _validate_str(json.get('last_name'))},
-
-        Book: lambda json: {       'editor_id':         _validate_int(json.get('editor_id'), 0),
-                                   'series_id':         _validate_int(json.get('series_id'), 0),
-                                   'title':             _validate_str(json.get('title')),
-                                   'publication_date':  _validate_date(json.get('publication_date'), '1990-01-01'),
-                                   'edition_number':    _validate_int(json.get('edition_number'), 1, 10),
-                                   'is_in_print':       _validate_bool(json.get('is_in_print'))},
-
-        Manuscript: lambda json: { 'editor_id':         _validate_int(json.get('editor_id'), 0),
-                                   'series_id':         _validate_int(json.get('series_id'), 0),
-                                   'working_title':     _validate_str(json.get('working_title')),
-                                   'due_date':          _validate_date(json.get('due_date'), tm_date_str, '2024-07-01'),
-                                   'advance':           _validate_int(json.get('advance'), 5000, 100000)},
-
-        Client: lambda json: {     'salesperson_id':    _validate_int(json.get('salesperson_id'), 0),
-                                   'email_address':     _validate_str(json.get('email_address')),
-                                   'phone_number':      _validate_str(json.get('phone_number'), 11, 11),
-                                   'business_name':     _validate_str(json.get('business_name')),
-                                   'street_address':    _validate_str(json.get('street_address')),
-                                   'city':              _validate_str(json.get('city')),
-                                   'state':             _validate_str(json.get('state'), 2, 2),
-                                   'zipcode':           _validate_str(json.get('zipcode'), 9, 9),
-                                   'country':           _validate_str(json.get('country'))},
-
-        Editor: lambda json: {     'first_name':        _validate_str(json.get('first_name')),
-                                   'last_name':         _validate_str(json.get('last_name')),
-                                   'salary':            _validate_int(json.get('salary'), 0)},
-
-        Salesperson: lambda json: {'first_name':        _validate_str(json.get('first_name')),
-                                   'last_name':         _validate_str(json.get('last_name')),
-                                   'salary':            _validate_int(json.get('salary'), 0)},
-
-        Series: lambda json: {     'title':             _validate_str(json.get('title')),
-                                   'volumes':           _validate_int(json.get('volumes'), 2)}
-
+        Author: \
+            lambda json: \
+                {'first_name':        _validate_str('first_name', json.get('first_name')),
+                 'last_name':         _validate_str('last_name', json.get('last_name'))},
+        AuthorMetadata: \
+            lambda json: \
+                {'author_id':         _validate_int('author_id', json.get('author_id')),
+                 'age':               _validate_int('age', json.get('age'), 18, 120),
+                 'biography':         _validate_str('biography', json.get('biography'), 1, math.inf),
+                 'photo_res_horiz':   _validate_int('photo_res_horiz', json.get('photo_res_horiz'), 1),
+                 'photo_rest_vert':   _validate_int('photo_rest_vert', json.get('photo_rest_vert'), 1),
+                 'photo_url':         _validate_str('photo_url', json.get('photo_url'), 1, 256)},
+        Book: \
+            lambda json: \
+                {'editor_id':         _validate_int('editor_id', json.get('editor_id'), 0),
+                 'series_id':         _validate_int('series_id', json.get('series_id'), 0),
+                 'title':             _validate_str('title', json.get('title')),
+                 'publication_date':  _validate_date('publication_date', json.get('publication_date'), '1990-01-01'),
+                 'edition_number':    _validate_int('edition_number', json.get('edition_number'), 1, 10),
+                 'is_in_print':       _validate_bool('is_in_print', json.get('is_in_print'))},
+        Manuscript: \
+            lambda json: \
+                {'editor_id':         _validate_int('editor_id', json.get('editor_id'), 0),
+                 'series_id':         _validate_int('series_id', json.get('series_id'), 0),
+                 'working_title':     _validate_str('working_title', json.get('working_title')),
+                 'due_date':          _validate_date('due_date', json.get('due_date'), tm_date_str, '2024-07-01'),
+                 'advance':           _validate_int('advance', json.get('advance'), 5000, 100000)},
+        Client: \
+            lambda json: \
+                {'salesperson_id':    _validate_int('salesperson_id', json.get('salesperson_id'), 0),
+                 'email_address':     _validate_str('email_address', json.get('email_address')),
+                 'phone_number':      _validate_str('phone_number', json.get('phone_number'), 11, 11),
+                 'business_name':     _validate_str('business_name', json.get('business_name')),
+                 'street_address':    _validate_str('street_address', json.get('street_address')),
+                 'city':              _validate_str('city', json.get('city')),
+                 'state':             _validate_str('state', json.get('state'), 2, 2),
+                 'zipcode':           _validate_str('zipcode', json.get('zipcode'), 9, 9),
+                 'country':           _validate_str('country', json.get('country'))},
+        Editor: \
+            lambda json: \
+                {'first_name':        _validate_str('first_name', json.get('first_name')),
+                 'last_name':         _validate_str('last_name', json.get('last_name')),
+                 'salary':            _validate_int('salary', json.get('salary'), 0)},
+        Salesperson: \
+            lambda json: \
+                {'first_name':        _validate_str('first_name', json.get('first_name')),
+                 'last_name':         _validate_str('last_name', json.get('last_name')),
+                 'salary':            _validate_int('salary', json.get('salary'), 0)},
+        Series: \
+            lambda json: \
+                {'title':             _validate_str('title', json.get('title')),
+                 'volumes':           _validate_int('volumes', json.get('volumes'), 2)}
         }
 
     # The lambda that computes the argd that can be constructor or update

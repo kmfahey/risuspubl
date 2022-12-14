@@ -15,7 +15,7 @@ display_sales_record_by_id = display_table_row_by_id_function(SalesRecord)
 
 
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
-def show_sales_record(sales_record_id: int):
+def display_sales_record_endpoint(sales_record_id: int):
     """
     Implements a GET /<id> endpoint. The row with that sales_record_id in the
     sales_records table is loaded and output as JSON.
@@ -27,7 +27,7 @@ def show_sales_record(sales_record_id: int):
 
 
 @blueprint.route('/year/<int:year>', methods=['GET'])
-def show_sales_records_by_year(year: int):
+def display_sales_records_by_year_endpoint(year: int):
     """
     Implements a GET /year/<year> endpoint. All rows in the sales_records table
     with that year are loaded and output as a JSON list.
@@ -48,7 +48,7 @@ def show_sales_records_by_year(year: int):
 
 
 @blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
-def show_sales_records_by_year_and_month(year: int, month: int):
+def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
     """
     Implements a GET /year/<year>/month/<month> endpoint. All rows in the
     sales_records table with that year and that month are loaded and output as a

@@ -29,7 +29,7 @@ class Book(db.Model):
     # These can't be defined now because the Editor and Series classes don't
     # exist yet. They're assigned later once the Editor and Series classes have
     # been defined.
-    # editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
+    # editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=True)
     # series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
     title = db.Column('title', db.String(64), nullable=False)
     publication_date = db.Column('publication_date', db.Date, nullable=False)
@@ -55,7 +55,7 @@ class Client(db.Model):
     client_id = db.Column('client_id', db.Integer, primary_key=True, autoincrement=True)
     # This can't be defined now because the Salesperson table doesn't exist yet.
     # It's assigned later once Salesperson has been defined.
-    # salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
+    # salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=True)
     email_address = db.Column('email_address', db.String(64), nullable=True)
     phone_number = db.Column('phone_number', db.String(11), nullable=False)
     business_name = db.Column('business_name', db.String(64), nullable=False)
@@ -99,7 +99,7 @@ class Editor(db.Model):
 
 
 # Defining these late because the 2nd Model subclass didn't exist until now.
-Book.editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
+Book.editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=True)
 
 
 class Manuscript(db.Model):
@@ -107,10 +107,10 @@ class Manuscript(db.Model):
     __primary_key__ = 'manuscript_id'
 
     manuscript_id = db.Column('manuscript_id', db.Integer, primary_key=True, autoincrement=True)
-    editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=False)
+    editor_id = db.Column('editor_id', db.ForeignKey(Editor.editor_id), nullable=True)
     # This can't be defined now because the Series table doesn't exist yet. It's
     # assigned later once Series has been defined.
-    # series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
+    # series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
     working_title = db.Column('working_title', db.String(64), nullable=False)
     due_date = db.Column('due_date', db.Date, nullable=False)
     advance = db.Column('advance', db.Integer, nullable=False)
@@ -169,7 +169,7 @@ class Salesperson(db.Model):
 
 
 # Defining these late because the 2nd Model subclass didn't exist until now.
-Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=False)
+Client.salesperson_id = db.Column('salesperson_id', db.ForeignKey(Salesperson.salesperson_id), nullable=True)
 
 
 class Series(db.Model):
@@ -187,11 +187,34 @@ class Series(db.Model):
             'volumes': self.volumes,
             }
 
+class AuthorMetadata(db.Model):
+    __tablename__ = 'authors_metadata'
+    __primary_key__ = 'author_metadata_id'
+
+    author_metadata_id = db.Column('author_metadata_id', db.Integer, primary_key=True, autoincrement=True)
+    author_id = db.Column('author_id', db.ForeignKey(Author.author_id), nullable=True)
+    age = db.Column('age', db.Integer, nullable=True)
+    biography = db.Column('biography', db.Text, nullable=False)
+    photo_url = db.Column('photo_url', db.String(256), nullable=False)
+    photo_res_horiz = db.Column('photo_res_horiz', db.Integer, nullable=False)
+    photo_res_vert = db.Column('photo_res_vert', db.Integer, nullable=False)
+
+    def serialize(self):
+        return {
+            'author_metadata_id': self.author_metadata_id,
+            'author_id': self.author_id,
+            'age': self.age,
+            'biography': self.biography,
+            'photo_url': self.photo_url,
+            'photo_res_horiz': self.photo_res_horiz,
+            'photo_res_vert': self.photo_res_vert
+            }
+
 
 # Defining these late because the 2nd Model subclass didn't exist until now.
 Book.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
 
-Manuscript.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=False)
+Manuscript.series_id = db.Column('series_id', db.ForeignKey(Series.series_id), nullable=True)
 
 
 # Defining a Table subclass object that represents the authors_books table, and

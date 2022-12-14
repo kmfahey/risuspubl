@@ -19,7 +19,7 @@ update_manuscript_by_Id = update_table_row_by_id_function(Manuscript)
 
 
 @blueprint.route('', methods=['GET'])
-def index():
+def index_endpoint():
     """
     Implements a GET /manuscripts endpoint. All rows in the manuscripts table
     are loaded and output as a JSON list.
@@ -30,7 +30,7 @@ def index():
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
-def show_manuscript_by_id(manuscript_id: int):
+def display_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a GET /manuscripts/<id> endpoint. The row in the manuscripts
     table with the given manuscript_id is loaded and output in JSON.
@@ -52,7 +52,7 @@ def show_manuscript_by_id(manuscript_id: int):
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['PATCH', 'PUT'])
-def update_manuscript_by_id(manuscript_id: int):
+def update_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/<id> endpoint. The row in the manuscripts
     table with that manuscript_id is updated from the JSON parameters.
@@ -65,7 +65,7 @@ def update_manuscript_by_id(manuscript_id: int):
 
 
 @blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
-def delete_manuscript_by_id(manuscript_id: int):
+def delete_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a DELETE /manuscripts/<id> endpoint. The row in the manuscripts
     table with that manuscript_id is deleted.

@@ -19,7 +19,7 @@ update_book_by_id = update_table_row_by_id_function(Book)
 
 
 @blueprint.route('', methods=['GET'])
-def index():
+def index_endpoint():
     """
     Implements a GET /books endpoint. All rows in the books table are loaded
     and output as a JSON list.
@@ -30,7 +30,7 @@ def index():
 
 
 @blueprint.route('/<int:book_id>', methods=['GET'])
-def show_book_by_id(book_id: int):
+def display_book_by_id_endpoint(book_id: int):
     """
     Implements a GET /books/<id> endpoint. The row in the books table with the
     given book_id is loaded and output in JSON.
@@ -52,7 +52,7 @@ def show_book_by_id(book_id: int):
 
 
 @blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
-def update_book_by_id(book_id: int):
+def update_book_by_id_endpoint(book_id: int):
     """
     Implements a PATCH /books/<id> endpoint. The row in the books table with
     that book_id is updated from the JSON parameters.
@@ -64,7 +64,7 @@ def update_book_by_id(book_id: int):
 
 
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
-def delete_book_by_id(book_id: int):
+def delete_book_by_id_endpoint(book_id: int):
     """
     Implements a DELETE /books/<id> endpoint. The row in the books table with
     that book_id is deleted.

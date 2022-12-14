@@ -5,8 +5,8 @@ import os
 
 from flask import abort
 
-from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, db
+from risuspubl.dbmodels import Author, AuthorMetadata, Authors_Books, Authors_Manuscripts, Book, Client, Editor, \
+        Manuscript, SalesRecord, Salesperson, Series, db
 from risuspubl.flaskapp import create_app
 
 

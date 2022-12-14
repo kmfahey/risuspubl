@@ -28,7 +28,7 @@ update_series_by_id = update_table_row_by_id_function(Series)
 
 
 @blueprint.route('', methods=['GET'])
-def index():
+def index_endpoint():
     """
     Implements a GET /series endpoint. All rows in the series table are loaded
     and output as a JSON list.
@@ -39,7 +39,7 @@ def index():
 
 
 @blueprint.route('/<int:series_id>', methods=['GET'])
-def show_series_by_id(series_id: int):
+def display_series_by_id_endpoint(series_id: int):
     """
     Implements a GET /series/<id> endpoint. The row in the series table with
     the given series_id is loaded and output in JSON.
@@ -52,7 +52,7 @@ def show_series_by_id(series_id: int):
 
 
 @blueprint.route('/<int:series_id>/books', methods=['GET'])
-def show_series_books(series_id: int):
+def display_series_books_endpoint(series_id: int):
     """
     Implements a GET /series/<id>/books endpoint. All rows in the books table
     with that series_id are loaded and output as a JSON list.
@@ -65,7 +65,7 @@ def show_series_books(series_id: int):
 
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['GET'])
-def show_series_book_by_id(series_id: int, book_id: int):
+def display_series_book_by_id_endpoint(series_id: int, book_id: int):
     """
     Implements a GET /series/<id>/books/<id> endpoint. The row in the books
     table with that series_id and that book_id is loaded and outputed in JSON.
@@ -78,7 +78,7 @@ def show_series_book_by_id(series_id: int, book_id: int):
 
 
 @blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
-def show_series_manuscripts(series_id: int):
+def display_series_manuscripts_endpoint(series_id: int):
     """
     Implements a GET /series/<id>/manuscripts endpoint. All rows in the
     manuscripts table with that series_id are loaded and output as a JSON list.
@@ -92,7 +92,7 @@ def show_series_manuscripts(series_id: int):
 
 
 @blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
-def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
+def display_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     """
     Implements a GET /series/<id>/manuscripts/<id> endpoint. The row in the
     manuscripts table with that series_id and that manuscript_id is loaded and
@@ -108,7 +108,7 @@ def show_series_manuscript_by_id(series_id: int, manuscript_id: int):
 
 
 @blueprint.route('', methods=['POST'])
-def create_series():
+def create_series_endpoint():
     """
     Implements a POST /series endpoint. A new row in the series table is
     constituted from the JSON parameters and saved to that table.
@@ -119,7 +119,7 @@ def create_series():
 
 
 @blueprint.route('/<int:series_id>', methods=['PATCH', 'PUT'])
-def update_series_by_id(series_id: int):
+def update_series_by_id_endpoint(series_id: int):
     """
     Implements a PATCH /series/<id> endpoint. The row in the series table with
     that series_id is updated from the JSON parameters.
@@ -131,7 +131,7 @@ def update_series_by_id(series_id: int):
 
 
 @blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
-def update_series_book_by_id(series_id: int, book_id: int):
+def update_series_book_by_id_endpoint(series_id: int, book_id: int):
     """
     Implements a PATCH /series/<id>/books/<id> endpoint. The row in the
     books table with that book_id and that series_id is updated from the JSON
@@ -145,7 +145,7 @@ def update_series_book_by_id(series_id: int, book_id: int):
 
 
 @blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
-def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
+def update_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     """
     Implements a PATCH /series/<id>/manuscripts/<id> endpoint. The row in the
     manuscripts table with that manuscript_id and that series_id is updated from the JSON
@@ -159,7 +159,7 @@ def update_series_manuscript_by_id(series_id: int, manuscript_id: int):
 
 
 @blueprint.route('/<int:series_id>', methods=['DELETE'])
-def delete_series_by_id(series_id: int):
+def delete_series_by_id_endpoint(series_id: int):
     """
     Implements a DELETE /series/<id> endpoint. The row in the series table
     with that series_id is deleted.

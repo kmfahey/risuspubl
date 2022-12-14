@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import math
 import collections
 import csv
 import os
@@ -7,25 +8,31 @@ import os.path
 import random
 from datetime import date, timedelta
 
-from risuspubl.dbmodels import Author, Authors_Books, Authors_Manuscripts, Book, Client, Editor, Manuscript, \
-        SalesRecord, Salesperson, Series, db
+from risuspubl.dbmodels import Author, AuthorMetadata, Authors_Books, Authors_Manuscripts, Book, Client, Editor, \
+        Manuscript, SalesRecord, Salesperson, Series, db
 from risuspubl.flaskapp import create_app
 
+
+lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore " \
+              "et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut " \
+              "aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse " \
+              "cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in " \
+              "culpa qui officia deserunt mollit anim id est laborum."
 
 # This list is used by delete_from_tables(). These names are in a particular
 # order such that each table which has a foriegn key dependency on another table
 # is *later in the list* than that table. That way, this list can be iterated
 # across, executing DELETE FROM {table} for each one, without getting fouled up
 # on a foreign key dependency error.
-table_names = ['authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors', 'clients',
-               'salespeople', 'sales_records', 'series']
+table_names = ['authors_metadata', 'authors_manuscripts', 'authors_books', 'books', 'authors', 'manuscripts', 'editors',
+               'clients', 'salespeople', 'sales_records', 'series']
 
 # Associates table names with the SQLAlchemy.Model subclasses that implement
 # them. Used when calling commit_model_objs_get_ids() to know what
 # SQLAlchemy.Model subclass object to pass in as a 2nd argument.
-table_to_model_class = {'authors': Author, 'books': Book, 'clients': Client, 'editors': Editor,
-                        'manuscripts': Manuscript, 'sales_records': SalesRecord, 'salespeople': Salesperson,
-                        'series': Series}
+table_to_model_class = {'authors_metadata': AuthorMetadata, 'authors': Author, 'books': Book, 'clients': Client,
+                        'editors': Editor, 'manuscripts': Manuscript, 'sales_records': SalesRecord,
+                        'salespeople': Salesperson, 'series': Series}
 
 model_objs = collections.defaultdict(list)
 
@@ -150,6 +157,24 @@ def main():
         sales_records_objs = generate_sales_record_objs(book_obj.book_id, start_date, end_date)
         commit_model_objs_get_ids('sales_records', sales_records_objs)
 
+    for author_id in model_ids['authors']:
+        authors_metadata_argd = dict(author_id=author_id)
+        authors_metadata_argd['age'] = random.randint(18,75)
+        # All bios get the same default text, the original "lorem ipsum" paragraph.
+        authors_metadata_argd['biography'] = lorem_ipsum
+        # Random image dimensions, but always 2:3, a typical bio photo for use
+        # on the inside back flap of a book dust cover.
+        photo_res_horiz = random.randint(200,1000)
+        photo_res_vert = math.floor(photo_res_horiz*1.5)
+        authors_metadata_argd['photo_res_horiz'] = photo_res_horiz
+        authors_metadata_argd['photo_res_vert'] = photo_res_vert
+        # A plausible generic url for a photo file at the imaginary risuspublishing.com website.
+        authors_metadata_argd['photo_url'] = "https://risuspublishing.com/cms/img/%s.jpeg" % (
+                ''.join(hex(random.randint(1,15)).lstrip('0x') for _ in range(16)))
+        authors_metadata_obj = AuthorMetadata(**authors_metadata_argd)
+        db.session.add(authors_metadata_obj)
+        db.session.commit()
+
 
 # Iterates down the table_names list, deleting all rows from each table.
 def delete_from_tables(db):
@@ -157,7 +182,6 @@ def delete_from_tables(db):
     for table_name in table_names:
         db.session.execute(f'DELETE FROM {table_name};')
     db.session.commit()
-
 
 # Reads a tsv file of testing data for the given table, forms an argd from each
 # line, instances an object from the given class from each argd, and returns a
