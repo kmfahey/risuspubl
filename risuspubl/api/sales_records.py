@@ -17,8 +17,8 @@ display_sales_record_by_id = display_table_row_by_id_function(SalesRecord)
 @blueprint.route('/<int:sales_record_id>', methods=['GET'])
 def display_sales_record_endpoint(sales_record_id: int):
     """
-    Implements a GET /<id> endpoint. The row with that sales_record_id in the
-    sales_records table is loaded and output as JSON.
+    Implements a GET /sales_records/{sales_record_id} endpoint. The row with
+    that sales_record_id in the sales_records table is displayed.
 
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
@@ -29,8 +29,9 @@ def display_sales_record_endpoint(sales_record_id: int):
 @blueprint.route('/years/<int:year>', methods=['GET'])
 def display_sales_records_by_year_endpoint(year: int):
     """
-    Implements a GET /years/<year> endpoint. All rows in the sales_records table
-    with that year are loaded and output as a JSON list.
+    Implements a GET /sales_records/years/{year} endpoint. All rows in the
+    sales_records table with that year are displayed in order by year, month and
+    book_id.
 
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
@@ -47,12 +48,14 @@ def display_sales_records_by_year_endpoint(year: int):
 @blueprint.route('/years/<int:year>/month/<int:month>', methods=['GET'])
 def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
     """
-    Implements a GET /years/<year>/month/<month> endpoint. All rows in the
+    Implements a GET /sales_records/years/{year}/month/{month} endpoint. All rows in the
     sales_records table with that year and that month are loaded and output as a
     JSON list.
 
-    :year:   The year of rows from sales_records table to display.
-    :month:  The year of rows from sales_records table to display.
+    :year:   The year of rows from sales_records table to display (between 1990
+             and the current year).
+    :month:  The month of rows from sales_records table to display (between 1
+             and 12).
     :return: A flask.Response object.
     """
     try:
@@ -71,6 +74,14 @@ def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
 
 @blueprint.route('/books/<int:book_id>', methods=['GET'])
 def display_sales_records_by_book_id_endpoint(book_id: int):
+    """
+    Implements a GET /sales_records/books/{book_id} endpoint. All rows in the
+    sales_records table with that book_id value are displayed in order by year
+    and month.
+
+    :book_id: The book_id of the book to see the complete sales records for.
+    :return:  a flask.Response object
+    """
     sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id))
     if len(sales_record_objs) == 0:
         return abort(404)
@@ -81,6 +92,15 @@ def display_sales_records_by_book_id_endpoint(book_id: int):
 
 @blueprint.route('/years/<int:year>/books/<int:book_id>', methods=['GET'])
 def display_sales_records_by_year_and_book_id_endpoint(year: int, book_id: int):
+    """
+    Implements a GET /sales_records/years/{year}/books/{book_id} endpoint. Loads
+    the sales data from the sales_records table for the specified year and the
+    specified book and displays them in order by month.
+
+    :year:    the year to retrieve sales data for
+    :book_id: the book_id of the book to retrieve sales data for
+    :return:  a flask.Response object
+    """
     sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id)
                                                .where(SalesRecord.year == year))
     if len(sales_record_objs) == 0:
@@ -92,6 +112,16 @@ def display_sales_records_by_year_and_book_id_endpoint(year: int, book_id: int):
 
 @blueprint.route('/years/<int:year>/months/<int:month>/books/<int:book_id>', methods=['GET'])
 def display_sales_records_by_year_and_month_and_book_id_endpoint(year: int, month: int, book_id: int):
+    """
+    Implements a GET /sales_records/years/{year}/months/{month}/books/{book_id}
+    endpoint. Retrieves the row in the sales_records table with the given year,
+    month and book_id values and displays it.
+
+    :year: the year to retrieve sales data for
+    :month: the month to retrieve sales data for
+    :book_id: the book_id to retrieve sales data for
+    :return:    a flask.Response object
+    """
     sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id)
                                                .where(SalesRecord.year == year)
                                                .where(SalesRecord.month == month))

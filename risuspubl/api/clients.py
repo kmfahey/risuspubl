@@ -33,8 +33,8 @@ def index_endpoint():
 @blueprint.route('/<int:client_id>', methods=['GET'])
 def display_client_by_id_endpoint(client_id: int):
     """
-    Implements a GET /clients/<id> endpoint. The row in the clients table with
-    the given client_id is loaded and output in JSON.
+    Implements a GET /clients/{client_id} endpoint. The row in the clients table
+    with the given client_id is loaded and output in JSON.
 
     :client_id: The client_id of the row in the clients table to load and
                 display.
@@ -57,8 +57,8 @@ def create_client_endpoint():
 @blueprint.route('/<int:client_id>', methods=['PATCH', 'PUT'])
 def update_client_by_id_endpoint(client_id: int):
     """
-    Implements a PATCH /clients/<id> endpoint. The row in the clients table with
-    that client_id is updated from the JSON parameters.
+    Implements a PATCH /clients/{client_id} endpoint. The row in the clients
+    table with that client_id is updated from the JSON parameters.
 
     :client_id: The client_id of the row in the clients table to update.
     :return:    A flask.Response object.
@@ -69,8 +69,8 @@ def update_client_by_id_endpoint(client_id: int):
 @blueprint.route('/<int:client_id>', methods=['DELETE'])
 def delete_client_by_id_endpoint(client_id: int):
     """
-    Implements a DELETE /clients/<id> endpoint. The row in the clients table
-    with that client_id is deleted.
+    Implements a DELETE /clients/{client_id} endpoint. The row in the clients
+    table with that client_id is deleted.
 
     :client_id: The client_id of the row in the clients table to delete.
     :return:    A flask.Response object.

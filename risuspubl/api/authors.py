@@ -23,6 +23,13 @@ update_author_by_id = update_table_row_by_id_function(Author)
 
 @blueprint.route('/<int:author_id>/metadata', methods=['GET'])
 def display_author_metadata_endpoint(author_id: int):
+    """
+    Implements a GET /authors/{author_id}/metadata endpoint. The row in the
+    authors_metadata table for that author_id is retrieved and displayed.
+
+    :author_id: the value for the author_id column in the authors_metadata table
+    :return:    a flask.Response object
+    """
     try:
         metadata_objs = list(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
         if not len(metadata_objs):
@@ -42,7 +49,7 @@ def index_endpoint():
     Implements a GET /authors endpoint. All rows in the authors table are loaded
     and output as a JSON list.
 
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         return display_authors()
@@ -53,15 +60,15 @@ def index_endpoint():
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['GET'])
 def display_authors_books_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/<id>/<id>/books endpoint. All rows in the books
-    table associated with those two author_ids in the authors_books table are
-    loaded and output as a JSON list.
+    Implements a GET /authors/{author1_id}/{author2_id}/books endpoint. All rows
+    in the books table associated with those two author_ids in the authors_books
+    table are loaded and output as a JSON list.
 
     :author1_id: One of the two author_ids associated with matching book_ids
                  in the authors_books table.
     :author2_id: The other of the two author_ids associated with matching
                  book_ids in the authors_books table.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         # A utility function is used to fetch a list of Book objects whose
@@ -77,9 +84,9 @@ def display_authors_books_endpoint(author1_id: int, author2_id: int):
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['GET'])
 def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
-    Implements a GET /authors/<id>/<id>/books/<id> endpoint. The row in the
-    books table with that book_id associated with those two author_ids in the
-    authors_books table is loaded and outputed in JSON.
+    Implements a GET /authors/{author1_id}/{author2_id}/books/{book_id}
+    endpoint. The row in the books table with that book_id associated with those
+    two author_ids in the authors_books table is loaded and outputed in JSON.
 
     :author1_id: One of the two author_ids associated with the given book_id
                  in the authors_books table.
@@ -87,7 +94,7 @@ def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_i
                  book_id in the authors_books table.
     :book_id:    The book_id of the row in the books table to load and
                  display.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         # A utility function is used to fetch a list of Book objects whose
@@ -135,15 +142,15 @@ def _authors_shared_manuscript_ids_endpoint(author1_id: int, author2_id: int) ->
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['GET'])
 def display_authors_manuscripts_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/<id>/<id>/manuscripts endpoint. All rows
-    in the manuscripts table associated with those two author_ids in the
-    authors_manuscripts table are loaded and output as a JSON list.
+    Implements a GET /authors/{author1_id}/{author2_id}/manuscripts endpoint.
+    All rows in the manuscripts table associated with those two author_ids in
+    the authors_manuscripts table are loaded and output as a JSON list.
 
     :author1_id:    One of the two author_ids associated with matching
                     manuscript_ids in the authors_manuscripts table.
     :author2_id:    The other of the two author_ids associated with matching
                     manuscript_ids in the authors_manuscripts table.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         # This utility function looks up which manuscript_ids are associated
@@ -160,9 +167,10 @@ def display_authors_manuscripts_endpoint(author1_id: int, author2_id: int):
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
 def display_authors_manuscript_by_id_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
     """
-    Implements a GET /authors/<id>/<id>/manuscripts/<id> endpoint. The row in
-    the manuscripts table with that manuscript_id associated with those two
-    author_ids in the authors_manuscripts table is loaded and outputed in JSON.
+    Implements a GET /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id
+    associated with those two author_ids in the authors_manuscripts table is
+    loaded and outputed in JSON.
 
     :author1_id:    One of the two author_ids associated with the given
                     manuscript_id in the authors_manuscripts table.
@@ -170,7 +178,7 @@ def display_authors_manuscript_by_id_endpoint(author1_id: int, author2_id: int, 
                     manuscript_id in the authors_manuscripts table.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     load and display.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         # Using a utility function to look up which manuscript_ids are
@@ -193,12 +201,12 @@ def display_authors_manuscript_by_id_endpoint(author1_id: int, author2_id: int, 
 @blueprint.route('/<int:author_id>', methods=['GET'])
 def display_author_by_id_endpoint(author_id: int):
     """
-    Implements a GET /authors/<id> endpoint. The row in the authors table with
-    the given author_id is loaded and output in JSON.
+    Implements a GET /authors/{author_id} endpoint. The row in the authors table
+    with the given author_id is loaded and output in JSON.
 
     :author_id: The author_id of the row in the authors table to load and
                 display.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     return display_author_by_id(author_id)
 
@@ -206,13 +214,13 @@ def display_author_by_id_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/books', methods=['GET'])
 def display_author_books_endpoint(author_id: int):
     """
-    Implements a GET /authors/<id>/books endpoint. All rows in the books table
-    associated with that author_id in the authors_books table are loaded and
-    output as a JSON list.
+    Implements a GET /authors/{author_id}/books endpoint. All rows in the books
+    table associated with that author_id in the authors_books table are loaded
+    and output as a JSON list.
 
     :author_id: The author_id associated with book_ids in the authors_books
                 table of rows from the books table to display.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -225,14 +233,14 @@ def display_author_books_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['GET'])
 def display_author_book_by_id_endpoint(author_id: int, book_id: int):
     """
-    Implements a GET /authors/<id>/books/<id> endpoint. The row in the books
-    table with that book_id associated with that author_id in the authors_books
-    table is loaded and outputed in JSON.
+    Implements a GET /authors/{author_id}/books/{book_id} endpoint. The row in
+    the books table with that book_id associated with that author_id in the
+    authors_books table is loaded and outputed in JSON.
 
     :author_id: The author_id associated with the given book_id in the
                 authors_books table.
     :book_id:   The book_id of the row in the books table to load and display.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -251,14 +259,14 @@ def display_author_book_by_id_endpoint(author_id: int, book_id: int):
 @blueprint.route('/<int:author_id>/manuscripts', methods=['GET'])
 def display_author_manuscripts_endpoint(author_id: int):
     """
-    Implements a GET /authors/<id>/manuscripts endpoint. All rows in the
+    Implements a GET /authors/{author_id}/manuscripts endpoint. All rows in the
     manuscripts table associated with that author_ids in the authors_manuscripts
     table are loaded and output as a JSON list.
 
     :author_id: The author_id associated with manuscript_ids in the
                 authors_manuscripts table of rows from the manuscripts table to
                 display.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -271,15 +279,16 @@ def display_author_manuscripts_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
 def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int):
     """
-    Implements a GET /authors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id associated with that author_id in
-    the authors_manuscripts table is loaded and outputed in JSON.
+    Implements a GET /authors/{author_id}/manuscripts/{manuscript_id} endpoint.
+    The row in the manuscripts table with that manuscript_id associated with
+    that author_id in the authors_manuscripts table is loaded and outputed in
+    JSON.
 
     :author_id:     The author_id associated with the given manuscript_id in
                     the authors_manuscripts table.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     load and display.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -296,19 +305,19 @@ def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int)
 
 
 # To be frank this endpoint doesn't have much of a reason to exist, save that
-# if this endpoint is loaded something *should* be here since /authors/<id> is
-# valid and /authors/<id>/<id>/books is valid. Provied for completGETeness. /<int:author1_id>/<int:author2_id>
+# if this endpoint is loaded something *should* be here since /authors/{author_id} is
+# valid and /authors/{author1_id}/{author2_id}/books is valid. Provied for completGETeness. /<int:author1_id>/<int:author2_id>
 @blueprint.route('/<int:author1_id>/<int:author2_id>', methods=['GET'])
 def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/<id>/<id> endpoint. The rows in the authors table
-    with those two author_ids are loaded and outputed in a JSON list.
+    Implements a GET /authors/{author_id}/<id> endpoint. The rows in the authors
+    table with those two author_ids are loaded and outputed in a JSON list.
 
     :author1_id: One of the two author_ids of rows in the authors table to
                  load and display.
     :author2_id: The other of the two author_ids of rows in the authors table
                  to load and display.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -346,6 +355,15 @@ def _authors_shared_book_ids_endpoint(author1_id: int, author2_id: int) -> set:
 
 @blueprint.route('/<int:author_id>/metadata', methods=['PATCH'])
 def update_author_metadata_endpoint(author_id: int):
+    """
+    Implements a PATCH /authors/{author_id}/metadata endpoint. The row in the
+    authors_metadata table associated with the given author_id is updated from
+    the JSON parameters.
+
+    :author_id: the author_id to locate the row to change in the
+                authors_metadata table with
+    :return:    a flask.Response object
+    """
     try:
         result = tuple(db.session.execute('SELECT author_metadata_id FROM authors_metadata WHERE '
                                           f'author_id = {author_id};'))
@@ -367,16 +385,17 @@ def update_author_metadata_endpoint(author_id: int):
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
-    Implements a PATCH /authors/<id>/<id>/books/<id> endpoint. The row in the
-    books table with that book_id associated with those two author_ids in the
-    authors_books table is updated from the JSON parameters.
+    Implements a PATCH /authors/{author1_id}/{author2_id}/books/{book_id}
+    endpoint. The row in the books table with that book_id associated with
+    those two author_ids in the authors_books table is updated from the JSON
+    parameters.
 
     :author1_id: One of the two author_ids associated with that book_id in the
                  authors_books table.
     :author2_id: The other of the two author_ids associated with that book_id
                  in the authors_books table.
     :book_id:    The book_id of the row in the books table to update.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -398,10 +417,10 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
     """
-    Implements a PATCH /authors/<id>/<id>/manuscripts/<id> endpoint. The row
-    in the manuscripts table with that manuscript_id associated with those
-    two author_ids in the authors_manuscripts table is updated from the JSON
-    parameters.
+    Implements a PATCH /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id
+    associated with those two author_ids in the authors_manuscripts table is
+    updated from the JSON parameters.
 
     :author1_id:    One of the two author_ids associated with that
                     manuscript_id in the authors_manuscripts table.
@@ -409,7 +428,7 @@ def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
                     manuscript_id in the authors_manuscripts table.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     update.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -435,11 +454,11 @@ def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
 @blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
 def update_author_by_id_endpoint(author_id: int):
     """
-    Implements a PATCH /authors/<id> endpoint. The row in the authors table with
-    that author_id is updated from the JSON parameters.
+    Implements a PATCH /authors/{author_id} endpoint. The row in the authors
+    table with that author_id is updated from the JSON parameters.
 
     :author_id: The author_id of the row in the authors table to update.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     return update_author_by_id(author_id, request.json)
 
@@ -447,15 +466,15 @@ def update_author_by_id_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_author_book_endpoint(author_id: int, book_id: int):
     """
-    Implements a PATCH /authors/<id>/books/<id> endpoint. The row in the books
-    table with that book_id associated with that author_id in the authors_books
-    table is updated from the JSON parameters.
+    Implements a PATCH /authors/{author_id}/books/{book_id} endpoint. The row
+    in the books table with that book_id associated with that author_id in the
+    authors_books table is updated from the JSON parameters.
 
     :author_id: The author_id associated with that book_id in the
                 authors_books table.
     :book_id:   The book_id of the row in the books table to
                 update.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -477,15 +496,16 @@ def update_author_book_endpoint(author_id: int, book_id: int):
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
-    Implements a PATCH /authors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id associated with that author_id in
-    the authors_manuscripts table is updated from the JSON parameters.
+    Implements a PATCH /authors/{author_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id
+    associated with that author_id in the authors_manuscripts table is updated
+    from the JSON parameters.
 
     :author_id:     The author_id associated with that manuscript_id in the
                     authors_manuscripts table.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     update.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -508,6 +528,16 @@ def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
 
 @blueprint.route('/<int:author_id>/metadata', methods=['POST'])
 def create_author_metadata_endpoint(author_id: int):
+    """
+    Implements a POST /authors/{author_id}/metadata endpoint. Creates a row
+    in the authors_metadata table with the given author_id from the JSON
+    parameters. Fails if there already is a row in the authors_metadata table
+    with that author_id value.
+
+    :author_id: the author_id value to set on the new row in the 
+                authors_metadata table
+    :return:    a flask.Response object
+    """
     try:
         results = tuple(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
         if len(results):
@@ -527,7 +557,7 @@ def author_create_endpoint():
     Implements a POST /authors endpoint. A new row in the authors table is
     constituted from the JSON parameters and saved to that table.
 
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     return create_author(request.json)
 
@@ -535,17 +565,17 @@ def author_create_endpoint():
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['POST'])
 def create_authors_book_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a POST /authors/<id>/books endpoint. A new row in the books table
-    is constituted from the JSON parameters and saved to that table. In addition,
-    rows in the authors_books table associating the new book_id with
-    those two author_ids are added.
+    Implements a POST /authors/{author_id}/books endpoint. A new row in the
+    books table is constituted from the JSON parameters and saved to that table.
+    In addition, rows in the authors_books table associating the new book_id
+    with those two author_ids are added.
 
     :author1_id: One of the two author_ids to associate the new book_id
                  with in the authors_books table.
     :author2_id: The other of the two author_ids to associate the new
                  book_id with in the authors_books table.
     :book_id:    The book_id of the row in the books table to update.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         Author.query.get_or_404(author1_id)
@@ -572,17 +602,17 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['POST'])
 def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a POST /authors/<id>/<id>/manuscripts endpoint. A new row in the
-    manuscripts table is constituted from the JSON parameters and saved to that
-    table. In addition, rows in the authors_manuscripts table associating the
-    new manuscript_id with those two author_ids are added.
+    Implements a POST /authors/{author1_id}/{author2_id}/manuscripts endpoint.
+    A new row in the manuscripts table is constituted from the JSON parameters
+    and saved to that table. In addition, rows in the authors_manuscripts table
+    associating the new manuscript_id with those two author_ids are added.
 
     :author1_id: One of the two author_ids to associate the new manuscript_id
                  with in the authors_manuscripts table.
     :author2_id: The other of the two author_ids to associate the new
                  manuscript_id with in the authors_manuscripts table.
     :book_id:    The book_id of the row in the books table to update.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         Author.query.get_or_404(author1_id)
@@ -611,7 +641,7 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
 @blueprint.route('/<int:author_id>/books', methods=['POST'])
 def create_author_book_endpoint(author_id: int):
     """
-    Implements a POST /authors/<id>/books endpoint. A new row in the
+    Implements a POST /authors/{author_id}/books endpoint. A new row in the
     books table is constituted from the JSON parameters and saved to that
     table. In addition, a row in the authors_books table associating the
     new book_id with that author_id is added.
@@ -619,7 +649,7 @@ def create_author_book_endpoint(author_id: int):
     :author_id: The author_id to associate the new book_id with in the
                 authors_books table.
     :book_id:   The book_id of the row in the books table to update.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         Author.query.get_or_404(author_id)
@@ -643,15 +673,15 @@ def create_author_book_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/manuscripts', methods=['POST'])
 def create_author_manuscript_endpoint(author_id: int):
     """
-    Implements a POST /authors/<id>/manuscripts endpoint. A new row in the
-    manuscripts table is constituted from the JSON parameters and saved to that
-    table. In addition, a row in the authors_manuscripts table associating the
-    new manuscript_id with that author_id is added.
+    Implements a POST /authors/{author_id}/manuscripts endpoint. A new row in
+    the manuscripts table is constituted from the JSON parameters and saved to
+    that table. In addition, a row in the authors_manuscripts table associating
+    the new manuscript_id with that author_id is added.
 
     :author_id: The author_id to associate the new manuscript_id with in the
                 authors_manuscripts table.
     :book_id:   The book_id of the row in the books table to update.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         Author.query.get_or_404(author_id)
@@ -674,6 +704,15 @@ def create_author_manuscript_endpoint(author_id: int):
 
 @blueprint.route('/<int:author_id>/metadata', methods=['DELETE'])
 def delete_author_metadata_endpoint(author_id: int):
+    """
+    Implements a DELETE /authors/{author_id}/metadata endpoint. Locates the row
+    in the authors_metadata table with the specified author_id value and deletes
+    it.
+
+    :author_id: the value for the author_id column to use when locating the row
+                in the authors_metadata table to delete
+    :return:    a flask.Response object
+    """
     try:
         metadata_objs = tuple(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
         if len(metadata_objs) == 0:
@@ -692,10 +731,10 @@ def delete_author_metadata_endpoint(author_id: int):
 @blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['DELETE'])
 def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
-    Implements a DELETE /authors/<id>/<id>/books/<id> endpoint. The row in
-    the books table with that book_id associated with those author_ids in the
-    authors_books table is deleted. The row(s) in authors_books table with that
-    book_id are also deleted.
+    Implements a DELETE /authors/{author1_id}/{author2_id}/books/{book_id}
+    endpoint. The row in the books table with that book_id associated with
+    those author_ids in the authors_books table is deleted. The row(s) in
+    authors_books table with that book_id are also deleted.
 
     :author1_id: The author_id of one of the two rows in the authors table
                  associated with this book_id.
@@ -703,7 +742,7 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
                  table associated with this book_id.
     :book_id:    The book_id value of the row in the books table to
                  delete.
-    :return:     A flask.Response object.
+    :return:     a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -729,10 +768,10 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
 @blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
 def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
     """
-    Implements a DELETE /authors/<id>/<id>/manuscripts/<id> endpoint. The row in
-    the manuscripts table with that id associated with those author_ids in the
-    authors_books table is deleted. The row(s) in authors_manuscripts table with
-    that manuscript id are also deleted.
+    Implements a DELETE /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id} endpoint.
+    The row in the manuscripts table with that id associated with those
+    author_ids in the authors_books table is deleted. The row(s) in
+    authors_manuscripts table with that manuscript id are also deleted.
 
     :author1_id:    The author_id of one of the two rows in the authors table
                     associated with this manuscript id.
@@ -740,7 +779,7 @@ def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
                     table associated with this manuscript id.
     :manuscript_id: The manuscript_id value of the row in the manuscripts
                     table to delete.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -767,12 +806,12 @@ def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
 @blueprint.route('/<int:author_id>', methods=['DELETE'])
 def delete_author_by_id_endpoint(author_id: int):
     """
-    Implements a DELETE /authors/<id> endpoint. The row in the authors
+    Implements a DELETE /authors/{author_id} endpoint. The row in the authors
     table with that author_id is deleted. The row(s) in authors_books and
     authors_manuscripts tables with that author_id are also deleted.
 
     :author_id: The author_id of the row in the authors table to delete.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -791,16 +830,16 @@ def delete_author_by_id_endpoint(author_id: int):
 @blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['DELETE'])
 def delete_author_book_endpoint(author_id: int, book_id: int):
     """
-    Implements a DELETE /authors/<id>/books/<id> endpoint. The row in the
-    books table with that book_id associated with that author_id in the
-    authors_books table is deleted. The row(s) in authors_books table with
-    that book_id are also deleted.
+    Implements a DELETE /authors/{author_id}/books/{book_id} endpoint. The row
+    in the books table with that book_id associated with that author_id in the
+    authors_books table is deleted. The row(s) in authors_books table with that
+    book_id are also deleted.
 
     :author_id: The author_id of the row in the authors table associated with
                 this book_id.
     :book_id:   The book_id value of the row in the books table to
                 delete.
-    :return:    A flask.Response object.
+    :return:    a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -824,16 +863,17 @@ def delete_author_book_endpoint(author_id: int, book_id: int):
 @blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
 def delete_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
-    Implements a DELETE /authors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id associated with that author_id in
-    the authors_manuscripts table is deleted. The row(s) in authors_manuscripts
-    table with that manuscript_id are also deleted.
+    Implements a DELETE /authors/{author_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id
+    associated with that author_id in the authors_manuscripts table is deleted.
+    The row(s) in authors_manuscripts table with that manuscript_id are also
+    deleted.
 
     :author_id:     The author_id of the row in the authors table associated
                     with this manuscript id.
     :manuscript_id: The manuscript_id value of the row in the manuscripts
                     table to delete.
-    :return:        A flask.Response object.
+    :return:        a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)

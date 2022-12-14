@@ -32,8 +32,8 @@ def index_endpoint():
 @blueprint.route('/<int:book_id>', methods=['GET'])
 def display_book_by_id_endpoint(book_id: int):
     """
-    Implements a GET /books/<id> endpoint. The row in the books table with the
-    given book_id is loaded and output in JSON.
+    Implements a GET /books/{book_id} endpoint. The row in the books table with
+    the given book_id is loaded and output in JSON.
 
     :book_id: The book_id of the row in the books table to load and
               display.
@@ -54,8 +54,8 @@ def display_book_by_id_endpoint(book_id: int):
 @blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_book_by_id_endpoint(book_id: int):
     """
-    Implements a PATCH /books/<id> endpoint. The row in the books table with
-    that book_id is updated from the JSON parameters.
+    Implements a PATCH /books/{book_id} endpoint. The row in the books table
+    with that book_id is updated from the JSON parameters.
 
     :book_id: The book_id of the row in the books table to update.
     :return:  A flask.Response object.
@@ -66,8 +66,8 @@ def update_book_by_id_endpoint(book_id: int):
 @blueprint.route('/<int:book_id>', methods=['DELETE'])
 def delete_book_by_id_endpoint(book_id: int):
     """
-    Implements a DELETE /books/<id> endpoint. The row in the books table with
-    that book_id is deleted.
+    Implements a DELETE /books/{book_id} endpoint. The row in the books table
+    with that book_id is deleted.
 
     :book_id: The book_id of the row in the books table to delete.
     :return:  A flask.Response object.

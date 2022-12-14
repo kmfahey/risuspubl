@@ -44,8 +44,8 @@ def index_endpoint():
 @blueprint.route('/<int:editor_id>', methods=['GET'])
 def display_editor_by_id_endpoint(editor_id: int):
     """
-    Implements a GET /editors/<id> endpoint. The row in the editors table with
-    the given editor_id is loaded and output in JSON.
+    Implements a GET /editors/{editor_id} endpoint. The row in the editors table
+    with the given editor_id is loaded and output in JSON.
 
     :editor_id: The editor_id of the row in the editors table to load and
                 display.
@@ -57,8 +57,8 @@ def display_editor_by_id_endpoint(editor_id: int):
 @blueprint.route('/<int:editor_id>/books', methods=['GET'])
 def display_editor_books_endpoint(editor_id: int):
     """
-    Implements a GET /editors/<id>/books endpoint. All rows in the books table
-    with that editor_id are loaded and output as a JSON list.
+    Implements a GET /editors/{editor_id}/books endpoint. All rows in the books
+    table with that editor_id are loaded and output as a JSON list.
 
     :editor_id: The editor_id associated with book_ids in the
                 editors_books table of rows from the books table to display.
@@ -70,8 +70,9 @@ def display_editor_books_endpoint(editor_id: int):
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['GET'])
 def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
-    Implements a GET /editors/<id>/books/<id> endpoint. The row in the books
-    table with that editor_id and that book_id is loaded and outputed in JSON.
+    Implements a GET /editors/{editor_id}/books/{book_id} endpoint. The row in
+    the books table with that editor_id and that book_id is loaded and outputed
+    in JSON.
 
     :editor_id: The editor_id of the row in the books table to display.
     :book_id:   The book_id of the row in the books table to load and display.
@@ -83,7 +84,7 @@ def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
 @blueprint.route('/<int:editor_id>/manuscripts', methods=['GET'])
 def display_editor_manuscripts_endpoint(editor_id: int):
     """
-    Implements a GET /editors/<id>/manuscripts endpoint. All rows in the
+    Implements a GET /editors/{editor_id}/manuscripts endpoint. All rows in the
     manuscripts table with that editor_id are loaded and output as a JSON list.
 
     :editor_id: The editor_id associated with manuscript_ids in the
@@ -97,9 +98,9 @@ def display_editor_manuscripts_endpoint(editor_id: int):
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
 def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
-    Implements a GET /editors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that editor_id and that manuscript_id is loaded and
-    outputed in JSON.
+    Implements a GET /editors/{editor_id}/manuscripts/{manuscript_id} endpoint.
+    The row in the manuscripts table with that editor_id and that manuscript_id
+    is loaded and outputed in JSON.
 
     :editor_id:       The editor_id of the row in the manuscripts table to
                       display.
@@ -124,8 +125,8 @@ def create_editor_endpoint():
 @blueprint.route('/<int:editor_id>', methods=['PATCH', 'PUT'])
 def update_editor_by_id_endpoint(editor_id: int):
     """
-    Implements a PATCH /editors/<id> endpoint. The row in the editors table with
-    that editor_id is updated from the JSON parameters.
+    Implements a PATCH /editors/{editor_id} endpoint. The row in the editors
+    table with that editor_id is updated from the JSON parameters.
 
     :editor_id: The editor_id of the row in the editors table to update.
     :return:    A flask.Response object.
@@ -136,9 +137,9 @@ def update_editor_by_id_endpoint(editor_id: int):
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
 def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
-    Implements a PATCH /editors/<id>/books/<id> endpoint. The row in the
-    books table with that book_id and that editor_id is updated from the JSON
-    parameters.
+    Implements a PATCH /editors/{editor_id}/books/{book_id} endpoint. The row
+    in the books table with that book_id and that editor_id is updated from the
+    JSON parameters.
 
     :editor_id: The editor_id of the row in the books table to update.
     :book_id:   The book_id of the row in the books table to update.
@@ -150,9 +151,9 @@ def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
-    Implements a PATCH /editors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id and that editor_id is updated from
-    the JSON parameters.
+    Implements a PATCH /editors/{editor_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id and that
+    editor_id is updated from the JSON parameters.
 
     :editor_id:     The editor_id of the row in the manuscripts table to update.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
@@ -165,8 +166,8 @@ def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
 @blueprint.route('/<int:editor_id>', methods=['DELETE'])
 def delete_editor_by_id_endpoint(editor_id: int):
     """
-    Implements a DELETE /editors/<id> endpoint. The row in the editors table
-    with that editor_id is deleted.
+    Implements a DELETE /editors/{editor_id} endpoint. The row in the editors
+    table with that editor_id is deleted.
 
     :editor_id: The editor_id of the row in the editors table to delete.
     :return:    A flask.Response object.
@@ -177,8 +178,8 @@ def delete_editor_by_id_endpoint(editor_id: int):
 @blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['DELETE'])
 def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
-    Implements a DELETE /editors/<id>/books/<id> endpoint. The row in the books
-    table with that book_id and that editor_id is deleted.
+    Implements a DELETE /editors/{editor_id}/books/{book_id} endpoint. The row
+    in the books table with that book_id and that editor_id is deleted.
 
     :editor_id: The editor_id of the row in the books table to delete.
     :book_id:   The book_id of the row in the books table to delete.
@@ -190,8 +191,9 @@ def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
 @blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
 def delete_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
-    Implements a DELETE /editors/<id>/manuscripts/<id> endpoint. The row in the
-    manuscripts table with that manuscript_id and that editor_id is deleted.
+    Implements a DELETE /editors/{editor_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id and that
+    editor_id is deleted.
 
     :editor_id:     The editor_id of the row in the manuscripts table to delete.
     :manuscript_id: The manuscript_id of the row in the manuscripts table to

@@ -32,8 +32,8 @@ def index_endpoint():
 @blueprint.route('/<int:manuscript_id>', methods=['GET'])
 def display_manuscript_by_id_endpoint(manuscript_id: int):
     """
-    Implements a GET /manuscripts/<id> endpoint. The row in the manuscripts
-    table with the given manuscript_id is loaded and output in JSON.
+    Implements a GET /manuscripts/{manuscript_id} endpoint. The row in the
+    manuscripts table with the given manuscript_id is loaded and output in JSON.
 
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     load and display.
@@ -54,8 +54,9 @@ def display_manuscript_by_id_endpoint(manuscript_id: int):
 @blueprint.route('/<int:manuscript_id>', methods=['PATCH', 'PUT'])
 def update_manuscript_by_id_endpoint(manuscript_id: int):
     """
-    Implements a PATCH /manuscripts/<id> endpoint. The row in the manuscripts
-    table with that manuscript_id is updated from the JSON parameters.
+    Implements a PATCH /manuscripts/{manuscript_id} endpoint. The row in
+    the manuscripts table with that manuscript_id is updated from the JSON
+    parameters.
 
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     update.
@@ -67,8 +68,8 @@ def update_manuscript_by_id_endpoint(manuscript_id: int):
 @blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
 def delete_manuscript_by_id_endpoint(manuscript_id: int):
     """
-    Implements a DELETE /manuscripts/<id> endpoint. The row in the manuscripts
-    table with that manuscript_id is deleted.
+    Implements a DELETE /manuscripts/{manuscript_id} endpoint. The row in the
+    manuscripts table with that manuscript_id is deleted.
 
     :manuscript_id: The manuscript_id of the row in the manuscripts table to
                     delete.

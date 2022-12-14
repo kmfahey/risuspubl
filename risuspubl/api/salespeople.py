@@ -40,8 +40,9 @@ def index_endpoint():
 @blueprint.route('/<int:salesperson_id>', methods=['GET'])
 def display_salesperson_by_id_endpoint(salesperson_id: int):
     """
-    Implements a GET /salespeople/<id> endpoint. The row in the salespeople
-    table with the given salesperson_id is loaded and output in JSON.
+    Implements a GET /salespeople/{salesperson_id} endpoint. The row in the
+    salespeople table with the given salesperson_id is loaded and output in
+    JSON.
 
     :salesperson_id: The salesperson_id of the row in the salespeople table to
                      load and display.
@@ -53,8 +54,9 @@ def display_salesperson_by_id_endpoint(salesperson_id: int):
 @blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
 def display_salesperson_clients_endpoint(salesperson_id: int):
     """
-    Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
-    table with that salesperson_id are loaded and output as a JSON list.
+    Implements a GET /salespeople/{salesperson_id}/clients endpoint. All rows in
+    the clients table with that salesperson_id are loaded and output as a JSON
+    list.
 
     :salesperson_id: The salesperson_id of the rows from the clients table to
                      display.
@@ -66,8 +68,9 @@ def display_salesperson_clients_endpoint(salesperson_id: int):
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
 def display_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
-    Implements a GET /salespeople/<id>/clients endpoint. All rows in the clients
-    table with that salesperson_id are loaded and output as a JSON list.
+    Implements a GET /salespeople/{salesperson_id}/clients endpoint. All rows in
+    the clients table with that salesperson_id are loaded and output as a JSON
+    list.
 
     :salesperson_id: The salesperson_id of the rows from the clients table to
                      display.
@@ -90,8 +93,8 @@ def create_salesperson_endpoint():
 @blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
 def create_salesperson_client_endpoint(salesperson_id: int):
     """
-    Implements a POST /salespeople/<id>/clients endpoint. A new row in
-    the clients table is constituted from the JSON parameters and that
+    Implements a POST /salespeople/{salesperson_id}/clients endpoint. A new
+    row in the clients table is constituted from the JSON parameters and that
     salesperson_id and saved to that table.
 
     :salesperson_id: The salesperson_id to save to the new row in the clients
@@ -115,8 +118,9 @@ def create_salesperson_client_endpoint(salesperson_id: int):
 @blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
 def update_salesperson_by_id_endpoint(salesperson_id: int):
     """
-    Implements a PATCH /salespeople/<id> endpoint. The row in the salespeople
-    table with that salesperson_id is updated from the JSON parameters.
+    Implements a PATCH /salespeople/{salesperson_id} endpoint. The row in
+    the salespeople table with that salesperson_id is updated from the JSON
+    parameters.
 
     :salesperson_id: The salesperson_id of the row in the salespeople table to
                      update.
@@ -128,9 +132,9 @@ def update_salesperson_by_id_endpoint(salesperson_id: int):
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
 def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
-    Implements a PATCH /salespeople/<id>/clients/<id> endpoint. The row in the
-    clients table with that client_id and that salesperson_id is updated from
-    the JSON parameters.
+    Implements a PATCH /salespeople/{salesperson_id}/clients/{client_id}
+    endpoint. The row in the clients table with that client_id and that
+    salesperson_id is updated from the JSON parameters.
 
     :salesperson_id: The salesperson_id of the row in the clients table to
                      update.
@@ -143,8 +147,8 @@ def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int
 @blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
 def delete_salesperson_by_id_endpoint(salesperson_id: int):
     """
-    Implements a DELETE /salespeople/<id> endpoint. The row in the salespeople
-    table with that salesperson_id is deleted.
+    Implements a DELETE /salespeople/{salesperson_id} endpoint. The row in the
+    salespeople table with that salesperson_id is deleted.
 
     :salesperson_id: The salesperson_id of the row in the salespeople table to delete.
     :return:         A flask.Response object.
@@ -155,8 +159,9 @@ def delete_salesperson_by_id_endpoint(salesperson_id: int):
 @blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
 def delete_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
-    Implements a DELETE /salespeople/<id>/clients/<id> endpoint. The row in the
-    clients table with that client_id and that salesperson_id is deleted.
+    Implements a DELETE /salespeople/{salesperson_id}/clients/{client_id}
+    endpoint. The row in the clients table with that client_id and that
+    salesperson_id is deleted.
 
     :salesperson_id: The salesperson_id of the row in the clients table to
                      delete.
