@@ -28,6 +28,23 @@ td.endp, th.endp {
     padding-right: 1em;
 }
 
+td.erd, th.erd {
+    font-size: small;
+    padding-top: 0.333em;
+    padding-left: 1em;
+    padding-bottom: 0.333em;
+    padding-right: 1em;
+}
+
+td.erdasc {
+    text-align: center;
+    font-size: small;
+    padding-top: 0.333em;
+    padding-left: 1em;
+    padding-bottom: 0.333em;
+    padding-right: 1em;
+}
+
 ul {
     padding-top: 0;
     margin-top: 0;
@@ -103,7 +120,28 @@ td.rightcol {
                 <td class="rightcol">
                     <p>
                         <a href="project/risuspubl_design_doc.sql">risuspubl_design_doc.sql</a><br>
-                        * will need updating
+                        <table class="erd">
+                            <tr>
+                                <th class="erd">relationship</th>
+                                <th class="erd">example</th>
+                                <th></th>
+                            </tr>
+                            <tr>
+                                <td class="erd">1-1 example:</td>
+                                <td class="erd, erdasc">authors --&gt;&#9671;&lt;-- authors_metadata</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="erd">1-many example:</td>
+                                <td class="erd, erdasc">series ---&#9671;&lt;-- books</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="erd">many-many example:</td>
+                                <td class="erd, erdasc">authors ---&#9671;--- books</td>
+                                <td class="erd">(by way of authors_books)</td>
+                            </tr>
+                        </table>
                     </p>
                 </td>
             </tr>
@@ -120,7 +158,6 @@ td.rightcol {
                 <td class="rightcol">
                     <p>
                         <a href="project/pgAdmin-generated ERD.png">pgAdmin-generated ERD.png</a><br>
-                        * will need updating
                     </p>
                 </td>
             </tr>
@@ -137,7 +174,6 @@ td.rightcol {
                 <td class="rightcol">
                     <p>
                         <a href="project/risuspublishing_dump.sql">risuspublishing_dump.sql</a><br>
-                        * will need updating
                     </p>
                 </td>
             </tr>
@@ -154,7 +190,6 @@ td.rightcol {
                 <td class="rightcol">
                     <p>
                         <a href="alembic">./alembic/</a><br>
-                        * will need updating
                     </p>
                 </td>
             </tr>
@@ -231,6 +266,10 @@ td.rightcol {
                             <th class="endp">Endpoint</th>
                         </tr>
                         <tr>
+                            <td class="endp">GET, POST, PATCH, DELETE</td>
+                            <td class="endp">/authors/{author_id}/metadata</td>
+                        </tr>
+                        <tr>
                             <td class="endp">GET</td>
                             <td class="endp">/editors/{editor_id}/books</td>
                         </tr>
@@ -299,7 +338,9 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                        * TODO
+                    I elected not to create visualizations, since all the numeric data in my database<br>
+                    is randomly generated; it would just be a series of images going in-depth on what<br>
+                    statisticians call "the shotgun distribution".
                     </p>
                 </td>
             </tr>
