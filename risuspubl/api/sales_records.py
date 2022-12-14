@@ -26,31 +26,28 @@ def display_sales_record_endpoint(sales_record_id: int):
     return display_sales_record_by_id(sales_record_id)
 
 
-@blueprint.route('/year/<int:year>', methods=['GET'])
+@blueprint.route('/years/<int:year>', methods=['GET'])
 def display_sales_records_by_year_endpoint(year: int):
     """
-    Implements a GET /year/<year> endpoint. All rows in the sales_records table
+    Implements a GET /years/<year> endpoint. All rows in the sales_records table
     with that year are loaded and output as a JSON list.
 
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
-    try:
-        retval = list()
-        if not (1990 <= year <= 2022):
-            raise ValueError(f'year parameter value {year} not in the range [1990, 2022]: no sales in specified year')
-        for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
-            retval.append(sales_record_obj.serialize())
-        retval.sort(key=lambda dictval: (dictval['month'], dictval['book_id']))
-        return jsonify(retval)
-    except Exception as exception:
-        return handle_exception(exception)
+    retval = list()
+    if not (1990 <= year <= 2022):
+        raise ValueError(f'year parameter value {year} not in the range [1990, 2022]: no sales in specified year')
+    for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
+        retval.append(sales_record_obj.serialize())
+    retval.sort(key=lambda dictval: (dictval['year'], dictval['month'], dictval['book_id']))
+    return jsonify(retval)
 
 
-@blueprint.route('/year/<int:year>/month/<int:month>', methods=['GET'])
+@blueprint.route('/years/<int:year>/month/<int:month>', methods=['GET'])
 def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
     """
-    Implements a GET /year/<year>/month/<month> endpoint. All rows in the
+    Implements a GET /years/<year>/month/<month> endpoint. All rows in the
     sales_records table with that year and that month are loaded and output as a
     JSON list.
 
@@ -66,9 +63,43 @@ def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
             raise ValueError(f'month parameter value {month} not in the range [1, 12]: invalid month parameter')
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year).where(SalesRecord.month == month):
             retval.append(sales_record_obj.serialize())
+        retval.sort(key=lambda dictval: (dictval['year'], dictval['month'], dictval['book_id']))
         return jsonify(retval)
     except Exception as exception:
         return handle_exception(exception)
+
+
+@blueprint.route('/books/<int:book_id>', methods=['GET'])
+def display_sales_records_by_book_id_endpoint(book_id: int):
+    sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id))
+    if len(sales_record_objs) == 0:
+        return abort(404)
+    retval = [sales_record_obj.serialize() for sales_record_obj in sales_record_objs]
+    retval.sort(key=lambda dictval: (dictval['year'], dictval['month']))
+    return jsonify(retval)
+
+
+@blueprint.route('/years/<int:year>/books/<int:book_id>', methods=['GET'])
+def display_sales_records_by_year_and_book_id_endpoint(year: int, book_id: int):
+    sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id)
+                                               .where(SalesRecord.year == year))
+    if len(sales_record_objs) == 0:
+        return abort(404)
+    retval = [sales_record_obj.serialize() for sales_record_obj in sales_record_objs]
+    retval.sort(key=lambda dictval: (dictval['year'], dictval['month']))
+    return jsonify()
+
+
+@blueprint.route('/years/<int:year>/months/<int:month>/books/<int:book_id>', methods=['GET'])
+def display_sales_records_by_year_and_month_and_book_id_endpoint(year: int, month: int, book_id: int):
+    sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id)
+                                               .where(SalesRecord.year == year)
+                                               .where(SalesRecord.month == month))
+    if len(sales_record_objs) == 0:
+        return abort(404)
+    sales_record_obj, = sales_record_objs
+    return jsonify(sales_record_obj.serialize())
+
 
 
 # Adding, updating and deleting sales records is deliberately made impossible
