@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>manuscripts</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/manuscripts.py">/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/manuscripts.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,24 +17,25 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-delete_manuscript_by_id"><strong>delete_manuscript_by_id</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/manuscripts/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
-table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;is&nbsp;deleted.<br>
+<td width="100%"><dl><dt><a name="-delete_manuscript_by_id_endpoint"><strong>delete_manuscript_by_id_endpoint</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/manuscripts/{manuscript_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
+manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;is&nbsp;deleted.<br>
 &nbsp;<br>
 :manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;delete.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-index"><strong>index</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/manuscripts&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table<br>
-are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
-&nbsp;<br>
-:return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_manuscript_by_id"><strong>show_manuscript_by_id</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/manuscripts/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
-table&nbsp;with&nbsp;the&nbsp;given&nbsp;manuscript_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_manuscript_by_id_endpoint"><strong>display_manuscript_by_id_endpoint</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/manuscripts/{manuscript_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
+manuscripts&nbsp;table&nbsp;with&nbsp;the&nbsp;given&nbsp;manuscript_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
 &nbsp;<br>
 :manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;load&nbsp;and&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_manuscript_by_id"><strong>update_manuscript_by_id</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/manuscripts/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
-table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+ <dl><dt><a name="-index_endpoint"><strong>index_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/manuscripts&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table<br>
+are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-update_manuscript_by_id_endpoint"><strong>update_manuscript_by_id_endpoint</strong></a>(manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/manuscripts/{manuscript_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in<br>
+the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON<br>
+parameters.<br>
 &nbsp;<br>
 :manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;update.<br>

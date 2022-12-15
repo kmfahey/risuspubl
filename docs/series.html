@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>series</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/series.py">/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/series.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,68 +17,69 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-create_series"><strong>create_series</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/series&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;is<br>
+<td width="100%"><dl><dt><a name="-create_series_endpoint"><strong>create_series_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/series&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;is<br>
 constituted&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters&nbsp;and&nbsp;saved&nbsp;to&nbsp;that&nbsp;table.<br>
 &nbsp;<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-delete_series_by_id"><strong>delete_series_by_id</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/series/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table<br>
-with&nbsp;that&nbsp;series_id&nbsp;is&nbsp;deleted.<br>
+ <dl><dt><a name="-delete_series_by_id_endpoint"><strong>delete_series_by_id_endpoint</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/series/{series_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series<br>
+table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;is&nbsp;deleted.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;to&nbsp;delete.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-index"><strong>index</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;are&nbsp;loaded<br>
-and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
-&nbsp;<br>
-:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_series_book_by_id"><strong>show_series_book_by_id</strong></a>(series_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/&lt;id&gt;/books/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books<br>
-table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;and&nbsp;that&nbsp;book_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;outputed&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_series_book_by_id_endpoint"><strong>display_series_book_by_id_endpoint</strong></a>(series_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/{series_id}/books/{book_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in<br>
+the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;and&nbsp;that&nbsp;book_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;outputed<br>
+in&nbsp;JSON.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;display.<br>
 :book_id:&nbsp;&nbsp;&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;load&nbsp;and&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_series_books"><strong>show_series_books</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/&lt;id&gt;/books&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;books&nbsp;table<br>
-with&nbsp;that&nbsp;series_id&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+ <dl><dt><a name="-display_series_books_endpoint"><strong>display_series_books_endpoint</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/{series_id}/books&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;books<br>
+table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;associated&nbsp;with&nbsp;book_ids&nbsp;in&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;series_books&nbsp;table&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_series_by_id"><strong>show_series_by_id</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;with<br>
-the&nbsp;given&nbsp;series_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_series_by_id_endpoint"><strong>display_series_by_id_endpoint</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/{series_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table<br>
+with&nbsp;the&nbsp;given&nbsp;series_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;to&nbsp;load&nbsp;and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_series_manuscript_by_id"><strong>show_series_manuscript_by_id</strong></a>(series_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/&lt;id&gt;/manuscripts/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
-manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;and&nbsp;that&nbsp;manuscript_id&nbsp;is&nbsp;loaded&nbsp;and<br>
-outputed&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_series_manuscript_by_id_endpoint"><strong>display_series_manuscript_by_id_endpoint</strong></a>(series_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/{series_id}/manuscripts/{manuscript_id}&nbsp;endpoint.<br>
+The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;and&nbsp;that&nbsp;manuscript_id<br>
+is&nbsp;loaded&nbsp;and&nbsp;outputed&nbsp;in&nbsp;JSON.<br>
 &nbsp;<br>
 :series_id:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
 :manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;load&nbsp;and&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_series_manuscripts"><strong>show_series_manuscripts</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/&lt;id&gt;/manuscripts&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
+ <dl><dt><a name="-display_series_manuscripts_endpoint"><strong>display_series_manuscripts_endpoint</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series/{series_id}/manuscripts&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
 manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;series_id&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;associated&nbsp;with&nbsp;manuscript_ids&nbsp;in&nbsp;the<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;series_manuscripts&nbsp;table&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_series_book_by_id"><strong>update_series_book_by_id</strong></a>(series_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/&lt;id&gt;/books/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
-books&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;and&nbsp;that&nbsp;series_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON<br>
-parameters.<br>
+ <dl><dt><a name="-index_endpoint"><strong>index_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/series&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;are&nbsp;loaded<br>
+and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-update_series_book_by_id_endpoint"><strong>update_series_book_by_id_endpoint</strong></a>(series_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/{series_id}/books/{book_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in<br>
+the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;and&nbsp;that&nbsp;series_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the<br>
+JSON&nbsp;parameters.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;update.<br>
 :book_id:&nbsp;&nbsp;&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;update.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_series_by_id"><strong>update_series_by_id</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;with<br>
-that&nbsp;series_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+ <dl><dt><a name="-update_series_by_id_endpoint"><strong>update_series_by_id_endpoint</strong></a>(series_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/{series_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table<br>
+with&nbsp;that&nbsp;series_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;series&nbsp;table&nbsp;to&nbsp;update.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_series_manuscript_by_id"><strong>update_series_manuscript_by_id</strong></a>(series_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/&lt;id&gt;/manuscripts/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
-manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;and&nbsp;that&nbsp;series_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON<br>
-parameters.<br>
+ <dl><dt><a name="-update_series_manuscript_by_id_endpoint"><strong>update_series_manuscript_by_id_endpoint</strong></a>(series_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/series/{series_id}/manuscripts/{manuscript_id}&nbsp;endpoint.<br>
+The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id&nbsp;and&nbsp;that&nbsp;series_id<br>
+is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
 &nbsp;<br>
 :series_id:&nbsp;The&nbsp;series_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to&nbsp;update.<br>
 :manuscript_id:&nbsp;&nbsp;&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to&nbsp;update.<br>

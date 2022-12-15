@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>clients</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/clients.py">/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/clients.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,27 +17,27 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-create_client"><strong>create_client</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/clients&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;is<br>
+<td width="100%"><dl><dt><a name="-create_client_endpoint"><strong>create_client_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/clients&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;is<br>
 constituted&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters&nbsp;and&nbsp;saved&nbsp;to&nbsp;that&nbsp;table.<br>
 &nbsp;<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-delete_client_by_id"><strong>delete_client_by_id</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/clients/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table<br>
-with&nbsp;that&nbsp;client_id&nbsp;is&nbsp;deleted.<br>
+ <dl><dt><a name="-delete_client_by_id_endpoint"><strong>delete_client_by_id_endpoint</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/clients/{client_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients<br>
+table&nbsp;with&nbsp;that&nbsp;client_id&nbsp;is&nbsp;deleted.<br>
 &nbsp;<br>
 :client_id:&nbsp;The&nbsp;client_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;to&nbsp;delete.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-index"><strong>index</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/clients&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;are&nbsp;loaded<br>
-and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
-&nbsp;<br>
-:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_client_by_id"><strong>show_client_by_id</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/clients/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with<br>
-the&nbsp;given&nbsp;client_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_client_by_id_endpoint"><strong>display_client_by_id_endpoint</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/clients/{client_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table<br>
+with&nbsp;the&nbsp;given&nbsp;client_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
 &nbsp;<br>
 :client_id:&nbsp;The&nbsp;client_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;to&nbsp;load&nbsp;and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_client_by_id"><strong>update_client_by_id</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/clients/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with<br>
-that&nbsp;client_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+ <dl><dt><a name="-index_endpoint"><strong>index_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/clients&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;are&nbsp;loaded<br>
+and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-update_client_by_id_endpoint"><strong>update_client_by_id_endpoint</strong></a>(client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/clients/{client_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients<br>
+table&nbsp;with&nbsp;that&nbsp;client_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
 &nbsp;<br>
 :client_id:&nbsp;The&nbsp;client_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;to&nbsp;update.<br>
 :return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>

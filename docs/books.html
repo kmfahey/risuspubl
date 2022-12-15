@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>books</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/books.py">/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/books.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,23 +17,23 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-delete_book_by_id"><strong>delete_book_by_id</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/books/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with<br>
-that&nbsp;book_id&nbsp;is&nbsp;deleted.<br>
+<td width="100%"><dl><dt><a name="-delete_book_by_id_endpoint"><strong>delete_book_by_id_endpoint</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/books/{book_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table<br>
+with&nbsp;that&nbsp;book_id&nbsp;is&nbsp;deleted.<br>
 &nbsp;<br>
 :book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;delete.<br>
 :return:&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-index"><strong>index</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/books&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;are&nbsp;loaded<br>
-and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
-&nbsp;<br>
-:return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_book_by_id"><strong>show_book_by_id</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/books/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with&nbsp;the<br>
-given&nbsp;book_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
+ <dl><dt><a name="-display_book_by_id_endpoint"><strong>display_book_by_id_endpoint</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/books/{book_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with<br>
+the&nbsp;given&nbsp;book_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
 &nbsp;<br>
 :book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;load&nbsp;and<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display.<br>
 :return:&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-update_book_by_id"><strong>update_book_by_id</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/books/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with<br>
-that&nbsp;book_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+ <dl><dt><a name="-index_endpoint"><strong>index_endpoint</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/books&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;are&nbsp;loaded<br>
+and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-update_book_by_id_endpoint"><strong>update_book_by_id_endpoint</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/books/{book_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table<br>
+with&nbsp;that&nbsp;book_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
 &nbsp;<br>
 :book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;update.<br>
 :return:&nbsp;&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>

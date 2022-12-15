@@ -8,7 +8,7 @@
 <td valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>sales_records</strong></big></big></font></td
 ><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/sales_records.py">/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week4/portfolio_project/risuspubl/risuspubl/api/sales_records.py</a></font></td></tr></table>
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a></font></td></tr></table>
     <p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
@@ -17,22 +17,46 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-show_sales_record"><strong>show_sales_record</strong></a>(sales_record_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/&lt;id&gt;&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;with&nbsp;that&nbsp;sales_record_id&nbsp;in&nbsp;the<br>
-sales_records&nbsp;table&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;JSON.<br>
+<td width="100%"><dl><dt><a name="-display_sales_record_endpoint"><strong>display_sales_record_endpoint</strong></a>(sales_record_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/{sales_record_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;with<br>
+that&nbsp;sales_record_id&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;is&nbsp;displayed.<br>
 &nbsp;<br>
 :year:&nbsp;&nbsp;&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
 :return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_sales_records_by_year"><strong>show_sales_records_by_year</strong></a>(year: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/year/&lt;year&gt;&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table<br>
-with&nbsp;that&nbsp;year&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+ <dl><dt><a name="-display_sales_records_by_book_id_endpoint"><strong>display_sales_records_by_book_id_endpoint</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/books/{book_id}&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
+sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;value&nbsp;are&nbsp;displayed&nbsp;in&nbsp;order&nbsp;by&nbsp;year<br>
+and&nbsp;month.<br>
 &nbsp;<br>
-:year:&nbsp;&nbsp;&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
-:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
- <dl><dt><a name="-show_sales_records_by_year_and_month"><strong>show_sales_records_by_year_and_month</strong></a>(year: int, month: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/year/&lt;year&gt;/month/&lt;month&gt;&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
+:book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;book&nbsp;to&nbsp;see&nbsp;the&nbsp;complete&nbsp;sales&nbsp;records&nbsp;for.<br>
+:return:&nbsp;&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-display_sales_records_by_year_and_book_id_endpoint"><strong>display_sales_records_by_year_and_book_id_endpoint</strong></a>(year: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}/books/{book_id}&nbsp;endpoint.&nbsp;Loads<br>
+the&nbsp;sales&nbsp;data&nbsp;from&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;for&nbsp;the&nbsp;specified&nbsp;year&nbsp;and&nbsp;the<br>
+specified&nbsp;book&nbsp;and&nbsp;displays&nbsp;them&nbsp;in&nbsp;order&nbsp;by&nbsp;month.<br>
+&nbsp;<br>
+:year:&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;year&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:book_id:&nbsp;the&nbsp;book_id&nbsp;of&nbsp;the&nbsp;book&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:return:&nbsp;&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-display_sales_records_by_year_and_month_and_book_id_endpoint"><strong>display_sales_records_by_year_and_month_and_book_id_endpoint</strong></a>(year: int, month: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}/months/{month}/books/{book_id}<br>
+endpoint.&nbsp;Retrieves&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;with&nbsp;the&nbsp;given&nbsp;year,<br>
+month&nbsp;and&nbsp;book_id&nbsp;values&nbsp;and&nbsp;displays&nbsp;it.<br>
+&nbsp;<br>
+:year:&nbsp;the&nbsp;year&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:month:&nbsp;the&nbsp;month&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:book_id:&nbsp;the&nbsp;book_id&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:return:&nbsp;&nbsp;&nbsp;&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-display_sales_records_by_year_and_month_endpoint"><strong>display_sales_records_by_year_and_month_endpoint</strong></a>(year: int, month: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}/month/{month}&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
 sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;year&nbsp;and&nbsp;that&nbsp;month&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a<br>
 JSON&nbsp;list.<br>
 &nbsp;<br>
+:year:&nbsp;&nbsp;&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display&nbsp;(between&nbsp;1990<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;the&nbsp;current&nbsp;year).<br>
+:month:&nbsp;&nbsp;The&nbsp;month&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display&nbsp;(between&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;and&nbsp;12).<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-display_sales_records_by_year_endpoint"><strong>display_sales_records_by_year_endpoint</strong></a>(year: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the<br>
+sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;year&nbsp;are&nbsp;displayed&nbsp;in&nbsp;order&nbsp;by&nbsp;year,&nbsp;month&nbsp;and<br>
+book_id.<br>
+&nbsp;<br>
 :year:&nbsp;&nbsp;&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
-:month:&nbsp;&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
 :return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
