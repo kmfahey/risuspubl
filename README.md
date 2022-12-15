@@ -1,13 +1,13 @@
 ﻿
 ## Risus Publishing Database
 
-An exercise in authoring a RESTful postgresql db API using flask, SQLAlchemy and alembic, completed as part of NuCamp's DevOps coding bootcamp. The conceit is that the database serves as the publishers/authors/editors-level database for a publishing company, Risus Publishing.
+This project is an exercise in authoring a RESTful postgresql db API using `flask`, `SQLAlchemy` and `alembic`, completed as part of NuCamp's DevOps coding bootcamp. The conceit is that the database serves as the publishers/authors/editors-level database for a publishing company, Risus Publishing.
 
-Included are the alembic migrations needed to instantiate the database in [alembic](alembic), a [load\_testing\_data.py](load_testing_data.py) script to populate or repopulate the database with testing data, and the testing data .tsv files in [data](data). (In addition a [experimenting.py](experimenting.py) script is included if one needs to experiment in the package's SQLAlchemy context; best used with `python -i`.)
+Included are the alembic migrations needed to instantiate the database in the alembic directory, a load\_testing\_data.py script to populate or repopulate the database with testing data, and the testing data .tsv files in the data directory. (In addition, an experimenting.py script is included if one needs to experiment in the package's `SQLAlchemy` context; best used with `python -i`.)
 
-The RESTful JSON API is implemented via the modules in [risuspubl.api.\*](risuspubl/api). It's implemented by way of `flask` and `SQLAlchemy`; executing `flask run` in the top-level directory will spawn a `flask` webserver that will furnish the endpoints under https://localhost:5000/. The SQLAlchemy table classes are defined in [risuspubl.dbmodels](risuspubl/dbmodels.py) and the `create_app()` function that `flask` depends on is defined in [risuspubl.api.flaskapp](risuspubl/api/flaskapp.py).
+The RESTful JSON API is implemented via the modules in risuspubl.api.\*. It's implemented by way of `flask` and `SQLAlchemy`; executing `flask run` in the top-level directory will spawn a `flask` webserver that will furnish the endpoints under https://localhost:5000/. The `SQLAlchemy.Model` subclasses are defined in risuspubl.dbmodels and the `create_app()` function that `flask` depends on is defined in risuspubl.api.flaskapp.
 
-(See the [Portfolio Project Requirements Checklist](Portfolio_Project_Requirements_Checklist.html) for a detailed review of the checklist from [the Portfolio Project Final Submission page](https://learn.nucamp.co/mod/forum/view.php?id=5133) with indications where files satisfying each requirement can be found.)
+(Please see the Portfolio\_Project\_Requirements\_Checklist.html file for a detailed review of the checklist from the Portfolio Project Final Submission page with indications where files satisfying each requirement can be found.)
 
 ### The Tables
 
@@ -45,25 +45,31 @@ The default database name is `risuspublishing`. The database's tables are:
 * `series`
     * the series that some of the books and manuscripts can be grouped into
 
-### Implementation Notes
-
-The other module files in [risuspubl.api](risuspubl/api) depend heavily on [the utility module](risuspubl/api/utility.py). All endpoints that create a row in a table use the function [risuspubl.api.utility.create\_model\_obj()](risuspubl/api/utility.py); likewise all endpoints that update a row in a table use the function [risuspubl.api.utility.update\_model\_obj()](risuspubl/api/utility.py). This generalizing of two of the most common tasks in an endpoint went a long way towards simplifying the endpoint code and avoiding code duplication.
-
-The other major dependency on the utility module is that the majority of the `api` modules, excluding `authors.py` and `sales_records.py`, implement some or all of their endpoints using a closure returned by one of nine endpoint-general-case higher-order functions defined in `utility.py`: `create_table_row_function()`, `delete_table_row_by_id_function()`, `delete_table_row_by_id_and_foreign_key_function()`, `display_table_rows_by_foreign_id_function()`, `display_table_rows_function()`, `display_table_row_by_id_function()`, `display_table_row_by_id_and_foreign_key_function()`, `update_table_row_by_id_function()`, and `update_table_row_by_id_and_foreign_key_function()`
-
-Each of these higher-order functions accepts one or two SQLAlchemy.Model subclass class objects as arguments, and returns a closure that implements a common endpoint case. The closure is generalized such that the arguments to its enclosing function fill in the blanks on its execution like mad libs. The effect is to dramatically simplify the endpoint function code in the large majority of cases.
-
 ### A Few Questions
 
 #### How did the project's design evolve over time?
 
 I had the idea of implementing `create_model_obj()` and `update_model_obj()` while I was partway through writing all the endpoint functions. At first their parameters `dict` argument had values that were `3-tuples`: the type of the parameter, the arguments to the matching validator function, and the actual parameter value. I found myself storing prototype create/update `dict` arguments in `lambda`s at the top of the modules, so it could be evaluated in the context of an endpoint function.
 
-Later when I came back to this design choice in an optimizing turn of mind, I implemented [risuspubl.api.utility.generate\_create\_update\_argd()](risuspubl.api.utility.generate_create_update_argd). It's a function with a big inline `dict`, whose keys are the SQLAlchemy.Model subclasses and whose values are `lambda`s that accept a request.json object and return a `dict` of parameter-name/parameter-value pairs. (See that function for more details.)
+Later when I came back to this design choice in an optimizing turn of mind, I implemented `risuspubl.api.utility.generate_create_update_argd()`. It's a function with a big inline `dict` that associated `SQLAlchemy.Model` subclass objects as keys with values that are `lambda`s which accept a `request.json` object and return a `dict` of parameter-name/parameter-value pairs that can be the arguments to a constructor for that `SQLAlchemy.Model` subclass. The `lambda`s are defined with validator functions inline such that once the `argd dict` has been instanced, all its keys (taken from `request.json`) have been checked for validity.  (See that function for more details.)
 
-It accepts a SQLAlchemy.Model subclass object and the request.json object as arguments; it picks the matching `lambda` from its `dict` that will return the correct dict argument for creating or updating a row in that table using create\_model\_obj() or update\_model\_obj(). That `lambda` is called with `response.json` as an argument, and the parameter names/values dict that results is returned to the caller, who no doubt is about to use it as an argument for `create_model_obj()` or `update_model_obj()`.
+`generate_create_update_argd()` accepts a `SQLAlchemy.Model` subclass object and the `request.json` object as arguments; it uses the model class to pick the matching `lambda` from its `dict`. That `lambda` is called with `response.json` as an argument, and the parameter names/values `dict` that results is returned to the caller, who can now use it as an argument for `create_model_obj()` or `update_model_obj()`.
 
-The other major revision was clearing out the copy-pasted code by implementing the closures discussed above (**Implementation Details**, 2nd paragraph). (At first I used classes that returned callable objects; later I had the light-bulb moment and replaced these with higher-order functions.) The large majority of the API modules have most or all of their endpoint functions implemented using closures returned by the [risuspubl.api.utility.\*\_function()](risuspubl/api/utility.py) higher-order functions. Each one is a single line, returning the result of the closure. Don't Repeat Myself indeed.
+The other major evolution happened when I noticed that, even with using `create_model_obj()` and `update_model_obj()`, a lot of my endpoints were copy-pasted code with one or two class objects changed and the primary key names swapped out. There had to be a way to reduce that duplication. At first I used classes that returned callable objects; later I had the light-bulb moment and replaced these with higher-order functions.
+
+The majority of the API modules, excluding `authors.py` and `sales_records.py`, implement some or all of their endpoints using closures returned by the endpoint-general-case higher-order functions defined in `utility.py`:
+
+* `create_table_row_function()`
+* `delete_table_row_by_id_function()`
+* `delete_table_row_by_id_and_foreign_key_function()`
+* `display_table_rows_by_foreign_id_function()`
+* `display_table_rows_function()`
+* `display_table_row_by_id_function()`
+* `display_table_row_by_id_and_foreign_key_function()`
+* `update_table_row_by_id_function()`
+* `update_table_row_by_id_and_foreign_key_function()`
+
+Each of these higher-order functions accepts one or two `SQLAlchemy.Model` subclass class objects as arguments, and returns a closure that implements a common endpoint case. The closure is generalized such that the argument(s) to its enclosing function fill in the blanks on its execution. When one of these closures is in use, a `flask` endpoint function can be implemented in a single line, simply by calling the closure with the endpoint function's arguments and returning its return value. The closures even do their own exception handling.
 
 #### Did you choose to use an ORM or raw SQL? Why?
 
@@ -71,7 +77,7 @@ I worked with an ORM in nearly every case. In a few situations I found I needed 
 
 #### What future improvements are in store, if any?
 
-I see this package as done. It certainly would be better off if I didn't implement any more endpoints! The only piece of the original design not implemented here was an idea for a warehouse table, a warehouse\_aisle table, a warehouse\_location table, and a stocking\_quantity table that between them would model the company's warehousing system. I dropped that from an early revision of my ERD because it just seemed out-of-place among the other tables. I don't think I'll bring it back.
+I see this package as done. It certainly would be better off if I didn't implement any more endpoints! The only piece of the original design not implemented here was an idea for a `warehouse` table, a `warehouse_aisle` table, a `warehouse_location` table, and a `stocking_quantity` table, that, between them, would model the company's warehousing system. I dropped that from an early revision of my ERD because it just seemed out-of-place among the other tables. I don't think I'll bring it back.
 
 ### The API
 
