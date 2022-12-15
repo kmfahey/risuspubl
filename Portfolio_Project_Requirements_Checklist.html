@@ -70,17 +70,28 @@ td.rightcol {
         <h4>Project Requirements Table</h4>
         <div class="header">
             <p>
-                I decided to treat the <a href="https://learn.nucamp.co/mod/forum/view.php?id=5133">Portfolio Project Final
-                Submission</a> page's subordinate list headed "A completed Portfolio Project is a directory that includes:"
-                as a checklist. For ease of grading, I've reproduced that list below, adjoined by links to where the files
-                that satisfy each requirement can be found.
+                I decided to treat the <a
+                href="https://learn.nucamp.co/mod/forum/view.php?id=5133">Portfo
+                lio Project Final Submission</a> page's subordinate list headed
+                "A completed Portfolio Project is a directory that includes:"
+                as a checklist. For ease of grading, I've reproduced that list
+                below, adjoined by links to where the files that satisfy each
+                requirement can be found.
             </p>
             <p>
-                If you've just run (or re-run) the alembic migrations and have a fresh, empty database, the <a
-                href="load_test_data.py">./load_test_data.py</a> script can be run to fill the database with testing
-                data. It loads data for each table (apart from sales_records) from the <a href="data">./data/</a>
-                directory, randomly assigning foreign key column values. The sales_records table is populated with
-                randomly generated sales history data for each book in the `books` table (a time-consuming task).
+                If you've just run (or re-run) the <code>alembic</code>
+                migrations and have a fresh, empty database, the <a
+                href="load_test_data.py">load_test_data.py</a> script can
+                be run to fill the database with testing data. It loads
+                data for each table (apart from <code>sales_records</code>
+                and <code>authors_metadata</code>) from the <a
+                href="data">data</a> directory, randomly assigning foreign
+                key column values. The <code>sales_records</code> table is
+                populated with randomly generated sales history data for each
+                book in the <code>books</code> table (a time-consuming task),
+                and the <code>authors_metadata</code> table is populated with
+                randomly generated data for each <code>author_id</code> from the
+                <code>authors</code> table.
             </p>
         </div>
         <table border="3">
@@ -101,8 +112,8 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="project/Week_1_Forum_Post.txt">Week_1_Forum_Post.txt</a><br>
-                        <a href="project/original_ERD.drawio">original_ERD.drawio</a>
+                        <a href="project/Week_1_Forum_Post.txt">project/Week_1_Forum_Post.txt</a><br>
+                        <a href="project/original_ERD.drawio">project/original_ERD.drawio</a>
                     </p>
                 </td>
             </tr>
@@ -111,15 +122,17 @@ td.rightcol {
                     <ul>
                         <li>Postgres database schema
                             <ul>
-                                <li>Tables designs (column names, data types, constraints etc.)</li>
-                                <li>Foreign key references (at least 1 example of 1-1, 1-many, and many-many)</li>
+                                <li>Tables designs (column names, data types,
+                                constraints etc.)</li>
+                                <li>Foreign key references (at least 1 example
+                                of 1-1, 1-many, and many-many)</li>
                             </ul>
                         </li>
                     </ul>
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="project/risuspubl_design_doc.sql">risuspubl_design_doc.sql</a><br>
+                        <a href="project/risuspubl_design_doc.sql">project/risuspubl_design_doc.sql</a><br>
                         <table class="erd">
                             <tr>
                                 <th class="erd">relationship</th>
@@ -127,17 +140,17 @@ td.rightcol {
                                 <th></th>
                             </tr>
                             <tr>
-                                <td class="erd">1-1 example:</td>
+                                <td class="erd">1-to-1:</td>
                                 <td class="erd, erdasc">authors --&gt;&#9671;&lt;-- authors_metadata</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="erd">1-many example:</td>
+                                <td class="erd">1-to-many</td>
                                 <td class="erd, erdasc">series ---&#9671;&lt;-- books</td>
                                 <td></td>
                             </tr>
                             <tr>
-                                <td class="erd">many-many example:</td>
+                                <td class="erd">many-to-many</td>
                                 <td class="erd, erdasc">authors ---&#9671;--- books</td>
                                 <td class="erd">(by way of authors_books)</td>
                             </tr>
@@ -150,14 +163,16 @@ td.rightcol {
                     <ul class="blank">
                         <li>
                             <ul>
-                                <li>Generated ER Diagram using pgAdmin (see video at bottom of this exercise from Week 1)</li>
+                                <li>Generated ER Diagram using pgAdmin (see
+                                video at bottom of this exercise from Week
+                                1)</li>
                             </ul>
                         </li>
                     </ul>
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="project/pgAdmin-generated ERD.png">pgAdmin-generated ERD.png</a><br>
+                        <a href="project/pgAdmin-generated ERD.png">project/pgAdmin-generated ERD.png</a><br>
                     </p>
                 </td>
             </tr>
@@ -173,7 +188,7 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="project/risuspublishing_dump.sql">risuspublishing_dump.sql</a><br>
+                        <a href="project/risuspublishing_dump.sql">project/risuspublishing_dump.sql</a><br>
                     </p>
                 </td>
             </tr>
@@ -182,14 +197,16 @@ td.rightcol {
                     <ul>
                         <li>REST API
                             <ul>
-                                <li>Migrations used to re-implement the database (ideally using either yoyo-migrations or Flask-Migrate)</li>
+                                <li>Migrations used to re-implement
+                                the database (ideally using
+                                either yoyo-migrations or Flask-Migrate)</li>
                             </ul>
                         </li>
                     </ul>
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="alembic">./alembic/</a><br>
+                        See the <a href="alembic">alembic</a> directory.
                     </p>
                 </td>
             </tr>
@@ -198,24 +215,24 @@ td.rightcol {
                     <ul class="blank">
                         <li>
                             <ul>
-                                <li>A REST API built on a Python backend using the Flask framework</li>
+                                <li>A REST API built on a Python backend using
+                                the Flask framework</li>
                             </ul>
                         </li>
                     </ul>
                 </td>
                 <td class="rightcol">
-                    <p>
-                        <a href="risuspubl/api/authors.py">./risuspubl/api/authors.py</a><br>
-                        <a href="risuspubl/api/authors_metadata.py">./risuspubl/api/authors_metadata.py</a><br>
-                        <a href="risuspubl/api/books.py">./risuspubl/api/books.py</a><br>
-                        <a href="risuspubl/api/clients.py">./risuspubl/api/clients.py</a><br>
-                        <a href="risuspubl/api/editors.py">./risuspubl/api/editors.py</a><br>
-                        <a href="risuspubl/api/manuscripts.py">./risuspubl/api/manuscripts.py</a><br>
-                        <a href="risuspubl/api/salespeople.py">./risuspubl/api/salespeople.py</a><br>
-                        <a href="risuspubl/api/sales_records.py">./risuspubl/api/sales_records.py</a><br>
-                        <a href="risuspubl/api/series.py">./risuspubl/api/series.py</a><br>
-                        <a href="risuspubl/api/utility.py">./risuspubl/api/utility.py</a>
-                    </p>
+                    <ul>
+                        <li><a href="risuspubl/api/authors.py">risuspubl.api.authors</a></li>
+                        <li><a href="risuspubl/api/books.py">risuspubl.api.books</a></li>
+                        <li><a href="risuspubl/api/clients.py">risuspubl.api.clients</a></li>
+                        <li><a href="risuspubl/api/editors.py">risuspubl.api.editors</a></li>
+                        <li><a href="risuspubl/api/manuscripts.py">risuspubl.api.manuscripts</a></li>
+                        <li><a href="risuspubl/api/salespeople.py">risuspubl.api.salespeople</a></li>
+                        <li><a href="risuspubl/api/sales_records.py">risuspubl.api.sales_records</a></li>
+                        <li><a href="risuspubl/api/series.py">risuspubl.api.series</a></li>
+                        <li><a href="risuspubl/api/utility.py">risuspubl.api.utility</li>
+                    </ul>
                 </td>
             </tr>
             <tr>
@@ -223,14 +240,16 @@ td.rightcol {
                     <ul class="blank">
                         <li>
                             <ul>
-                                <li>Insomnia Request Collection Export (at least 1 endpoint for each of GET, POST, PUT/PATCH, and DELETE)</li>
+                                <li>Insomnia Request Collection Export (at
+                                least 1 endpoint for each of GET, POST,
+                                PUT/PATCH, and DELETE)</li>
                             </ul>
                         </li>
                     </ul>
                 </td>
                 <td class="rightcol">
                     <p>
-                        <a href="project/Portfolio_Project_Insomnia.json">Portfolio_Project_Insomnia.json</a>
+                        <a href="project/Portfolio_Project_Insomnia.json">project/Portfolio_Project_Insomnia.json</a>
                     </p>
                 </td>
             </tr>
@@ -258,7 +277,10 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                    Since the development milestone on December 7th when I turned in<br>my Week 3 Portfolio Project Report, I've added the endpoints I discussed<br>in that document plus a few more:
+                        Since the development milestone on December 7th when I
+                        turned in<br>my Week 3 Portfolio Project Report, I've added
+                        the endpoints I discussed<br>in that document plus a few
+                        more:
                     </p>
                     <table class="endp">
                         <tr>
@@ -303,6 +325,18 @@ td.rightcol {
                         </tr>
                         <tr>
                             <td class="endp">GET</td>
+                            <td class="endp">/sales_records/books/{book_id}</td>
+                        </tr>
+                        <tr>
+                            <td class="endp">GET</td>
+                            <td class="endp">/sales_records/years/{year}/books/{book_id}</td>
+                        </tr>
+                        <tr>
+                            <td class="endp">GET</td>
+                            <td class="endp">/sales_records/years/{year}/months/{month}/books/{book_id}</td>
+                        </tr>
+                        <tr>
+                            <td class="endp">GET</td>
                             <td class="endp">/series/{series_id}/books</td>
                         </tr>
                         <tr>
@@ -319,6 +353,12 @@ td.rightcol {
                     </ul>
                 </td>
                 <td class="rightcol">
+                    <p>
+                        Consider these alembic migration steps from the
+                        ADD INDEX phase. Alternatively,<br>consider <a
+                        href="project/risuspubl_design_doc.sql">the SQL design
+                        document</a>, lines 167 to end.
+                    </p>
                     <p>
                         <a href="alembic/versions/d6c50ee4f065_add_index_on_books_hash_editor_id.py">./alembic/versions/d6c50ee4f065_add_index_on_books_hash_editor_id.py</a><br>
                         <a href="alembic/versions/0b893ceafe67_add_index_on_books_hash_series_id.py">./alembic/versions/0b893ceafe67_add_index_on_books_hash_series_id.py</a><br>
@@ -338,9 +378,9 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                    I elected not to create visualizations, since all the numeric data in my database<br>
-                    is randomly generated; it would just be a series of images going in-depth on what<br>
-                    statisticians call "the shotgun distribution".
+                        I elected not to create visualizations, since all the numeric data in my database<br>
+                        is randomly generated; it would just be a series of images going in-depth on what<br>
+                        statisticians call "the shotgun distribution".
                     </p>
                 </td>
             </tr>
@@ -352,7 +392,9 @@ td.rightcol {
                 </td>
                 <td class="rightcol">
                     <p>
-                        * TODO
+                        See the readme at <a href="README.md">README.md</a>,
+                        or its HTML output at <a href="README.html">
+                        README.html</a>.
                     </p>
                 </td>
             </tr>

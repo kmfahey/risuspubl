@@ -1,1 +1,2782 @@
-{"_type":"export","__export_format":4,"__export_date":"2022-12-14T01:54:04.481Z","__export_source":"insomnia.desktop.app:v2022.6.0","resources":[{"_id":"req_67b325a664a340d4bf5d69efb7091b4c","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521802898,"created":1670521060464,"url":"{{baseUrl}}/authors","name":"display authors","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521060464,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_7a2d4ae2ffa941d1988708b2529665d8","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473421044,"created":1670473421044,"name":"authors","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473421044,"_type":"request_group"},{"_id":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","parentId":null,"modified":1670176201636,"created":1670176201636,"name":"New Document","description":"","scope":"design","_type":"workspace"},{"_id":"req_9a7d61a4543f470cac24bf1e27269fcc","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780759448,"created":1670521060065,"url":"{{baseUrl}}/authors","name":"create author","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521060065,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_710889a2b64743a59b7ba115238e1385","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670541916697,"created":1670521059681,"url":"{{baseUrl}}/authors/{author_id}","name":"display author by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521059681,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_ce5b51ec2e3a45a7a9bf73332baaf2a8","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780758615,"created":1670521059280,"url":"{{baseUrl}}/authors/{author_id}","name":"update author by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521059280,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_bedc02b46db149e8b4e317db983b60f2","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521767980,"created":1670521058406,"url":"{{baseUrl}}/authors/{author_id}","name":"delete author by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058406,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_ab27b69bd51340c6b618f629342b50d7","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670977048215,"created":1670976397735,"url":"{{baseUrl}}/authors/{author_id}/metadata","name":"display author metadata","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058383.5,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_ee88dabe4c0147b797797c7915ba439a","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670982814012,"created":1670976397535,"url":"{{baseUrl}}/authors/{author_id}/metadata","name":"create author metadata","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n  \"author_id\": 0,\n  \"age\": 0, \n  \"biography\": \"\",\n  \"photo_url\": \"\",\n  \"photo_res_horiz\": 0,\n  \"photo_res_vert\": 0\n}    "},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058361,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_866760ee0bfd44d49b70cf3eebff4e03","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670982816341,"created":1670976393995,"url":"{{baseUrl}}/authors/{author_id}/metadata","name":"update author metadata","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n  \"author_id\": 0,\n  \"age\": 0, \n  \"biography\": \"\",\n  \"photo_url\": \"\",\n  \"photo_res_horiz\": 0,\n  \"photo_res_vert\": 0\n}    "},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058316,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_1a2254d05c0546dc8fd2e7f5fa9afa01","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670982818659,"created":1670976398067,"url":"{{baseUrl}}/authors/{author_id}/metadata","name":"delete author metadata","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058226,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a0805f289bc6437a98fd0b6996b77f47","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670545718879,"created":1670521058046,"url":"{{baseUrl}}/authors/{author_id}/books","name":"display author books","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521058046,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_18b194ce33204eb5974c03dfe177a1eb","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670976886233,"created":1670521057701,"url":"{{baseUrl}}/authors/{author_id}/books","name":"create author book","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"series_id\":null,\n\t\"title\":\"\",\n\t\"publication_date\":\"\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521057701,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a90ad47b1f724aaf904639c689bcc52a","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521741547,"created":1670521057292,"url":"{{baseUrl}}/authors/{author_id}/books/{book_id}","name":"display author book by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521057292,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_6cd66dd0f96b41eab55d8807cad78e6d","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780755981,"created":1670521056605,"url":"{{baseUrl}}/authors/{author_id}/books/{book_id}","name":"update author book by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"\t{\n\t\t\"edition_number\": 0,\n\t\t\"editor_id\": 0,\n\t\t\"is_in_print\": true,\n\t\t\"publication_date\": \"YYYY-MM-DD\",\n\t\t\"series_id\": null,\n\t\t\"title\": \"\"\n\t}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521056605,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_813433bd753f40f78818b379fd722d3a","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521728389,"created":1670521056282,"url":"{{baseUrl}}/authors/{author_id}/books/{book_id}","name":"delete author book by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521056282,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_b2195d0a1c864de0b57de98044c5b371","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521713170,"created":1670521055940,"url":"{{baseUrl}}/authors/{author_id}/manuscripts","name":"display author manuscripts","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521055940,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a2f6d85cb7904a3c872c946827f584dc","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780749122,"created":1670521055571,"url":"{{baseUrl}}/authors/{author_id}/manuscripts","name":"create author manuscript","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521055571,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_9375fac2faf84979a22e6e1f07669d7c","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670546234371,"created":1670521054854,"url":"{{baseUrl}}/authors/{author_id}/manuscripts/{manuscript_id}","name":"display author manuscript by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521054854,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_558de0576015455a9f55fedefbc047d9","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780762740,"created":1670521054583,"url":"{{baseUrl}}/authors/1625/manuscripts/566","name":"update author manuscript by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"advance\": \"\",\n\t\"due_date\": \"\",\n\t\"editor_id\": 0,\n\t\"manuscript_id\": 0,\n\t\"series_id\": null,\n\t\"working_title\": \"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521054583,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_7542df94894b4423bd66b19db9e948cc","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521666054,"created":1670521054295,"url":"{{baseUrl}}/authors/{author_id}/manuscripts/{manuscript_id}","name":"delete author manuscript by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521054295,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_34c5b730d2244fcbbc64b351fdcafe45","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521657274,"created":1670521054008,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}","name":"display 2 authors","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521054008,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_5c8bd20838154147ab0a8f8df41e3903","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670545854742,"created":1670521053208,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/books","name":"display 2 authors books","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521053208,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_14d6eef7a71f4a818b81de685bba37c8","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780764459,"created":1670521052944,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/books","name":"create 2 authors book","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521052944,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_332b3953af644e6b805a68067b38b21d","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670545364824,"created":1670521052642,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}","name":"display 2 authors book by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521052642,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_89430c9455dd48a28a44f47f89b7ea28","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780783723,"created":1670521052364,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}","name":"update 2 authors book by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"book_id\": 0,\n\t\"edition_number\": 0,\n\t\"editor_id\": 0,\n\t\"is_in_print\": true,\n\t\"publication_date\": \"YYYY-MM-DD\",\n\t\"series_id\": null,\n\t\"title\": \"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521052364,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_346a73971ded4d4cb41bab04394e659f","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521618111,"created":1670521051634,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}","name":"delete 2 authors book by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521051634,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_d82f71c550264410a7eaa4111ee929be","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521612341,"created":1670521051342,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts","name":"display 2 authors manuscripts","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521051342,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_c3945a0b2d68431b8710702df5abc7c9","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780795734,"created":1670521051027,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts","name":"create 2 authors manuscript","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521051027,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_56e8fb4c9e2f4f3cbd3189763532079f","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670546042642,"created":1670521050717,"url":"{{baseUrl}}/authors/1632/1634/manuscripts/592","name":"display 2 authors manuscript by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521050717,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_175fe527a6fc4280bb1240e0a16bc27e","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670780811155,"created":1670521050044,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}","name":"update 2 authors manuscript by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"advance\": 0,\n\t\"due_date\": \"YYYY-MM-DD\",\n\t\"editor_id\": 0,\n\t\"manuscript_id\": 0,\n\t\"series_id\": null,\n\t\"working_title\": \"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521050044,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a34fa98e4bcc4189bada48602f7d8d53","parentId":"fld_7a2d4ae2ffa941d1988708b2529665d8","modified":1670521561694,"created":1670521044732,"url":"{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}","name":"delete 2 authors manuscript by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670521044732,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_fc514760e0c34dbb882e834b3b81dff3","parentId":"fld_9e788f5ef688408795ee51030fea49e4","modified":1670521991283,"created":1670520437604,"url":"{{baseUrl}}/books","name":"display books","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520437604,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_9e788f5ef688408795ee51030fea49e4","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473416123,"created":1670473416123,"name":"books","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473416123,"_type":"request_group"},{"_id":"req_c2c527b3a4c64774b76b3a4e40ec9b7f","parentId":"fld_9e788f5ef688408795ee51030fea49e4","modified":1670541995442,"created":1670520418890,"url":"{{baseUrl}}/books/{book_id}","name":"display book by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520418890,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_4756c8ce7eda41c59457432fce60bc51","parentId":"fld_9e788f5ef688408795ee51030fea49e4","modified":1670780821868,"created":1670520384846,"url":"{{baseUrl}}/books/{book_id}","name":"update book by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520384846,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_5ad25260ecd24036bba82f5aa54e4e6f","parentId":"fld_9e788f5ef688408795ee51030fea49e4","modified":1670536467822,"created":1670520358726,"url":"{{baseUrl}}/books/{book_id}","name":"delete book by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_84337cbe8ece42f39c880e8200fa86df"}],"authentication":{},"metaSortKey":-1670520358726,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_51036721887c465a851be296f0e537f8","parentId":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","modified":1670520355531,"created":1670520340507,"url":"{{baseUrl}}/clients","name":"display clients","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520340507,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473409453,"created":1670473409453,"name":"clients","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473409453,"_type":"request_group"},{"_id":"req_d2aa3d83a433424587d2ee28e8b2800c","parentId":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","modified":1670542052476,"created":1670520324436,"url":"{{baseUrl}}/clients/{client_id}","name":"display client by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520324436,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_deb18dc7efa54dc58dd6608d53557ee6","parentId":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","modified":1670780944870,"created":1670538571384,"url":"{{baseUrl}}/clients","name":"create client","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"salesperson_id\":0,\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520285413,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_f90ae2e619b645049170ebefc709af58","parentId":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","modified":1670780949713,"created":1670520246390,"url":"{{baseUrl}}/clients/{client_id}","name":"update client by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\",\n\t\"salesperson_id\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520246390,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_b292d36c07fb4a04953c864084baa79d","parentId":"fld_3aa7fe8366cd4397b5ec36dadcc5cc6d","modified":1670535363352,"created":1670520169739,"url":"{{baseUrl}}/clients/{client_id}","name":"delete client by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_ee63b45bfbec4e1ba4d7ab7a633da938"}],"authentication":{},"metaSortKey":-1670520169739,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_232ead0bee7f4b46ae47aafb232c1ca9","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670520162717,"created":1670520150795,"url":"{{baseUrl}}/editors","name":"display editors","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520150795,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_e86f4f17bfcc497ab678b31553bc461c","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473404796,"created":1670473404796,"name":"editors","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473404796,"_type":"request_group"},{"_id":"req_1393f1c9ce0c4f8d8c41511e4456c5f1","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670542099663,"created":1670520128050,"url":"{{baseUrl}}/editors/{editor_id}","name":"display editor by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520128050,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a44a3139eac240bfa00e662155c23eb1","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670780965027,"created":1670538396341,"url":"{{baseUrl}}/editors","name":"create editor","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520098297,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_1bf3a504d44b422d8babea1a7f25fa5b","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670780963238,"created":1670520068544,"url":"{{baseUrl}}/editors/{editor_id}","name":"update editor by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670520068544,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_4a4c91aa9b5a48218848f8a79ebc27a6","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670535253001,"created":1670520045968,"url":"{{baseUrl}}/editors/{editor_id}","name":"delete editor by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_0c52b3e79f1f47cc9de7e3cd5c46eb29"}],"authentication":{},"metaSortKey":-1670520045968,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_a6971057150a427cb527713a6c92a97d","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670541379286,"created":1670519832407,"url":"{{baseUrl}}/editors/{editor_id}/books","name":"dispay editor books","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519682541,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_b12bd12fd8a74e0a98a79dfea7e72749","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670540096738,"created":1670519826606,"url":"{{baseUrl}}/editors/{editor_id}/books/{book_id}","name":"display editor book by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519682491,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_8125c4fabd0d406689afb5e58c141dea","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670780960997,"created":1670519820473,"url":"{{baseUrl}}/editors/{editor_id}/books/{book_id}","name":"update editor book by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":false\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519682441,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_23264fcb4e81441cb89fba9d3c23af81","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670529396703,"created":1670519812955,"url":"{{baseUrl}}/editors/{editor_id}/books/{book_id}","name":"delete editor book by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_9171c111235e42d98e721752257382fa"}],"authentication":{},"metaSortKey":-1670519682391,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_c275b139053f42af9f3041cabcdf8f56","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670541843446,"created":1670519682341,"url":"{{baseUrl}}/editors/{editor_id}/manuscripts","name":"dispay editor manuscripts","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519682341,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_1c449133d0c5419190a2e56d6c8a97e6","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670540816389,"created":1670519621741,"url":"{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}","name":"display editor manuscript by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519621741,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_8c2b7bcf6b3d4937a546e78e2bc52820","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670780954241,"created":1670519536406,"url":"{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}","name":"update editor manuscript by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"series_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519536406,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_5fcf629c369243d3a69bfbcde5f80448","parentId":"fld_e86f4f17bfcc497ab678b31553bc461c","modified":1670529065694,"created":1670519534906,"url":"{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}","name":"delete editor manuscript by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_9171c111235e42d98e721752257382fa"}],"authentication":{},"metaSortKey":-1670519536356,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_6e567054cae24ce08e2ad8dc3e7083c4","parentId":"fld_656ea27a1be84576a41b24c2dff4f4b7","modified":1670537150228,"created":1670519502752,"url":"{{baseUrl}}/manuscripts","name":"display manuscripts","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519502752,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_656ea27a1be84576a41b24c2dff4f4b7","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473399726,"created":1670473399726,"name":"manuscripts","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473399726,"_type":"request_group"},{"_id":"req_00da2272d4bf44c3af7fbc3993af4da8","parentId":"fld_656ea27a1be84576a41b24c2dff4f4b7","modified":1670544014135,"created":1670519478724,"url":"{{baseUrl}}/manuscripts/{manuscript_id}","name":"display manuscript by id","description":"","method":"GET","body":{},"parameters":[],"headers":[],"authentication":{},"metaSortKey":-1670519478724,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_018ea8ec36354011a3302de8abc13377","parentId":"fld_656ea27a1be84576a41b24c2dff4f4b7","modified":1670780970477,"created":1670519328192,"url":"{{baseUrl}}/manuscripts/{manuscript_id}","name":"update manuscript by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519301742,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_97c4f9de92364434a4cb8c8375ef9a72","parentId":"fld_656ea27a1be84576a41b24c2dff4f4b7","modified":1670544017815,"created":1670519301692,"url":"{{baseUrl}}/manuscripts/567","name":"delete manuscript by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519301692,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_084390409d544a668f35c9be0d7ccb82","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670522057310,"created":1670519217168,"url":"{{baseUrl}}/salespeople","name":"display salespeople","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519217168,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_b8979c77c0ec41a3b12db2c39a521130","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473393603,"created":1670473393603,"name":"salespeople","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473393603,"_type":"request_group"},{"_id":"req_09d5c06f1bba491d98d2304b5ddbf155","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670780975611,"created":1670519175533,"url":"{{baseUrl}}/salespeople","name":"create salesperson","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519175533,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_34205ab67e0d4337b7ecc18c4fdcf01e","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670542459868,"created":1670519140187,"url":"{{baseUrl}}/salespeople/{salesperson_id}","name":"display salesperson by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670519009870.5,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_cb75bdcedb6942df8cc7686d170eb639","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670780976345,"created":1670519032074,"url":"{{baseUrl}}/salespeople/{salesperson_id}","name":"update salesperson by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670518998768.75,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_170797e467124b008ae0ef44f64e9b3f","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670535070164,"created":1670518987667,"url":"{{baseUrl}}/salespeople/{salesperson_id}","name":"delete salesperson by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670518987667,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_bc8b9c5f36314395adde0363dab3bbf5","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670541278676,"created":1670518954847,"url":"{{baseUrl}}/salespeople/{salesperson_id}/clients","name":"display salesperson clients","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670518954847,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_98b4ad03a25b40c5a47353fdc6fa5025","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670780977804,"created":1670518002610,"url":"{{baseUrl}}/salespeople/315/clients","name":"create salesperson client","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670518002610,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_bee5cd5daa7d40cf8f8ba5e8a1af98a0","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670539934762,"created":1670517985777,"url":"{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}","name":"display salesperson client by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517985777,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_c4ed49b73c854bba996608166383c9ff","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670780978862,"created":1670517958652,"url":"{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}","name":"update salesperson client by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517958652,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_36a22bc7153d4aaaa29934d540797f96","parentId":"fld_b8979c77c0ec41a3b12db2c39a521130","modified":1670529225948,"created":1670517908779,"url":"{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}","name":"delete salesperson client by id ","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517908779,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_f9a93c8fe28c46ff9e0cd23711db2fd1","parentId":"fld_9ea543e9269941948d27cf273737d801","modified":1670543509177,"created":1670517878482,"url":"{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}{{baseUrl}}/sales_records/{sales_record_id}","name":"display sales by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517878482,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_9ea543e9269941948d27cf273737d801","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473388191,"created":1670473388191,"name":"sales_records","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473388191,"_type":"request_group"},{"_id":"req_beb39740e3bb4b9a97399645b91c4ab9","parentId":"fld_9ea543e9269941948d27cf273737d801","modified":1670543529232,"created":1670517859007,"url":"{{baseUrl}}/sales_records/year/1995","name":"display sales by year","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517859007,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_ac4427088d1644ee9a8968654728511c","parentId":"fld_9ea543e9269941948d27cf273737d801","modified":1670522084683,"created":1670517256316,"url":"{{baseUrl}}/sales_records/year/{year}/month/{month}","name":"display sales by year & month","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670517256316,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_1ce90af745e0486b83127210b57fc2dd","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670522096853,"created":1670474408351,"url":"{{baseUrl}}/series","name":"display all series","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474408351,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"fld_979be5ab7d964655ac886d0eef21b1c2","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670473382566,"created":1670473382566,"name":"series","description":"","environment":{},"environmentPropertyOrder":null,"metaSortKey":-1670473382567,"_type":"request_group"},{"_id":"req_3a9755e06ae54c239bcf43cf6d800667","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670542599808,"created":1670474379344,"url":"{{baseUrl}}/series/{series_id}","name":"display series by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474379344,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_b5b8cdade4cc43f9b075049de6d68335","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670780989988,"created":1670538118436,"url":"{{baseUrl}}/series","name":"create series","description":"","method":"POST","body":{"mimeType":"application/json","text":"{\n\t\"title\":\"\",\n\t\"volumes\":3\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474355898.5,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_77eee2bf30314b80bed72973c8560311","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670780994016,"created":1670474332453,"url":"{{baseUrl}}/series/{series_id}","name":"update series by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"title\":\"\",\n\t\"volumes\":4\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json","id":"pair_753e6b816b014af68bedbc3161b21dfa"}],"authentication":{},"metaSortKey":-1670474332453,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_353fc47e78b64c939ecf8b4337d73edc","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670535036215,"created":1670474307842,"url":"{{baseUrl}}/series/{series_id}","name":"delete series by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474307842,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_1f43b798163d454e8bc3de58d93c2c34","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670541163052,"created":1670474282234,"url":"{{baseUrl}}/series/{series_id}/books","name":"display all series books","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474282234,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_5dfa9e5ab0cb421492798af642e9b34c","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670539818901,"created":1670474107481,"url":"{{baseUrl}}/series/{series_id}/books/{book_id}","name":"display series book by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474107481,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_c6519405d091404fb7c62b3e6c753f95","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670781004585,"created":1670474058777,"url":"{{baseUrl}}/series/{series_id}/books/{book_id}","name":"update series book by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":1,\n\t\"is_in_print\":true\n}\t"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474058777,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_e73bbe942b214a74959d6a54a87bb3ca","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670529721307,"created":1670474001655,"url":"{{baseUrl}}/series/449/books/2281","name":"delete series book by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670474001655,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_498ceeec02b247f49d9e50e2b4e75c19","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670541068720,"created":1670473854740,"url":"{{baseUrl}}/series/{series_id}/manuscripts","name":"display all series manuscripts","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670473854740,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_aca630a7b78245579b0b6014eaece8e9","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670539555550,"created":1670473812496,"url":"{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}","name":"display series manuscript by id","description":"","method":"GET","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670473812496,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_e5314762f0af47d0bb0e9e9d15aba588","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670976359929,"created":1670473662770,"url":"{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}","name":"update series manuscript by id","description":"","method":"PATCH","body":{"mimeType":"application/json","text":"{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670473662770,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"req_58c8c2ebf7214130b08c27c0891e44ec","parentId":"fld_979be5ab7d964655ac886d0eef21b1c2","modified":1670529697021,"created":1670473591211,"url":"{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}","name":"delete series manuscript by id","description":"","method":"DELETE","body":{"mimeType":"application/json","text":""},"parameters":[],"headers":[{"name":"Content-Type","value":"application/json"}],"authentication":{},"metaSortKey":-1670473591211,"isPrivate":false,"settingStoreCookies":true,"settingSendCookies":true,"settingDisableRenderRequestBody":false,"settingEncodeUrl":true,"settingRebuildPath":true,"settingFollowRedirects":"global","_type":"request"},{"_id":"env_830108d90e4f9943aec7d7ed809e7e45386524bd","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670431867819,"created":1670176201653,"name":"Base Environment","data":{},"dataPropertyOrder":{},"color":null,"isPrivate":false,"metaSortKey":1670176201653,"_type":"environment"},{"_id":"jar_830108d90e4f9943aec7d7ed809e7e45386524bd","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670176201657,"created":1670176201657,"name":"Default Jar","cookies":[],"_type":"cookie_jar"},{"_id":"spc_00e73bb93c45434ba2a8863195937437","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670431844568,"created":1670176201649,"fileName":"RIsus Publishing","contents":"","contentType":"yaml","_type":"api_spec"},{"_id":"uts_90bc33693122466282509877d9d10f99","parentId":"wrk_73eb0a85a99646abb4ccc2cf884f8d1e","modified":1670176201663,"created":1670176201663,"name":"Example Test Suite","_type":"unit_test_suite"},{"_id":"env_6213f4cd8a1441839f51040a18431a19","parentId":"env_830108d90e4f9943aec7d7ed809e7e45386524bd","modified":1670705973646,"created":1670431870412,"name":"Risus Publishing","data":{"baseUrl":"http://localhost:5000"},"dataPropertyOrder":{"&":["baseUrl"]},"color":null,"isPrivate":false,"metaSortKey":1670431870412,"_type":"environment"}]}
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2022-12-14T22:34:38.784Z",
+  "__export_source": "insomnia.desktop.app:v2022.6.0",
+  "resources": [
+    {
+      "_id": "req_67b325a664a340d4bf5d69efb7091b4c",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521802898,
+      "created": 1670521060464,
+      "url": "{{baseUrl}}/authors",
+      "name": "display authors",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521060464,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473421044,
+      "created": 1670473421044,
+      "name": "authors",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473421044,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "parentId": null,
+      "modified": 1670176201636,
+      "created": 1670176201636,
+      "name": "New Document",
+      "description": "",
+      "scope": "design",
+      "_type": "workspace"
+    },
+    {
+      "_id": "req_9a7d61a4543f470cac24bf1e27269fcc",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050799155,
+      "created": 1670521060065,
+      "url": "{{baseUrl}}/authors",
+      "name": "create author",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521060065,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_710889a2b64743a59b7ba115238e1385",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670541916697,
+      "created": 1670521059681,
+      "url": "{{baseUrl}}/authors/{author_id}",
+      "name": "display author by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521059681,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_ce5b51ec2e3a45a7a9bf73332baaf2a8",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050800529,
+      "created": 1670521059280,
+      "url": "{{baseUrl}}/authors/{author_id}",
+      "name": "update author by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521059280,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_bedc02b46db149e8b4e317db983b60f2",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521767980,
+      "created": 1670521058406,
+      "url": "{{baseUrl}}/authors/{author_id}",
+      "name": "delete author by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058406,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_ab27b69bd51340c6b618f629342b50d7",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670977048215,
+      "created": 1670976397735,
+      "url": "{{baseUrl}}/authors/{author_id}/metadata",
+      "name": "display author metadata",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058383.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_ee88dabe4c0147b797797c7915ba439a",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050802130,
+      "created": 1670976397535,
+      "url": "{{baseUrl}}/authors/{author_id}/metadata",
+      "name": "create author metadata",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"author_id\": 0,\n  \"age\": 0, \n  \"biography\": \"\",\n  \"photo_url\": \"\",\n  \"photo_res_horiz\": 0,\n  \"photo_res_vert\": 0\n}    "
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058361,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_866760ee0bfd44d49b70cf3eebff4e03",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050804235,
+      "created": 1670976393995,
+      "url": "{{baseUrl}}/authors/{author_id}/metadata",
+      "name": "update author metadata",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"author_id\": 0,\n  \"age\": 0, \n  \"biography\": \"\",\n  \"photo_url\": \"\",\n  \"photo_res_horiz\": 0,\n  \"photo_res_vert\": 0\n}    "
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058316,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_1a2254d05c0546dc8fd2e7f5fa9afa01",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670982818659,
+      "created": 1670976398067,
+      "url": "{{baseUrl}}/authors/{author_id}/metadata",
+      "name": "delete author metadata",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058226,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a0805f289bc6437a98fd0b6996b77f47",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670545718879,
+      "created": 1670521058046,
+      "url": "{{baseUrl}}/authors/{author_id}/books",
+      "name": "display author books",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521058046,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_18b194ce33204eb5974c03dfe177a1eb",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050902322,
+      "created": 1670521057701,
+      "url": "{{baseUrl}}/authors/{author_id}/books",
+      "name": "create author book",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"series_id\":null,\n\t\"title\":\"\",\n\t\"publication_date\":\"\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521057701,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a90ad47b1f724aaf904639c689bcc52a",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521741547,
+      "created": 1670521057292,
+      "url": "{{baseUrl}}/authors/{author_id}/books/{book_id}",
+      "name": "display author book by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521057292,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_6cd66dd0f96b41eab55d8807cad78e6d",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050905234,
+      "created": 1670521056605,
+      "url": "{{baseUrl}}/authors/{author_id}/books/{book_id}",
+      "name": "update author book by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "\t{\n\t\t\"edition_number\": 0,\n\t\t\"editor_id\": 0,\n\t\t\"is_in_print\": true,\n\t\t\"publication_date\": \"YYYY-MM-DD\",\n\t\t\"series_id\": null,\n\t\t\"title\": \"\"\n\t}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521056605,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_813433bd753f40f78818b379fd722d3a",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521728389,
+      "created": 1670521056282,
+      "url": "{{baseUrl}}/authors/{author_id}/books/{book_id}",
+      "name": "delete author book by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521056282,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b2195d0a1c864de0b57de98044c5b371",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521713170,
+      "created": 1670521055940,
+      "url": "{{baseUrl}}/authors/{author_id}/manuscripts",
+      "name": "display author manuscripts",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521055940,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a2f6d85cb7904a3c872c946827f584dc",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050960599,
+      "created": 1670521055571,
+      "url": "{{baseUrl}}/authors/{author_id}/manuscripts",
+      "name": "create author manuscript",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0,\n\t\"series_id\":null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521055571,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_9375fac2faf84979a22e6e1f07669d7c",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670546234371,
+      "created": 1670521054854,
+      "url": "{{baseUrl}}/authors/{author_id}/manuscripts/{manuscript_id}",
+      "name": "display author manuscript by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521054854,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_558de0576015455a9f55fedefbc047d9",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050820605,
+      "created": 1670521054583,
+      "url": "{{baseUrl}}/authors/1625/manuscripts/566",
+      "name": "update author manuscript by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"advance\": \"\",\n\t\"due_date\": \"\",\n\t\"editor_id\": 0,\n\t\"manuscript_id\": 0,\n\t\"series_id\": null,\n\t\"working_title\": \"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521054583,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_7542df94894b4423bd66b19db9e948cc",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521666054,
+      "created": 1670521054295,
+      "url": "{{baseUrl}}/authors/{author_id}/manuscripts/{manuscript_id}",
+      "name": "delete author manuscript by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521054295,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_34c5b730d2244fcbbc64b351fdcafe45",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521657274,
+      "created": 1670521054008,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}",
+      "name": "display 2 authors",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521054008,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_5c8bd20838154147ab0a8f8df41e3903",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670545854742,
+      "created": 1670521053208,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/books",
+      "name": "display 2 authors books",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521053208,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_14d6eef7a71f4a818b81de685bba37c8",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050824096,
+      "created": 1670521052944,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/books",
+      "name": "create 2 authors book",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521052944,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_332b3953af644e6b805a68067b38b21d",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670545364824,
+      "created": 1670521052642,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}",
+      "name": "display 2 authors book by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521052642,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_89430c9455dd48a28a44f47f89b7ea28",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050826441,
+      "created": 1670521052364,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}",
+      "name": "update 2 authors book by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"book_id\": 0,\n\t\"edition_number\": 0,\n\t\"editor_id\": 0,\n\t\"is_in_print\": true,\n\t\"publication_date\": \"YYYY-MM-DD\",\n\t\"series_id\": null,\n\t\"title\": \"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521052364,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_346a73971ded4d4cb41bab04394e659f",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521618111,
+      "created": 1670521051634,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/books/{book_id}",
+      "name": "delete 2 authors book by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521051634,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_d82f71c550264410a7eaa4111ee929be",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521612341,
+      "created": 1670521051342,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts",
+      "name": "display 2 authors manuscripts",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521051342,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c3945a0b2d68431b8710702df5abc7c9",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050829385,
+      "created": 1670521051027,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts",
+      "name": "create 2 authors manuscript",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0,\n\t\"series_id\":null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521051027,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_56e8fb4c9e2f4f3cbd3189763532079f",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670546042642,
+      "created": 1670521050717,
+      "url": "{{baseUrl}}/authors/1632/1634/manuscripts/592",
+      "name": "display 2 authors manuscript by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521050717,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_175fe527a6fc4280bb1240e0a16bc27e",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1671050832042,
+      "created": 1670521050044,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}",
+      "name": "update 2 authors manuscript by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0,\n\t\"series_id\":null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521050044,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a34fa98e4bcc4189bada48602f7d8d53",
+      "parentId": "fld_7a2d4ae2ffa941d1988708b2529665d8",
+      "modified": 1670521561694,
+      "created": 1670521044732,
+      "url": "{{baseUrl}}/authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}",
+      "name": "delete 2 authors manuscript by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670521044732,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_fc514760e0c34dbb882e834b3b81dff3",
+      "parentId": "fld_9e788f5ef688408795ee51030fea49e4",
+      "modified": 1670521991283,
+      "created": 1670520437604,
+      "url": "{{baseUrl}}/books",
+      "name": "display books",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520437604,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_9e788f5ef688408795ee51030fea49e4",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473416123,
+      "created": 1670473416123,
+      "name": "books",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473416123,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_c2c527b3a4c64774b76b3a4e40ec9b7f",
+      "parentId": "fld_9e788f5ef688408795ee51030fea49e4",
+      "modified": 1670541995442,
+      "created": 1670520418890,
+      "url": "{{baseUrl}}/books/{book_id}",
+      "name": "display book by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520418890,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_4756c8ce7eda41c59457432fce60bc51",
+      "parentId": "fld_9e788f5ef688408795ee51030fea49e4",
+      "modified": 1671050911694,
+      "created": 1670520384846,
+      "url": "{{baseUrl}}/books/{book_id}",
+      "name": "update book by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"series_id\":null,\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520384846,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_5ad25260ecd24036bba82f5aa54e4e6f",
+      "parentId": "fld_9e788f5ef688408795ee51030fea49e4",
+      "modified": 1670536467822,
+      "created": 1670520358726,
+      "url": "{{baseUrl}}/books/{book_id}",
+      "name": "delete book by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_84337cbe8ece42f39c880e8200fa86df"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520358726,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_51036721887c465a851be296f0e537f8",
+      "parentId": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "modified": 1670520355531,
+      "created": 1670520340507,
+      "url": "{{baseUrl}}/clients",
+      "name": "display clients",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520340507,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473409453,
+      "created": 1670473409453,
+      "name": "clients",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473409453,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_d2aa3d83a433424587d2ee28e8b2800c",
+      "parentId": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "modified": 1670542052476,
+      "created": 1670520324436,
+      "url": "{{baseUrl}}/clients/{client_id}",
+      "name": "display client by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520324436,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_deb18dc7efa54dc58dd6608d53557ee6",
+      "parentId": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "modified": 1671050915424,
+      "created": 1670538571384,
+      "url": "{{baseUrl}}/clients",
+      "name": "create client",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"salesperson_id\":0,\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520285413,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_f90ae2e619b645049170ebefc709af58",
+      "parentId": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "modified": 1671050916587,
+      "created": 1670520246390,
+      "url": "{{baseUrl}}/clients/{client_id}",
+      "name": "update client by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\",\n\t\"salesperson_id\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520246390,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b292d36c07fb4a04953c864084baa79d",
+      "parentId": "fld_3aa7fe8366cd4397b5ec36dadcc5cc6d",
+      "modified": 1670535363352,
+      "created": 1670520169739,
+      "url": "{{baseUrl}}/clients/{client_id}",
+      "name": "delete client by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_ee63b45bfbec4e1ba4d7ab7a633da938"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520169739,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_232ead0bee7f4b46ae47aafb232c1ca9",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670520162717,
+      "created": 1670520150795,
+      "url": "{{baseUrl}}/editors",
+      "name": "display editors",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520150795,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473404796,
+      "created": 1670473404796,
+      "name": "editors",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473404796,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_1393f1c9ce0c4f8d8c41511e4456c5f1",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670542099663,
+      "created": 1670520128050,
+      "url": "{{baseUrl}}/editors/{editor_id}",
+      "name": "display editor by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520128050,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a44a3139eac240bfa00e662155c23eb1",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1671050966157,
+      "created": 1670538396341,
+      "url": "{{baseUrl}}/editors",
+      "name": "create editor",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520098297,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_1bf3a504d44b422d8babea1a7f25fa5b",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1671050967261,
+      "created": 1670520068544,
+      "url": "{{baseUrl}}/editors/{editor_id}",
+      "name": "update editor by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520068544,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_4a4c91aa9b5a48218848f8a79ebc27a6",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670535253001,
+      "created": 1670520045968,
+      "url": "{{baseUrl}}/editors/{editor_id}",
+      "name": "delete editor by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_0c52b3e79f1f47cc9de7e3cd5c46eb29"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670520045968,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_a6971057150a427cb527713a6c92a97d",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670541379286,
+      "created": 1670519832407,
+      "url": "{{baseUrl}}/editors/{editor_id}/books",
+      "name": "dispay editor books",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519682541,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b12bd12fd8a74e0a98a79dfea7e72749",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670540096738,
+      "created": 1670519826606,
+      "url": "{{baseUrl}}/editors/{editor_id}/books/{book_id}",
+      "name": "display editor book by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519682491,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_8125c4fabd0d406689afb5e58c141dea",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1671050968419,
+      "created": 1670519820473,
+      "url": "{{baseUrl}}/editors/{editor_id}/books/{book_id}",
+      "name": "update editor book by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519682441,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_23264fcb4e81441cb89fba9d3c23af81",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670529396703,
+      "created": 1670519812955,
+      "url": "{{baseUrl}}/editors/{editor_id}/books/{book_id}",
+      "name": "delete editor book by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9171c111235e42d98e721752257382fa"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519682391,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c275b139053f42af9f3041cabcdf8f56",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670541843446,
+      "created": 1670519682341,
+      "url": "{{baseUrl}}/editors/{editor_id}/manuscripts",
+      "name": "dispay editor manuscripts",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519682341,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_1c449133d0c5419190a2e56d6c8a97e6",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670540816389,
+      "created": 1670519621741,
+      "url": "{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}",
+      "name": "display editor manuscript by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519621741,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_8c2b7bcf6b3d4937a546e78e2bc52820",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1671050978062,
+      "created": 1670519536406,
+      "url": "{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}",
+      "name": "update editor manuscript by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0,\n\t\"series_id\":null\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519536406,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_5fcf629c369243d3a69bfbcde5f80448",
+      "parentId": "fld_e86f4f17bfcc497ab678b31553bc461c",
+      "modified": 1670529065694,
+      "created": 1670519534906,
+      "url": "{{baseUrl}}/editors/{editor_id}/manuscripts/{manuscript_id}",
+      "name": "delete editor manuscript by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_9171c111235e42d98e721752257382fa"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519536356,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_6e567054cae24ce08e2ad8dc3e7083c4",
+      "parentId": "fld_656ea27a1be84576a41b24c2dff4f4b7",
+      "modified": 1670537150228,
+      "created": 1670519502752,
+      "url": "{{baseUrl}}/manuscripts",
+      "name": "display manuscripts",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519502752,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_656ea27a1be84576a41b24c2dff4f4b7",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473399726,
+      "created": 1670473399726,
+      "name": "manuscripts",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473399726,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_00da2272d4bf44c3af7fbc3993af4da8",
+      "parentId": "fld_656ea27a1be84576a41b24c2dff4f4b7",
+      "modified": 1670544014135,
+      "created": 1670519478724,
+      "url": "{{baseUrl}}/manuscripts/{manuscript_id}",
+      "name": "display manuscript by id",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1670519478724,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_018ea8ec36354011a3302de8abc13377",
+      "parentId": "fld_656ea27a1be84576a41b24c2dff4f4b7",
+      "modified": 1671050981989,
+      "created": 1670519328192,
+      "url": "{{baseUrl}}/manuscripts/{manuscript_id}",
+      "name": "update manuscript by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"series_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519301742,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_97c4f9de92364434a4cb8c8375ef9a72",
+      "parentId": "fld_656ea27a1be84576a41b24c2dff4f4b7",
+      "modified": 1670544017815,
+      "created": 1670519301692,
+      "url": "{{baseUrl}}/manuscripts/567",
+      "name": "delete manuscript by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519301692,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_084390409d544a668f35c9be0d7ccb82",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670522057310,
+      "created": 1670519217168,
+      "url": "{{baseUrl}}/salespeople",
+      "name": "display salespeople",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519217168,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473393603,
+      "created": 1670473393603,
+      "name": "salespeople",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473393603,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_09d5c06f1bba491d98d2304b5ddbf155",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1671050987114,
+      "created": 1670519175533,
+      "url": "{{baseUrl}}/salespeople",
+      "name": "create salesperson",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519175533,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_34205ab67e0d4337b7ecc18c4fdcf01e",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670542459868,
+      "created": 1670519140187,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}",
+      "name": "display salesperson by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670519009870.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_cb75bdcedb6942df8cc7686d170eb639",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1671050989299,
+      "created": 1670519032074,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}",
+      "name": "update salesperson by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"first_name\":\"\",\n\t\"last_name\":\"\",\n\t\"salary\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670518998768.75,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_170797e467124b008ae0ef44f64e9b3f",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670535070164,
+      "created": 1670518987667,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}",
+      "name": "delete salesperson by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670518987667,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_bc8b9c5f36314395adde0363dab3bbf5",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670541278676,
+      "created": 1670518954847,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}/clients",
+      "name": "display salesperson clients",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670518954847,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_98b4ad03a25b40c5a47353fdc6fa5025",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1671050990662,
+      "created": 1670518002610,
+      "url": "{{baseUrl}}/salespeople/315/clients",
+      "name": "create salesperson client",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670518002610,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_bee5cd5daa7d40cf8f8ba5e8a1af98a0",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670539934762,
+      "created": 1670517985777,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}",
+      "name": "display salesperson client by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517985777,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c4ed49b73c854bba996608166383c9ff",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1671050992321,
+      "created": 1670517958652,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}",
+      "name": "update salesperson client by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"email_address\":\"\",\n\t\"phone_number\":\"\",\n\t\"business_name\":\"\",\n\t\"street_address\":\"\",\n\t\"city\":\"\",\n\t\"state\":\"\",\n\t\"zipcode\":\"\",\n\t\"country\":\"\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517958652,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_36a22bc7153d4aaaa29934d540797f96",
+      "parentId": "fld_b8979c77c0ec41a3b12db2c39a521130",
+      "modified": 1670529225948,
+      "created": 1670517908779,
+      "url": "{{baseUrl}}/salespeople/{salesperson_id}/clients/{client_id}",
+      "name": "delete salesperson client by id ",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517908779,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_f9a93c8fe28c46ff9e0cd23711db2fd1",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671053493356,
+      "created": 1670517878482,
+      "url": "{{baseUrl}}/sales_records/{sales_record_id}",
+      "name": "display sales by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517878482,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_9ea543e9269941948d27cf273737d801",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473388191,
+      "created": 1670473388191,
+      "name": "sales_records",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473388191,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_beb39740e3bb4b9a97399645b91c4ab9",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671053500025,
+      "created": 1670517859007,
+      "url": "{{baseUrl}}/sales_records/years/{year}",
+      "name": "display sales by year",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517859007,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_ac4427088d1644ee9a8968654728511c",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671051404792,
+      "created": 1670517256316,
+      "url": "{{baseUrl}}/sales_records/years/{year}/months/{month}",
+      "name": "display sales by year & month",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670517256316,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_29b18d7551cc457e9dbd3f7db66efe59",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671053464487,
+      "created": 1671051628180,
+      "url": "{{baseUrl}}/sales_records/books/{book_id}",
+      "name": "display sales by book id",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1670517256303.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_7eddca24a43f4dfaaa02ce299cd839b3",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671053472346,
+      "created": 1671051630933,
+      "url": "{{baseUrl}}/sales_records/years/{year}/books/{book_id}",
+      "name": "display sales by year and book id",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1670517256291,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_6fed4a4a6e6145e59505f8bbafa68662",
+      "parentId": "fld_9ea543e9269941948d27cf273737d801",
+      "modified": 1671053512056,
+      "created": 1671051632303,
+      "url": "{{baseUrl}}/sales_records/years/{year}/months/{month}/books/{book_id}",
+      "name": "display sales by year, month and book id",
+      "description": "",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": -1670517256266,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_1ce90af745e0486b83127210b57fc2dd",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670522096853,
+      "created": 1670474408351,
+      "url": "{{baseUrl}}/series",
+      "name": "display all series",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474408351,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670473382566,
+      "created": 1670473382566,
+      "name": "series",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1670473382567,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_3a9755e06ae54c239bcf43cf6d800667",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670542599808,
+      "created": 1670474379344,
+      "url": "{{baseUrl}}/series/{series_id}",
+      "name": "display series by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474379344,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_b5b8cdade4cc43f9b075049de6d68335",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1671050998617,
+      "created": 1670538118436,
+      "url": "{{baseUrl}}/series",
+      "name": "create series",
+      "description": "",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\":\"\",\n\t\"volumes\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474355898.5,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_77eee2bf30314b80bed72973c8560311",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1671051000721,
+      "created": 1670474332453,
+      "url": "{{baseUrl}}/series/{series_id}",
+      "name": "update series by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\":\"\",\n\t\"volumes\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json",
+          "id": "pair_753e6b816b014af68bedbc3161b21dfa"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474332453,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_353fc47e78b64c939ecf8b4337d73edc",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670535036215,
+      "created": 1670474307842,
+      "url": "{{baseUrl}}/series/{series_id}",
+      "name": "delete series by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474307842,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_1f43b798163d454e8bc3de58d93c2c34",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670541163052,
+      "created": 1670474282234,
+      "url": "{{baseUrl}}/series/{series_id}/books",
+      "name": "display all series books",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474282234,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_5dfa9e5ab0cb421492798af642e9b34c",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670539818901,
+      "created": 1670474107481,
+      "url": "{{baseUrl}}/series/{series_id}/books/{book_id}",
+      "name": "display series book by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474107481,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_c6519405d091404fb7c62b3e6c753f95",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1671051003079,
+      "created": 1670474058777,
+      "url": "{{baseUrl}}/series/{series_id}/books/{book_id}",
+      "name": "update series book by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"title\":\"\",\n\t\"publication_date\":\"YYYY-MM-DD\",\n\t\"edition_number\":0,\n\t\"is_in_print\":true\n}\t"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474058777,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_e73bbe942b214a74959d6a54a87bb3ca",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670529721307,
+      "created": 1670474001655,
+      "url": "{{baseUrl}}/series/449/books/2281",
+      "name": "delete series book by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670474001655,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_498ceeec02b247f49d9e50e2b4e75c19",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670541068720,
+      "created": 1670473854740,
+      "url": "{{baseUrl}}/series/{series_id}/manuscripts",
+      "name": "display all series manuscripts",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670473854740,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_aca630a7b78245579b0b6014eaece8e9",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670539555550,
+      "created": 1670473812496,
+      "url": "{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}",
+      "name": "display series manuscript by id",
+      "description": "",
+      "method": "GET",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670473812496,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_e5314762f0af47d0bb0e9e9d15aba588",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670976359929,
+      "created": 1670473662770,
+      "url": "{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}",
+      "name": "update series manuscript by id",
+      "description": "",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n\t\"editor_id\":0,\n\t\"working_title\":\"\",\n\t\"due_date\":\"YYYY-MM-DD\",\n\t\"advance\":0\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670473662770,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_58c8c2ebf7214130b08c27c0891e44ec",
+      "parentId": "fld_979be5ab7d964655ac886d0eef21b1c2",
+      "modified": 1670529697021,
+      "created": 1670473591211,
+      "url": "{{baseUrl}}/series/{series_id}/manuscripts/{manuscript_id}",
+      "name": "delete series manuscript by id",
+      "description": "",
+      "method": "DELETE",
+      "body": {
+        "mimeType": "application/json",
+        "text": ""
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1670473591211,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "env_830108d90e4f9943aec7d7ed809e7e45386524bd",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670431867819,
+      "created": 1670176201653,
+      "name": "Base Environment",
+      "data": {},
+      "dataPropertyOrder": {},
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1670176201653,
+      "_type": "environment"
+    },
+    {
+      "_id": "jar_830108d90e4f9943aec7d7ed809e7e45386524bd",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670176201657,
+      "created": 1670176201657,
+      "name": "Default Jar",
+      "cookies": [],
+      "_type": "cookie_jar"
+    },
+    {
+      "_id": "spc_00e73bb93c45434ba2a8863195937437",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670431844568,
+      "created": 1670176201649,
+      "fileName": "RIsus Publishing",
+      "contents": "",
+      "contentType": "yaml",
+      "_type": "api_spec"
+    },
+    {
+      "_id": "uts_90bc33693122466282509877d9d10f99",
+      "parentId": "wrk_73eb0a85a99646abb4ccc2cf884f8d1e",
+      "modified": 1670176201663,
+      "created": 1670176201663,
+      "name": "Example Test Suite",
+      "_type": "unit_test_suite"
+    },
+    {
+      "_id": "env_6213f4cd8a1441839f51040a18431a19",
+      "parentId": "env_830108d90e4f9943aec7d7ed809e7e45386524bd",
+      "modified": 1670705973646,
+      "created": 1670431870412,
+      "name": "Risus Publishing",
+      "data": {
+        "baseUrl": "http://localhost:5000"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "baseUrl"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1670431870412,
+      "_type": "environment"
+    }
+  ]
+}

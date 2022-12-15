@@ -1,79 +1,104 @@
-﻿
-## Risus Publishing Database
+<p>﻿</p>
 
-An exercise in authoring a RESTful postgresql db API using flask, SQLAlchemy and alembic, completed as part of NuCamp's DevOps coding bootcamp. The conceit is that the database serves as the publishers/authors/editors-level database for a publishing company, Risus Publishing.
+<h2>Risus Publishing Database</h2>
 
-Included are the alembic migrations needed to instantiate the database in [alembic](alembic), a [load\_testing\_data.py](load_testing_data.py) script to populate or repopulate the database with testing data, and the testing data .tsv files in [data](data). (In addition a [experimenting.py](experimenting.py) script is included if one needs to experiment in the package's SQLAlchemy context; best used with `python -i`.)
+<p>An exercise in authoring a RESTful postgresql db API using flask, SQLAlchemy and alembic, completed as part of NuCamp's DevOps coding bootcamp. The conceit is that the database serves as the publishers/authors/editors-level database for a publishing company, Risus Publishing.</p>
 
-The RESTful JSON API is implemented via the modules in [risuspubl.api.\*](risuspubl/api). It's implemented by way of `flask` and `SQLAlchemy`; executing `flask run` in the top-level directory will spawn a `flask` webserver that will furnish the endpoints under https://localhost:5000/. The SQLAlchemy table classes are defined in [risuspubl.dbmodels](risuspubl/dbmodels.py) and the `create_app()` function that `flask` depends on is defined in [risuspubl.api.flaskapp](risuspubl/api/flaskapp.py).
+<p>Included are the alembic migrations needed to instantiate the database in <a href="alembic">alembic</a>, a <a href="load_testing_data.py">load_testing_data.py</a> script to populate or repopulate the database with testing data, and the testing data .tsv files in <a href="data">data</a>. (In addition a <a href="experimenting.py">experimenting.py</a> script is included if one needs to experiment in the package's SQLAlchemy context; best used with <code>python -i</code>.)</p>
 
-(See the [Portfolio Project Requirements Checklist](Portfolio_Project_Requirements_Checklist.html) for a detailed review of the checklist from [the Portfolio Project Final Submission page](https://learn.nucamp.co/mod/forum/view.php?id=5133) with indications where files satisfying each requirement can be found.)
+<p>The RESTful JSON API is implemented via the modules in <a href="risuspubl/api">risuspubl.api.*</a>. It's implemented by way of <code>flask</code> and <code>SQLAlchemy</code>; executing <code>flask run</code> in the top-level directory will spawn a <code>flask</code> webserver that will furnish the endpoints under https://localhost:5000/. The SQLAlchemy table classes are defined in <a href="risuspubl/dbmodels.py">risuspubl.dbmodels</a> and the <code>create_app()</code> function that <code>flask</code> depends on is defined in <a href="risuspubl/api/flaskapp.py">risuspubl.api.flaskapp</a>.</p>
 
-### The Tables
+<p>(See the <a href="Portfolio_Project_Requirements_Checklist.html">Portfolio Project Requirements Checklist</a> for a detailed review of the checklist from <a href="https://learn.nucamp.co/mod/forum/view.php?id=5133">the Portfolio Project Final Submission page</a> with indications where files satisfying each requirement can be found.)</p>
 
-The default database name is `risuspublishing`. The database's tables are:
+<h3>The Tables</h3>
 
-* `authors`
-    * the authors employed by the publishing company
-* `authors_books`
-    * a bridge table between `authors` and `books`
-    * foreign keys `authors::author_id` and `books::book_id`
-* `authors_manuscripts`
-    * a bridge table between `authors` and `manuscripts`
-    * foreign keys `authors::author_id` and `manuscripts::manuscript_id`
-* `authors_metadata`
-    * biographical information about the authors
-    * foreign key `authors::author_id`: the author the info is about
-* `books`
-    * the books the publishing company has published
-    * foreign key `editors::editor_id`: the editor who edited the book
-    * foreign key `series::series_id`: the series the book belongs to (optional)
-* `clients`
-    * the publishing company's customers
-    * foreign key `salespeople::salesperson_id`: the salesperson who manages the relationship with that client
-* `editors`
-    * the editors employed by the publishing company
-* `manuscripts`
-    * manuscripts currently in-progress by authors employed by the publishing company
-    * foreign key `editors::editor_id`: the editor that is editing the manuscript
-    * foreign key `series::series_id`: the series the manuscript belongs to (optional)
-* `salespeople`
-    * salespeople who work for the publishing company
-* `sales_records`
-    * by-month sales records for each book published by the company, from the date of publication to today (if it's still in print), or the date the book went out of print (otherwise)
-    * foreign key `books::book_id`: the book that the the sales record is for
-* `series`
-    * the series that some of the books and manuscripts can be grouped into
+<p>The default database name is <code>risuspublishing</code>. The database's tables are:</p>
 
-### Implementation Notes
+<ul>
+<li><code>authors</code>
+<ul>
+<li>the authors employed by the publishing company</li>
+</ul></li>
+<li><code>authors_books</code>
+<ul>
+<li>a bridge table between <code>authors</code> and <code>books</code></li>
+<li>foreign keys <code>authors::author_id</code> and <code>books::book_id</code></li>
+</ul></li>
+<li><code>authors_manuscripts</code>
+<ul>
+<li>a bridge table between <code>authors</code> and <code>manuscripts</code></li>
+<li>foreign keys <code>authors::author_id</code> and <code>manuscripts::manuscript_id</code></li>
+</ul></li>
+<li><code>authors_metadata</code>
+<ul>
+<li>biographical information about the authors</li>
+<li>foreign key <code>authors::author_id</code>: the author the info is about</li>
+</ul></li>
+<li><code>books</code>
+<ul>
+<li>the books the publishing company has published</li>
+<li>foreign key <code>editors::editor_id</code>: the editor who edited the book</li>
+<li>foreign key <code>series::series_id</code>: the series the book belongs to (optional)</li>
+</ul></li>
+<li><code>clients</code>
+<ul>
+<li>the publishing company's customers</li>
+<li>foreign key <code>salespeople::salesperson_id</code>: the salesperson who manages the relationship with that client</li>
+</ul></li>
+<li><code>editors</code>
+<ul>
+<li>the editors employed by the publishing company</li>
+</ul></li>
+<li><code>manuscripts</code>
+<ul>
+<li>manuscripts currently in-progress by authors employed by the publishing company</li>
+<li>foreign key <code>editors::editor_id</code>: the editor that is editing the manuscript</li>
+<li>foreign key <code>series::series_id</code>: the series the manuscript belongs to (optional)</li>
+</ul></li>
+<li><code>salespeople</code>
+<ul>
+<li>salespeople who work for the publishing company</li>
+</ul></li>
+<li><code>sales_records</code>
+<ul>
+<li>by-month sales records for each book published by the company, from the date of publication to today (if it's still in print), or the date the book went out of print (otherwise)</li>
+<li>foreign key <code>books::book_id</code>: the book that the the sales record is for</li>
+</ul></li>
+<li><code>series</code>
+<ul>
+<li>the series that some of the books and manuscripts can be grouped into</li>
+</ul></li>
+</ul>
 
-The other module files in [risuspubl.api](risuspubl/api) depend heavily on [the utility module](risuspubl/api/utility.py). All endpoints that create a row in a table use the function [risuspubl.api.utility.create\_model\_obj()](risuspubl/api/utility.py); likewise all endpoints that update a row in a table use the function [risuspubl.api.utility.update\_model\_obj()](risuspubl/api/utility.py). This generalizing of two of the most common tasks in an endpoint went a long way towards simplifying the endpoint code and avoiding code duplication.
+<h3>Implementation Notes</h3>
 
-The other major dependency on the utility module is that the majority of the `api` modules, excluding `authors.py` and `sales_records.py`, implement some or all of their endpoints using a closure returned by one of nine endpoint-general-case higher-order functions defined in `utility.py`: `create_table_row_function()`, `delete_table_row_by_id_function()`, `delete_table_row_by_id_and_foreign_key_function()`, `display_table_rows_by_foreign_id_function()`, `display_table_rows_function()`, `display_table_row_by_id_function()`, `display_table_row_by_id_and_foreign_key_function()`, `update_table_row_by_id_function()`, and `update_table_row_by_id_and_foreign_key_function()`
+<p>The other module files in <a href="risuspubl/api">risuspubl.api</a> depend heavily on <a href="risuspubl/api/utility.py">the utility module</a>. All endpoints that create a row in a table use the function <a href="risuspubl/api/utility.py">risuspubl.api.utility.create_model_obj()</a>; likewise all endpoints that update a row in a table use the function <a href="risuspubl/api/utility.py">risuspubl.api.utility.update_model_obj()</a>. This generalizing of two of the most common tasks in an endpoint went a long way towards simplifying the endpoint code and avoiding code duplication.</p>
 
-Each of these higher-order functions accepts one or two SQLAlchemy.Model subclass class objects as arguments, and returns a closure that implements a common endpoint case. The closure is generalized such that the arguments to its enclosing function fill in the blanks on its execution like mad libs. The effect is to dramatically simplify the endpoint function code in the large majority of cases.
+<p>The other major dependency on the utility module is that the majority of the <code>api</code> modules, excluding <code>authors.py</code> and <code>sales_records.py</code>, implement some or all of their endpoints using a closure returned by one of nine endpoint-general-case higher-order functions defined in <code>utility.py</code>: <code>create_table_row_function()</code>, <code>delete_table_row_by_id_function()</code>, <code>delete_table_row_by_id_and_foreign_key_function()</code>, <code>display_table_rows_by_foreign_id_function()</code>, <code>display_table_rows_function()</code>, <code>display_table_row_by_id_function()</code>, <code>display_table_row_by_id_and_foreign_key_function()</code>, <code>update_table_row_by_id_function()</code>, and <code>update_table_row_by_id_and_foreign_key_function()</code></p>
 
-### A Few Questions
+<p>Each of these higher-order functions accepts one or two SQLAlchemy.Model subclass class objects as arguments, and returns a closure that implements a common endpoint case. The closure is generalized such that the arguments to its enclosing function fill in the blanks on its execution like mad libs. The effect is to dramatically simplify the endpoint function code in the large majority of cases.</p>
 
-#### How did the project's design evolve over time?
+<h3>A Few Questions</h3>
 
-I had the idea of implementing `create_model_obj()` and `update_model_obj()` while I was partway through writing all the endpoint functions. At first their parameters `dict` argument had values that were `3-tuples`: the type of the parameter, the arguments to the matching validator function, and the actual parameter value. I found myself storing prototype create/update `dict` arguments in `lambda`s at the top of the modules, so it could be evaluated in the context of an endpoint function.
+<h4>How did the project's design evolve over time?</h4>
 
-Later when I came back to this design choice in an optimizing turn of mind, I implemented [risuspubl.api.utility.generate\_create\_update\_argd()](risuspubl.api.utility.generate_create_update_argd). It's a function with a big inline `dict`, whose keys are the SQLAlchemy.Model subclasses and whose values are `lambda`s that accept a request.json object and return a `dict` of parameter-name/parameter-value pairs. (See that function for more details.)
+<p>I had the idea of implementing <code>create_model_obj()</code> and <code>update_model_obj()</code> while I was partway through writing all the endpoint functions. At first their parameters <code>dict</code> argument had values that were <code>3-tuples</code>: the type of the parameter, the arguments to the matching validator function, and the actual parameter value. I found myself storing prototype create/update <code>dict</code> arguments in <code>lambda</code>s at the top of the modules, so it could be evaluated in the context of an endpoint function.</p>
 
-It accepts a SQLAlchemy.Model subclass object and the request.json object as arguments; it picks the matching `lambda` from its `dict` that will return the correct dict argument for creating or updating a row in that table using create\_model\_obj() or update\_model\_obj(). That `lambda` is called with `response.json` as an argument, and the parameter names/values dict that results is returned to the caller, who no doubt is about to use it as an argument for `create_model_obj()` or `update_model_obj()`.
+<p>Later when I came back to this design choice in an optimizing turn of mind, I implemented <a href="risuspubl.api.utility.generate_create_update_argd">risuspubl.api.utility.generate_create_update_argd()</a>. It's a function with a big inline <code>dict</code>, whose keys are the SQLAlchemy.Model subclasses and whose values are <code>lambda</code>s that accept a request.json object and return a <code>dict</code> of parameter-name/parameter-value pairs. (See that function for more details.)</p>
 
-The other major revision was clearing out the copy-pasted code by implementing the closures discussed above (**Implementation Details**, 2nd paragraph). (At first I used classes that returned callable objects; later I had the light-bulb moment and replaced these with higher-order functions.) The large majority of the API modules have most or all of their endpoint functions implemented using closures returned by the [risuspubl.api.utility.\*\_function()](risuspubl/api/utility.py) higher-order functions. Each one is a single line, returning the result of the closure. Don't Repeat Myself indeed.
+<p>It accepts a SQLAlchemy.Model subclass object and the request.json object as arguments; it picks the matching <code>lambda</code> from its <code>dict</code> that will return the correct dict argument for creating or updating a row in that table using create_model_obj() or update_model_obj(). That <code>lambda</code> is called with <code>response.json</code> as an argument, and the parameter names/values dict that results is returned to the caller, who no doubt is about to use it as an argument for <code>create_model_obj()</code> or <code>update_model_obj()</code>.</p>
 
-#### Did you choose to use an ORM or raw SQL? Why?
+<p>The other major revision was clearing out the copy-pasted code by implementing the closures discussed above (<strong>Implementation Details</strong>, 2nd paragraph). (At first I used classes that returned callable objects; later I had the light-bulb moment and replaced these with higher-order functions.) The large majority of the API modules have most or all of their endpoint functions implemented using closures returned by the <a href="risuspubl/api/utility.py">risuspubl.api.utility.*_function()</a> higher-order functions. Each one is a single line, returning the result of the closure. Don't Repeat Myself indeed.</p>
 
-I worked with an ORM in nearly every case. In a few situations I found I needed results that only raw SQL could get me, so I used that. But otherwise I stuck to the ORM. I made the choice to use an ORM because it's something I hadn't done before, and I wanted to learn how to do it. It's really changed how I interact with SQL servers; I'll be using this in the future wherever I can, it's *much* simpler that using raw SQL and always being marshaling the results and parsing out the row results into useful values.
+<h4>Did you choose to use an ORM or raw SQL? Why?</h4>
 
-#### What future improvements are in store, if any?
+<p>I worked with an ORM in nearly every case. In a few situations I found I needed results that only raw SQL could get me, so I used that. But otherwise I stuck to the ORM. I made the choice to use an ORM because it's something I hadn't done before, and I wanted to learn how to do it. It's really changed how I interact with SQL servers; I'll be using this in the future wherever I can, it's <em>much</em> simpler that using raw SQL and always being marshaling the results and parsing out the row results into useful values.</p>
 
-I see this package as done. It certainly would be better off if I didn't implement any more endpoints! The only piece of the original design not implemented here was an idea for a warehouse table, a warehouse\_aisle table, a warehouse\_location table, and a stocking\_quantity table that between them would model the company's warehousing system. I dropped that from an early revision of my ERD because it just seemed out-of-place among the other tables. I don't think I'll bring it back.
+<h4>What future improvements are in store, if any?</h4>
 
-### The API
+<p>I see this package as done. It certainly would be better off if I didn't implement any more endpoints! The only piece of the original design not implemented here was an idea for a warehouse table, a warehouse_aisle table, a warehouse_location table, and a stocking_quantity table that between them would model the company's warehousing system. I dropped that from an early revision of my ERD because it just seemed out-of-place among the other tables. I don't think I'll bring it back.</p>
+
+<h3>The API</h3>
 
 <table border=3 cellpadding=5 cellspacing=5>
     <tr>
