@@ -2,12 +2,16 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import delete_table_row_by_id_function, display_table_row_by_id_function, \
-        display_table_rows_function, update_table_row_by_id_function
+from risuspubl.api.utility import (
+    delete_table_row_by_id_function,
+    display_table_row_by_id_function,
+    display_table_rows_function,
+    update_table_row_by_id_function,
+)
 from risuspubl.dbmodels import Book
 
 
-blueprint = Blueprint('books', __name__, url_prefix='/books')
+blueprint = Blueprint("books", __name__, url_prefix="/books")
 
 
 # These functions return closures that implement the requested functions,
@@ -18,7 +22,7 @@ display_books = display_table_rows_function(Book)
 update_book_by_id = update_table_row_by_id_function(Book)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /books endpoint. All rows in the books table are loaded
@@ -29,7 +33,7 @@ def index_endpoint():
     return display_books()
 
 
-@blueprint.route('/<int:book_id>', methods=['GET'])
+@blueprint.route("/<int:book_id>", methods=["GET"])
 def display_book_by_id_endpoint(book_id: int):
     """
     Implements a GET /books/{book_id} endpoint. The row in the books table with
@@ -51,7 +55,7 @@ def display_book_by_id_endpoint(book_id: int):
 # appropriately.
 
 
-@blueprint.route('/<int:book_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:book_id>", methods=["PATCH", "PUT"])
 def update_book_by_id_endpoint(book_id: int):
     """
     Implements a PATCH /books/{book_id} endpoint. The row in the books table
@@ -63,7 +67,7 @@ def update_book_by_id_endpoint(book_id: int):
     return update_book_by_id(book_id, request.json)
 
 
-@blueprint.route('/<int:book_id>', methods=['DELETE'])
+@blueprint.route("/<int:book_id>", methods=["DELETE"])
 def delete_book_by_id_endpoint(book_id: int):
     """
     Implements a DELETE /books/{book_id} endpoint. The row in the books table

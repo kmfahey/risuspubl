@@ -10,14 +10,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '670c8486947d'
-down_revision = '6b2da27f9ce8'
+revision = "670c8486947d"
+down_revision = "6b2da27f9ce8"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
 CREATE TABLE sales_records (
     sales_record_id SERIAL PRIMARY KEY,
     book_id INT,
@@ -27,10 +28,13 @@ CREATE TABLE sales_records (
     gross_profit NUMERIC,
     net_profit NUMERIC
 );
-""")
+"""
+    )
 
 
 def downgrade():
-    op.execute("""
+    op.execute(
+        """
 DROP TABLE sales_records;
-""")
+"""
+    )

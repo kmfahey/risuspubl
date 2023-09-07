@@ -2,12 +2,17 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_table_row_function, delete_table_row_by_id_function, \
-        display_table_row_by_id_function, display_table_rows_function, update_table_row_by_id_function
+from risuspubl.api.utility import (
+    create_table_row_function,
+    delete_table_row_by_id_function,
+    display_table_row_by_id_function,
+    display_table_rows_function,
+    update_table_row_by_id_function,
+)
 from risuspubl.dbmodels import Client
 
 
-blueprint = Blueprint('clients', __name__, url_prefix='/clients')
+blueprint = Blueprint("clients", __name__, url_prefix="/clients")
 
 
 # These functions return closures that implement the requested functions,
@@ -19,7 +24,7 @@ display_clients = display_table_rows_function(Client)
 update_client_by_id = update_table_row_by_id_function(Client)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /clients endpoint. All rows in the clients table are loaded
@@ -30,7 +35,7 @@ def index_endpoint():
     return display_clients()
 
 
-@blueprint.route('/<int:client_id>', methods=['GET'])
+@blueprint.route("/<int:client_id>", methods=["GET"])
 def display_client_by_id_endpoint(client_id: int):
     """
     Implements a GET /clients/{client_id} endpoint. The row in the clients table
@@ -43,7 +48,7 @@ def display_client_by_id_endpoint(client_id: int):
     return display_client_by_id(client_id)
 
 
-@blueprint.route('', methods=['POST'])
+@blueprint.route("", methods=["POST"])
 def create_client_endpoint():
     """
     Implements a POST /clients endpoint. A new row in the clients table is
@@ -54,7 +59,7 @@ def create_client_endpoint():
     return create_client(request.json)
 
 
-@blueprint.route('/<int:client_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:client_id>", methods=["PATCH", "PUT"])
 def update_client_by_id_endpoint(client_id: int):
     """
     Implements a PATCH /clients/{client_id} endpoint. The row in the clients
@@ -66,7 +71,7 @@ def update_client_by_id_endpoint(client_id: int):
     return update_client_by_id(client_id, request.json)
 
 
-@blueprint.route('/<int:client_id>', methods=['DELETE'])
+@blueprint.route("/<int:client_id>", methods=["DELETE"])
 def delete_client_by_id_endpoint(client_id: int):
     """
     Implements a DELETE /clients/{client_id} endpoint. The row in the clients

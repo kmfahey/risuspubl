@@ -2,35 +2,55 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_table_row_function, delete_table_row_by_id_function, \
-        delete_table_row_by_id_and_foreign_key_function, display_table_row_by_id_function, \
-        display_table_row_by_id_and_foreign_key_function, display_table_rows_function, \
-        display_table_rows_by_foreign_id_function, update_table_row_by_id_function, \
-        update_table_row_by_id_and_foreign_key_function
+from risuspubl.api.utility import (
+    create_table_row_function,
+    delete_table_row_by_id_function,
+    delete_table_row_by_id_and_foreign_key_function,
+    display_table_row_by_id_function,
+    display_table_row_by_id_and_foreign_key_function,
+    display_table_rows_function,
+    display_table_rows_by_foreign_id_function,
+    update_table_row_by_id_function,
+    update_table_row_by_id_and_foreign_key_function,
+)
 from risuspubl.dbmodels import Book, Editor, Manuscript
 
 
-blueprint = Blueprint('editors', __name__, url_prefix='/editors')
+blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
 create_editor = create_table_row_function(Editor)
-delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key_function(Editor, Book)
+delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key_function(
+    Editor, Book
+)
 delete_editor_by_id = delete_table_row_by_id_function(Editor)
-delete_manuscript_by_manuscript_id_and_editor_id = delete_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
-display_book_by_book_id_and_editor_id = display_table_row_by_id_and_foreign_key_function(Editor, Book)
+delete_manuscript_by_manuscript_id_and_editor_id = (
+    delete_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+)
+display_book_by_book_id_and_editor_id = (
+    display_table_row_by_id_and_foreign_key_function(Editor, Book)
+)
 display_books_by_editor_id = display_table_rows_by_foreign_id_function(Editor, Book)
 display_editor_by_id = display_table_row_by_id_function(Editor)
 display_editors = display_table_rows_function(Editor)
-display_manuscript_by_manuscript_id_and_editor_id = display_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
-display_manuscripts_by_editor_id = display_table_rows_by_foreign_id_function(Editor, Manuscript)
-update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(Editor, Book)
+display_manuscript_by_manuscript_id_and_editor_id = (
+    display_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+)
+display_manuscripts_by_editor_id = display_table_rows_by_foreign_id_function(
+    Editor, Manuscript
+)
+update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(
+    Editor, Book
+)
 update_editor_by_id = update_table_row_by_id_function(Editor)
-update_manuscript_by_manuscript_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+update_manuscript_by_manuscript_id_and_editor_id = (
+    update_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /editors endpoint. All rows in the editors table are loaded
@@ -41,7 +61,7 @@ def index_endpoint():
     return display_editors()
 
 
-@blueprint.route('/<int:editor_id>', methods=['GET'])
+@blueprint.route("/<int:editor_id>", methods=["GET"])
 def display_editor_by_id_endpoint(editor_id: int):
     """
     Implements a GET /editors/{editor_id} endpoint. The row in the editors table
@@ -54,7 +74,7 @@ def display_editor_by_id_endpoint(editor_id: int):
     return display_editor_by_id(editor_id)
 
 
-@blueprint.route('/<int:editor_id>/books', methods=['GET'])
+@blueprint.route("/<int:editor_id>/books", methods=["GET"])
 def display_editor_books_endpoint(editor_id: int):
     """
     Implements a GET /editors/{editor_id}/books endpoint. All rows in the books
@@ -67,7 +87,7 @@ def display_editor_books_endpoint(editor_id: int):
     return display_books_by_editor_id(editor_id)
 
 
-@blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['GET'])
+@blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["GET"])
 def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
     Implements a GET /editors/{editor_id}/books/{book_id} endpoint. The row in
@@ -81,7 +101,7 @@ def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     return display_book_by_book_id_and_editor_id(editor_id, book_id)
 
 
-@blueprint.route('/<int:editor_id>/manuscripts', methods=['GET'])
+@blueprint.route("/<int:editor_id>/manuscripts", methods=["GET"])
 def display_editor_manuscripts_endpoint(editor_id: int):
     """
     Implements a GET /editors/{editor_id}/manuscripts endpoint. All rows in the
@@ -95,7 +115,7 @@ def display_editor_manuscripts_endpoint(editor_id: int):
     return display_manuscripts_by_editor_id(editor_id)
 
 
-@blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
+@blueprint.route("/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
 def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
     Implements a GET /editors/{editor_id}/manuscripts/{manuscript_id} endpoint.
@@ -111,7 +131,7 @@ def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int)
     return display_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id)
 
 
-@blueprint.route('', methods=['POST'])
+@blueprint.route("", methods=["POST"])
 def create_editor_endpoint():
     """
     Implements a POST /editors endpoint. A new row in the editors table is
@@ -122,7 +142,7 @@ def create_editor_endpoint():
     return create_editor(request.json)
 
 
-@blueprint.route('/<int:editor_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:editor_id>", methods=["PATCH", "PUT"])
 def update_editor_by_id_endpoint(editor_id: int):
     """
     Implements a PATCH /editors/{editor_id} endpoint. The row in the editors
@@ -134,7 +154,7 @@ def update_editor_by_id_endpoint(editor_id: int):
     return update_editor_by_id(editor_id, request.json)
 
 
-@blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
 def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
     Implements a PATCH /editors/{editor_id}/books/{book_id} endpoint. The row
@@ -148,7 +168,9 @@ def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     return update_book_by_book_id_and_editor_id(editor_id, book_id, request.json)
 
 
-@blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
+@blueprint.route(
+    "/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["PATCH", "PUT"]
+)
 def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
     Implements a PATCH /editors/{editor_id}/manuscripts/{manuscript_id}
@@ -160,10 +182,12 @@ def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
                     update.
     :return:        A flask.Response object.
     """
-    return update_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id, request.json)
+    return update_manuscript_by_manuscript_id_and_editor_id(
+        editor_id, manuscript_id, request.json
+    )
 
 
-@blueprint.route('/<int:editor_id>', methods=['DELETE'])
+@blueprint.route("/<int:editor_id>", methods=["DELETE"])
 def delete_editor_by_id_endpoint(editor_id: int):
     """
     Implements a DELETE /editors/{editor_id} endpoint. The row in the editors
@@ -175,7 +199,7 @@ def delete_editor_by_id_endpoint(editor_id: int):
     return delete_editor_by_id(editor_id)
 
 
-@blueprint.route('/<int:editor_id>/books/<int:book_id>', methods=['DELETE'])
+@blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["DELETE"])
 def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     """
     Implements a DELETE /editors/{editor_id}/books/{book_id} endpoint. The row
@@ -188,7 +212,7 @@ def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     return delete_book_by_book_id_and_editor_id(editor_id, book_id)
 
 
-@blueprint.route('/<int:editor_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
+@blueprint.route("/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["DELETE"])
 def delete_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     """
     Implements a DELETE /editors/{editor_id}/manuscripts/{manuscript_id}

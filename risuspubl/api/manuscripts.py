@@ -2,12 +2,16 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import delete_table_row_by_id_function, display_table_row_by_id_function, \
-        display_table_rows_function, update_table_row_by_id_function
+from risuspubl.api.utility import (
+    delete_table_row_by_id_function,
+    display_table_row_by_id_function,
+    display_table_rows_function,
+    update_table_row_by_id_function,
+)
 from risuspubl.dbmodels import Manuscript
 
 
-blueprint = Blueprint('manuscripts', __name__, url_prefix='/manuscripts')
+blueprint = Blueprint("manuscripts", __name__, url_prefix="/manuscripts")
 
 
 # These functions return closures that implement the requested functions,
@@ -18,7 +22,7 @@ display_manuscripts = display_table_rows_function(Manuscript)
 update_manuscript_by_Id = update_table_row_by_id_function(Manuscript)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /manuscripts endpoint. All rows in the manuscripts table
@@ -29,7 +33,7 @@ def index_endpoint():
     return display_manuscripts()
 
 
-@blueprint.route('/<int:manuscript_id>', methods=['GET'])
+@blueprint.route("/<int:manuscript_id>", methods=["GET"])
 def display_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a GET /manuscripts/{manuscript_id} endpoint. The row in the
@@ -51,7 +55,7 @@ def display_manuscript_by_id_endpoint(manuscript_id: int):
 # appropriately.
 
 
-@blueprint.route('/<int:manuscript_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:manuscript_id>", methods=["PATCH", "PUT"])
 def update_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/{manuscript_id} endpoint. The row in
@@ -65,7 +69,7 @@ def update_manuscript_by_id_endpoint(manuscript_id: int):
     return update_manuscript_by_Id(manuscript_id, request.json)
 
 
-@blueprint.route('/<int:manuscript_id>', methods=['DELETE'])
+@blueprint.route("/<int:manuscript_id>", methods=["DELETE"])
 def delete_manuscript_by_id_endpoint(manuscript_id: int):
     """
     Implements a DELETE /manuscripts/{manuscript_id} endpoint. The row in the

@@ -4,13 +4,28 @@ import itertools
 
 from flask import Blueprint, Response, abort, jsonify, request
 
-from risuspubl.api.utility import create_model_obj, create_table_row_function, display_table_row_by_id_function, \
-        display_table_rows_function, generate_create_update_argd, handle_exception, update_model_obj, \
-        update_table_row_by_id_function
-from risuspubl.dbmodels import Author, AuthorMetadata, Authors_Books, Authors_Manuscripts, Book, Manuscript, db
+from risuspubl.api.utility import (
+    create_model_obj,
+    create_table_row_function,
+    display_table_row_by_id_function,
+    display_table_rows_function,
+    generate_create_update_argd,
+    handle_exception,
+    update_model_obj,
+    update_table_row_by_id_function,
+)
+from risuspubl.dbmodels import (
+    Author,
+    AuthorMetadata,
+    Authors_Books,
+    Authors_Manuscripts,
+    Book,
+    Manuscript,
+    db,
+)
 
 
-blueprint = Blueprint('authors', __name__, url_prefix='/authors')
+blueprint = Blueprint("authors", __name__, url_prefix="/authors")
 
 
 # These functions return closures that implement the requested functions,
@@ -21,7 +36,7 @@ display_authors = display_table_rows_function(Author)
 update_author_by_id = update_table_row_by_id_function(Author)
 
 
-@blueprint.route('/<int:author_id>/metadata', methods=['GET'])
+@blueprint.route("/<int:author_id>/metadata", methods=["GET"])
 def display_author_metadata_endpoint(author_id: int):
     """
     Implements a GET /authors/{author_id}/metadata endpoint. The row in the
@@ -31,19 +46,24 @@ def display_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
-        metadata_objs = list(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
+        metadata_objs = list(
+            AuthorMetadata.query.where(AuthorMetadata.author_id == author_id)
+        )
         if not len(metadata_objs):
             return abort(404)
         elif len(metadata_objs) > 1:
-            return Response(f'internal error: author_id {author_id} matches more than one row in '
-                            'authors_metadata table', status=500)
-        metadata_obj, = metadata_objs
+            return Response(
+                f"internal error: author_id {author_id} matches more than one row in "
+                "authors_metadata table",
+                status=500,
+            )
+        (metadata_obj,) = metadata_objs
         return jsonify(metadata_obj.serialize())
     except Exception as exception:
         return handle_exception(exception)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /authors endpoint. All rows in the authors table are loaded
@@ -57,7 +77,7 @@ def index_endpoint():
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['GET'])
+@blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["GET"])
 def display_authors_books_endpoint(author1_id: int, author2_id: int):
     """
     Implements a GET /authors/{author1_id}/{author2_id}/books endpoint. All rows
@@ -81,7 +101,9 @@ def display_authors_books_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['GET'])
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/books/<int:book_id>", methods=["GET"]
+)
 def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a GET /authors/{author1_id}/{author2_id}/books/{book_id}
@@ -126,20 +148,27 @@ def _authors_shared_manuscript_ids_endpoint(author1_id: int, author2_id: int) ->
     author2_manuscripts = author2_obj.manuscripts
     # A dict of Manuscript objects by manuscript_id is built from both lists
     # chained in sequence.
-    manuscript_objs_by_id = {manuscript_obj.manuscript_id: manuscript_obj for manuscript_obj
-                             in itertools.chain(author1_manuscripts, author2_manuscripts)}
+    manuscript_objs_by_id = {
+        manuscript_obj.manuscript_id: manuscript_obj
+        for manuscript_obj in itertools.chain(author1_manuscripts, author2_manuscripts)
+    }
     # Sets of manuscript_ids associated with each author_id are built and
     # intersected to find the shared manuscripts.
-    shared_manuscript_ids = set(author1_manuscript_obj.manuscript_id
-                                for author1_manuscript_obj in author1_manuscripts) & \
-                          set(author2_manuscript_obj.manuscript_id
-                              for author2_manuscript_obj in author2_manuscripts)
+    shared_manuscript_ids = set(
+        author1_manuscript_obj.manuscript_id
+        for author1_manuscript_obj in author1_manuscripts
+    ) & set(
+        author2_manuscript_obj.manuscript_id
+        for author2_manuscript_obj in author2_manuscripts
+    )
     # The manuscript_ids are looked up in the dict via a list comprehension and
     # that list is returned.
-    return [manuscript_objs_by_id[manuscript_id] for manuscript_id in shared_manuscript_ids]
+    return [
+        manuscript_objs_by_id[manuscript_id] for manuscript_id in shared_manuscript_ids
+    ]
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['GET'])
+@blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["GET"])
 def display_authors_manuscripts_endpoint(author1_id: int, author2_id: int):
     """
     Implements a GET /authors/{author1_id}/{author2_id}/manuscripts endpoint.
@@ -164,8 +193,13 @@ def display_authors_manuscripts_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
-def display_authors_manuscript_by_id_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>",
+    methods=["GET"],
+)
+def display_authors_manuscript_by_id_endpoint(
+    author1_id: int, author2_id: int, manuscript_id: int
+):
     """
     Implements a GET /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
@@ -198,7 +232,7 @@ def display_authors_manuscript_by_id_endpoint(author1_id: int, author2_id: int, 
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>', methods=['GET'])
+@blueprint.route("/<int:author_id>", methods=["GET"])
 def display_author_by_id_endpoint(author_id: int):
     """
     Implements a GET /authors/{author_id} endpoint. The row in the authors table
@@ -211,7 +245,7 @@ def display_author_by_id_endpoint(author_id: int):
     return display_author_by_id(author_id)
 
 
-@blueprint.route('/<int:author_id>/books', methods=['GET'])
+@blueprint.route("/<int:author_id>/books", methods=["GET"])
 def display_author_books_endpoint(author_id: int):
     """
     Implements a GET /authors/{author_id}/books endpoint. All rows in the books
@@ -230,7 +264,7 @@ def display_author_books_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['GET'])
+@blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["GET"])
 def display_author_book_by_id_endpoint(author_id: int, book_id: int):
     """
     Implements a GET /authors/{author_id}/books/{book_id} endpoint. The row in
@@ -251,12 +285,15 @@ def display_author_book_by_id_endpoint(author_id: int, book_id: int):
             if book_obj.book_id != book_id:
                 continue
             return jsonify(book_obj.serialize())
-        return Response(f'author with author_id {author_id} does not have a book with book_id {book_id}', status=400)
+        return Response(
+            f"author with author_id {author_id} does not have a book with book_id {book_id}",
+            status=400,
+        )
     except Exception as exception:
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/manuscripts', methods=['GET'])
+@blueprint.route("/<int:author_id>/manuscripts", methods=["GET"])
 def display_author_manuscripts_endpoint(author_id: int):
     """
     Implements a GET /authors/{author_id}/manuscripts endpoint. All rows in the
@@ -270,13 +307,15 @@ def display_author_manuscripts_endpoint(author_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
-        retval = [manuscript_obj.serialize() for manuscript_obj in author_obj.manuscripts]
+        retval = [
+            manuscript_obj.serialize() for manuscript_obj in author_obj.manuscripts
+        ]
         return jsonify(retval)
     except Exception as exception:
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
+@blueprint.route("/<int:author_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
 def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int):
     """
     Implements a GET /authors/{author_id}/manuscripts/{manuscript_id} endpoint.
@@ -307,7 +346,7 @@ def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int)
 # To be frank this endpoint doesn't have much of a reason to exist, save that
 # if this endpoint is loaded something *should* be here since /authors/{author_id} is
 # valid and /authors/{author1_id}/{author2_id}/books is valid. Provied for completGETeness. /<int:author1_id>/<int:author2_id>
-@blueprint.route('/<int:author1_id>/<int:author2_id>', methods=['GET'])
+@blueprint.route("/<int:author1_id>/<int:author2_id>", methods=["GET"])
 def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
     """
     Implements a GET /authors/{author_id}/<id> endpoint. The rows in the authors
@@ -343,17 +382,21 @@ def _authors_shared_book_ids_endpoint(author1_id: int, author2_id: int) -> set:
     author2_books = author2_obj.books
     # A dict of Book objects by book_id is built from both lists
     # chained in sequence.
-    book_objs_by_id = {book_obj.book_id: book_obj for book_obj in itertools.chain(author1_books, author2_books)}
+    book_objs_by_id = {
+        book_obj.book_id: book_obj
+        for book_obj in itertools.chain(author1_books, author2_books)
+    }
     # Sets of book_ids associated with each author_id are built and
     # intersected to find the shared books.
-    shared_book_ids = set(author1_book_obj.book_id for author1_book_obj in author1_books) & \
-                          set(author2_book_obj.book_id for author2_book_obj in author2_books)
+    shared_book_ids = set(
+        author1_book_obj.book_id for author1_book_obj in author1_books
+    ) & set(author2_book_obj.book_id for author2_book_obj in author2_books)
     # The book_ids are looked up in the dict via a list comprehension and
     # that list is returned.
     return [book_objs_by_id[book_id] for book_id in shared_book_ids]
 
 
-@blueprint.route('/<int:author_id>/metadata', methods=['PATCH'])
+@blueprint.route("/<int:author_id>/metadata", methods=["PATCH"])
 def update_author_metadata_endpoint(author_id: int):
     """
     Implements a PATCH /authors/{author_id}/metadata endpoint. The row in the
@@ -365,16 +408,26 @@ def update_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
-        result = tuple(db.session.execute('SELECT author_metadata_id FROM authors_metadata WHERE '
-                                          f'author_id = {author_id};'))
+        result = tuple(
+            db.session.execute(
+                "SELECT author_metadata_id FROM authors_metadata WHERE "
+                f"author_id = {author_id};"
+            )
+        )
         if len(result) == 0:
             return abort(404)
         elif len(result) > 1:
-            return Response(f'internal error: author_id {author_id} matches more than one row in '
-                            'authors_metadata table', status=500)
-        (author_metadata_id,), = result
-        author_metadata_obj = update_model_obj(author_metadata_id, AuthorMetadata,
-                                               generate_create_update_argd(AuthorMetadata, request.json))
+            return Response(
+                f"internal error: author_id {author_id} matches more than one row in "
+                "authors_metadata table",
+                status=500,
+            )
+        ((author_metadata_id,),) = result
+        author_metadata_obj = update_model_obj(
+            author_metadata_id,
+            AuthorMetadata,
+            generate_create_update_argd(AuthorMetadata, request.json),
+        )
         db.session.add(author_metadata_obj)
         db.session.commit()
         return jsonify(author_metadata_obj.serialize())
@@ -382,7 +435,9 @@ def update_author_metadata_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/books/<int:book_id>", methods=["PATCH", "PUT"]
+)
 def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a PATCH /authors/{author1_id}/{author2_id}/books/{book_id}
@@ -400,13 +455,19 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
-        a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
-        a2_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author2_obj.books))
+        a1_book_objs = list(
+            filter(lambda bobj: bobj.book_id == book_id, author1_obj.books)
+        )
+        a2_book_objs = list(
+            filter(lambda bobj: bobj.book_id == book_id, author2_obj.books)
+        )
         # Verifying that both author_ids are associated with this book_id in
         # authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        book_obj = update_model_obj(book_id, Book, generate_create_update_argd(Book, request.json))
+        book_obj = update_model_obj(
+            book_id, Book, generate_create_update_argd(Book, request.json)
+        )
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -414,8 +475,13 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
-def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>",
+    methods=["PATCH", "PUT"],
+)
+def update_authors_manuscript_endpoint(
+    author1_id: int, author2_id: int, manuscript_id: int
+):
     """
     Implements a PATCH /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
@@ -433,17 +499,29 @@ def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
-        a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
-        a2_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author2_obj.manuscripts))
+        a1_manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id,
+                author1_obj.manuscripts,
+            )
+        )
+        a2_manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id,
+                author2_obj.manuscripts,
+            )
+        )
         # Verifying that the two author_ids are associated with the
         # manuscript_id in authors_manuscripts.
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
-        manuscript_obj = update_model_obj(manuscript_id,
-                                          Manuscript,
-                                          generate_create_update_argd(Manuscript, request.json))
+        manuscript_obj = update_model_obj(
+            manuscript_id,
+            Manuscript,
+            generate_create_update_argd(Manuscript, request.json),
+        )
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -451,7 +529,7 @@ def update_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:author_id>", methods=["PATCH", "PUT"])
 def update_author_by_id_endpoint(author_id: int):
     """
     Implements a PATCH /authors/{author_id} endpoint. The row in the authors
@@ -463,7 +541,7 @@ def update_author_by_id_endpoint(author_id: int):
     return update_author_by_id(author_id, request.json)
 
 
-@blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
 def update_author_book_endpoint(author_id: int, book_id: int):
     """
     Implements a PATCH /authors/{author_id}/books/{book_id} endpoint. The row
@@ -485,7 +563,9 @@ def update_author_book_endpoint(author_id: int, book_id: int):
             return abort(404)
         # Using update_model_obj() to fetch the Book object and update it
         # against request.json.
-        book_obj = update_model_obj(book_id, Book, generate_create_update_argd(Book, request.json))
+        book_obj = update_model_obj(
+            book_id, Book, generate_create_update_argd(Book, request.json)
+        )
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -493,7 +573,9 @@ def update_author_book_endpoint(author_id: int, book_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
+@blueprint.route(
+    "/<int:author_id>/manuscripts/<int:manuscript_id>", methods=["PATCH", "PUT"]
+)
 def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
     Implements a PATCH /authors/{author_id}/manuscripts/{manuscript_id}
@@ -509,16 +591,22 @@ def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
-        manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
+        manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts
+            )
+        )
         # Verifying that this author_id is associated with this manuscript_id in
         # authors_manuscripts.
         if len(manuscript_objs) == 0:
             return abort(404)
         # Using update_model_obj() to fetch the Manuscript object and update it
         # against request.json.
-        manuscript_obj = update_model_obj(manuscript_id,
-                                          Manuscript,
-                                          generate_create_update_argd(Manuscript, request.json))
+        manuscript_obj = update_model_obj(
+            manuscript_id,
+            Manuscript,
+            generate_create_update_argd(Manuscript, request.json),
+        )
         db.session.add(manuscript_obj)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -526,7 +614,7 @@ def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/metadata', methods=['POST'])
+@blueprint.route("/<int:author_id>/metadata", methods=["POST"])
 def create_author_metadata_endpoint(author_id: int):
     """
     Implements a POST /authors/{author_id}/metadata endpoint. Creates a row
@@ -534,16 +622,21 @@ def create_author_metadata_endpoint(author_id: int):
     parameters. Fails if there already is a row in the authors_metadata table
     with that author_id value.
 
-    :author_id: the author_id value to set on the new row in the 
+    :author_id: the author_id value to set on the new row in the
                 authors_metadata table
     :return:    a flask.Response object
     """
     try:
-        results = tuple(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
+        results = tuple(
+            AuthorMetadata.query.where(AuthorMetadata.author_id == author_id)
+        )
         if len(results):
-            raise ValueError(f'metadata for author with id {author_id} already exists; cannot create anew')
-        author_metadata_obj = create_model_obj(AuthorMetadata, generate_create_update_argd(AuthorMetadata,
-                                                                                           request.json))
+            raise ValueError(
+                f"metadata for author with id {author_id} already exists; cannot create anew"
+            )
+        author_metadata_obj = create_model_obj(
+            AuthorMetadata, generate_create_update_argd(AuthorMetadata, request.json)
+        )
         db.session.add(author_metadata_obj)
         db.session.commit()
         return jsonify(author_metadata_obj.serialize())
@@ -551,7 +644,7 @@ def create_author_metadata_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('', methods=['POST'])
+@blueprint.route("", methods=["POST"])
 def author_create_endpoint():
     """
     Implements a POST /authors endpoint. A new row in the authors table is
@@ -562,7 +655,7 @@ def author_create_endpoint():
     return create_author(request.json)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books', methods=['POST'])
+@blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["POST"])
 def create_authors_book_endpoint(author1_id: int, author2_id: int):
     """
     Implements a POST /authors/{author_id}/books endpoint. A new row in the
@@ -582,15 +675,21 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
         Author.query.get_or_404(author2_id)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book,
-                                    generate_create_update_argd(Book, request.json),
-                                    optional_params={'series_id'})
+        book_obj = create_model_obj(
+            Book,
+            generate_create_update_argd(Book, request.json),
+            optional_params={"series_id"},
+        )
         db.session.add(book_obj)
         db.session.commit()
         # Associating the new book_id with both author_ids in the authors_books
         # table.
-        ab1_insert = Authors_Books.insert().values(author_id=author1_id, book_id=book_obj.book_id)
-        ab2_insert = Authors_Books.insert().values(author_id=author2_id, book_id=book_obj.book_id)
+        ab1_insert = Authors_Books.insert().values(
+            author_id=author1_id, book_id=book_obj.book_id
+        )
+        ab2_insert = Authors_Books.insert().values(
+            author_id=author2_id, book_id=book_obj.book_id
+        )
         db.session.execute(ab1_insert)
         db.session.execute(ab2_insert)
         db.session.commit()
@@ -599,7 +698,7 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts', methods=['POST'])
+@blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["POST"])
 def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     """
     Implements a POST /authors/{author1_id}/{author2_id}/manuscripts endpoint.
@@ -619,17 +718,21 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
         Author.query.get_or_404(author2_id)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript,
-                                          generate_create_update_argd(Manuscript, request.json),
-                                          optional_params={'series_id'})
+        manuscript_obj = create_model_obj(
+            Manuscript,
+            generate_create_update_argd(Manuscript, request.json),
+            optional_params={"series_id"},
+        )
         db.session.add(manuscript_obj)
         db.session.commit()
         # Associating the new manuscript_id with both author_ids in the
         # authors_manuscripts table.
-        ab1_insert = Authors_Manuscripts.insert().values(author_id=author1_id,
-                                                         manuscript_id=manuscript_obj.manuscript_id)
-        ab2_insert = Authors_Manuscripts.insert().values(author_id=author2_id,
-                                                         manuscript_id=manuscript_obj.manuscript_id)
+        ab1_insert = Authors_Manuscripts.insert().values(
+            author_id=author1_id, manuscript_id=manuscript_obj.manuscript_id
+        )
+        ab2_insert = Authors_Manuscripts.insert().values(
+            author_id=author2_id, manuscript_id=manuscript_obj.manuscript_id
+        )
         db.session.execute(ab1_insert)
         db.session.execute(ab2_insert)
         db.session.commit()
@@ -638,7 +741,7 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/books', methods=['POST'])
+@blueprint.route("/<int:author_id>/books", methods=["POST"])
 def create_author_book_endpoint(author_id: int):
     """
     Implements a POST /authors/{author_id}/books endpoint. A new row in the
@@ -655,14 +758,18 @@ def create_author_book_endpoint(author_id: int):
         Author.query.get_or_404(author_id)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        book_obj = create_model_obj(Book,
-                                    generate_create_update_argd(Book, request.json),
-                                    optional_params={'series_id'})
+        book_obj = create_model_obj(
+            Book,
+            generate_create_update_argd(Book, request.json),
+            optional_params={"series_id"},
+        )
         db.session.add(book_obj)
         db.session.commit()
         # Associating the new book_id with both author_ids in the
         # authors_books table.
-        ab_insert = Authors_Books.insert().values(author_id=author_id, book_id=book_obj.book_id)
+        ab_insert = Authors_Books.insert().values(
+            author_id=author_id, book_id=book_obj.book_id
+        )
         db.session.execute(ab_insert)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -670,7 +777,7 @@ def create_author_book_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/manuscripts', methods=['POST'])
+@blueprint.route("/<int:author_id>/manuscripts", methods=["POST"])
 def create_author_manuscript_endpoint(author_id: int):
     """
     Implements a POST /authors/{author_id}/manuscripts endpoint. A new row in
@@ -687,14 +794,18 @@ def create_author_manuscript_endpoint(author_id: int):
         Author.query.get_or_404(author_id)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
-        manuscript_obj = create_model_obj(Manuscript,
-                                          generate_create_update_argd(Manuscript, request.json),
-                                          optional_params={'series_id'})
+        manuscript_obj = create_model_obj(
+            Manuscript,
+            generate_create_update_argd(Manuscript, request.json),
+            optional_params={"series_id"},
+        )
         db.session.add(manuscript_obj)
         db.session.commit()
         # Associating the new manuscript_id with the author_id in the
         # authors_manuscripts table.
-        ab_insert = Authors_Manuscripts.insert().values(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
+        ab_insert = Authors_Manuscripts.insert().values(
+            author_id=author_id, manuscript_id=manuscript_obj.manuscript_id
+        )
         db.session.execute(ab_insert)
         db.session.commit()
         return jsonify(manuscript_obj.serialize())
@@ -702,7 +813,7 @@ def create_author_manuscript_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/metadata', methods=['DELETE'])
+@blueprint.route("/<int:author_id>/metadata", methods=["DELETE"])
 def delete_author_metadata_endpoint(author_id: int):
     """
     Implements a DELETE /authors/{author_id}/metadata endpoint. Locates the row
@@ -714,13 +825,18 @@ def delete_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
-        metadata_objs = tuple(AuthorMetadata.query.where(AuthorMetadata.author_id == author_id))
+        metadata_objs = tuple(
+            AuthorMetadata.query.where(AuthorMetadata.author_id == author_id)
+        )
         if len(metadata_objs) == 0:
             return abort(404)
         elif len(metadata_objs) > 1:
-            return Response(f'internal error: author_id {author_id} matches more than one row in '
-                            'authors_metadata table', status=500)
-        metadata_obj, = metadata_objs
+            return Response(
+                f"internal error: author_id {author_id} matches more than one row in "
+                "authors_metadata table",
+                status=500,
+            )
+        (metadata_obj,) = metadata_objs
         db.session.delete(metadata_obj)
         db.session.commit()
         return jsonify(True)
@@ -728,7 +844,9 @@ def delete_author_metadata_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/books/<int:book_id>', methods=['DELETE'])
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/books/<int:book_id>", methods=["DELETE"]
+)
 def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a DELETE /authors/{author1_id}/{author2_id}/books/{book_id}
@@ -747,13 +865,17 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
-        a1_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author1_obj.books))
-        a2_book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author2_obj.books))
+        a1_book_objs = list(
+            filter(lambda bobj: bobj.book_id == book_id, author1_obj.books)
+        )
+        a2_book_objs = list(
+            filter(lambda bobj: bobj.book_id == book_id, author2_obj.books)
+        )
         # This step verifies that the two author_ids each occur in a row in
         # authors_books with this book_id set.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        book_obj, = a1_book_objs
+        (book_obj,) = a1_book_objs
         # That row in authors_books needs to be deleted too.
         ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
         db.session.execute(ab_del)
@@ -765,8 +887,13 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
-def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscript_id: int):
+@blueprint.route(
+    "/<int:author1_id>/<int:author2_id>/manuscripts/<int:manuscript_id>",
+    methods=["DELETE"],
+)
+def delete_authors_manuscript_endpoint(
+    author1_id: int, author2_id: int, manuscript_id: int
+):
     """
     Implements a DELETE /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id} endpoint.
     The row in the manuscripts table with that id associated with those
@@ -784,16 +911,28 @@ def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
-        a1_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author1_obj.manuscripts))
-        a2_manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author2_obj.manuscripts))
+        a1_manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id,
+                author1_obj.manuscripts,
+            )
+        )
+        a2_manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id,
+                author2_obj.manuscripts,
+            )
+        )
         # This step verifies that the two author_ids each occur in a row in
         # authors_manuscripts with this manuscript_id set.
         if len(a1_manuscript_objs) == 0 or len(a2_manuscript_objs) == 0:
             return abort(404)
 
-        manuscript_obj, = a1_manuscript_objs
+        (manuscript_obj,) = a1_manuscript_objs
         # That row in authors_manuscripts needs to be deleted too.
-        ab_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
+        ab_del = Authors_Manuscripts.delete().where(
+            Authors_Manuscripts.columns[1] == manuscript_id
+        )
         db.session.execute(ab_del)
         db.session.commit()
         db.session.delete(manuscript_obj)
@@ -803,7 +942,7 @@ def delete_authors_manuscript_endpoint(author1_id: int, author2_id: int, manuscr
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>', methods=['DELETE'])
+@blueprint.route("/<int:author_id>", methods=["DELETE"])
 def delete_author_by_id_endpoint(author_id: int):
     """
     Implements a DELETE /authors/{author_id} endpoint. The row in the authors
@@ -817,7 +956,9 @@ def delete_author_by_id_endpoint(author_id: int):
         author_obj = Author.query.get_or_404(author_id)
         ab_del = Authors_Books.delete().where(Authors_Books.columns[0] == author_id)
         db.session.execute(ab_del)
-        am_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[0] == author_id)
+        am_del = Authors_Manuscripts.delete().where(
+            Authors_Manuscripts.columns[0] == author_id
+        )
         db.session.execute(am_del)
         db.session.commit()
         db.session.delete(author_obj)
@@ -827,7 +968,7 @@ def delete_author_by_id_endpoint(author_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/books/<int:book_id>', methods=['DELETE'])
+@blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["DELETE"])
 def delete_author_book_endpoint(author_id: int, book_id: int):
     """
     Implements a DELETE /authors/{author_id}/books/{book_id} endpoint. The row
@@ -848,7 +989,7 @@ def delete_author_book_endpoint(author_id: int, book_id: int):
         # author_id and the given book_id.
         if len(book_objs) == 0:
             return abort(404)
-        book_obj, = book_objs
+        (book_obj,) = book_objs
         # That row in authors_books must be deleted as well.
         ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
         db.session.execute(ab_del)
@@ -860,7 +1001,7 @@ def delete_author_book_endpoint(author_id: int, book_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:author_id>/manuscripts/<int:manuscript_id>', methods=['DELETE'])
+@blueprint.route("/<int:author_id>/manuscripts/<int:manuscript_id>", methods=["DELETE"])
 def delete_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
     Implements a DELETE /authors/{author_id}/manuscripts/{manuscript_id}
@@ -877,14 +1018,20 @@ def delete_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
-        manuscript_objs = list(filter(lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts))
+        manuscript_objs = list(
+            filter(
+                lambda bobj: bobj.manuscript_id == manuscript_id, author_obj.manuscripts
+            )
+        )
         # This step verifies that there is a row in authors_manuscripts with the
         # given author_id and the given manuscript_id.
         if len(manuscript_objs) == 0:
             return abort(404)
-        manuscript_obj, = manuscript_objs
+        (manuscript_obj,) = manuscript_objs
         # That row in authors_manuscripts must be deleted as well.
-        ab_del = Authors_Manuscripts.delete().where(Authors_Manuscripts.columns[1] == manuscript_id)
+        ab_del = Authors_Manuscripts.delete().where(
+            Authors_Manuscripts.columns[1] == manuscript_id
+        )
         db.session.execute(ab_del)
         db.session.commit()
         db.session.delete(manuscript_obj)

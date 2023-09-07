@@ -10,19 +10,23 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '66d37e1125cf'
-down_revision = '611cb224d629'
+revision = "66d37e1125cf"
+down_revision = "611cb224d629"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
 CREATE INDEX idx_sales_records_book_id ON sales_records USING hash(book_id);
-""")
+"""
+    )
 
 
 def downgrade():
-    op.execute("""
+    op.execute(
+        """
 DROP INDEX idx_sales_records_book_id;
-""")
+"""
+    )

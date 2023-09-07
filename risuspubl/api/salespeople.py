@@ -2,31 +2,48 @@
 
 from flask import Blueprint, jsonify, request
 
-from risuspubl.api.utility import create_model_obj, create_table_row_function, delete_table_row_by_id_function, \
-        delete_table_row_by_id_and_foreign_key_function, display_table_row_by_id_function, \
-        display_table_row_by_id_and_foreign_key_function, display_table_rows_function, \
-        display_table_rows_by_foreign_id_function, generate_create_update_argd, handle_exception, \
-        update_table_row_by_id_function, update_table_row_by_id_and_foreign_key_function
+from risuspubl.api.utility import (
+    create_model_obj,
+    create_table_row_function,
+    delete_table_row_by_id_function,
+    delete_table_row_by_id_and_foreign_key_function,
+    display_table_row_by_id_function,
+    display_table_row_by_id_and_foreign_key_function,
+    display_table_rows_function,
+    display_table_rows_by_foreign_id_function,
+    generate_create_update_argd,
+    handle_exception,
+    update_table_row_by_id_function,
+    update_table_row_by_id_and_foreign_key_function,
+)
 from risuspubl.dbmodels import Client, Salesperson, db
 
 
-blueprint = Blueprint('salespeople', __name__, url_prefix='/salespeople')
+blueprint = Blueprint("salespeople", __name__, url_prefix="/salespeople")
 
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
 create_salesperson = create_table_row_function(Salesperson)
-delete_client_by_client_id_and_salesperson_id = delete_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+delete_client_by_client_id_and_salesperson_id = (
+    delete_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+)
 delete_salesperson_by_id = delete_table_row_by_id_function(Salesperson)
-display_client_by_client_id_and_salesperson_id = display_table_row_by_id_and_foreign_key_function(Salesperson, Client)
-display_clients_by_salesperson_id = display_table_rows_by_foreign_id_function(Salesperson, Client)
+display_client_by_client_id_and_salesperson_id = (
+    display_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+)
+display_clients_by_salesperson_id = display_table_rows_by_foreign_id_function(
+    Salesperson, Client
+)
 display_salespeople = display_table_rows_function(Salesperson)
 display_salesperson_by_id = display_table_row_by_id_function(Salesperson)
-update_client_by_client_id_and_salesperson_id = update_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+update_client_by_client_id_and_salesperson_id = (
+    update_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+)
 update_salesperson_by_id = update_table_row_by_id_function(Salesperson)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /salespeople endpoint. All rows in the salespeople table
@@ -37,7 +54,7 @@ def index_endpoint():
     return display_salespeople()
 
 
-@blueprint.route('/<int:salesperson_id>', methods=['GET'])
+@blueprint.route("/<int:salesperson_id>", methods=["GET"])
 def display_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a GET /salespeople/{salesperson_id} endpoint. The row in the
@@ -51,7 +68,7 @@ def display_salesperson_by_id_endpoint(salesperson_id: int):
     return display_salesperson_by_id(salesperson_id)
 
 
-@blueprint.route('/<int:salesperson_id>/clients', methods=['GET'])
+@blueprint.route("/<int:salesperson_id>/clients", methods=["GET"])
 def display_salesperson_clients_endpoint(salesperson_id: int):
     """
     Implements a GET /salespeople/{salesperson_id}/clients endpoint. All rows in
@@ -65,7 +82,7 @@ def display_salesperson_clients_endpoint(salesperson_id: int):
     return display_clients_by_salesperson_id(salesperson_id)
 
 
-@blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['GET'])
+@blueprint.route("/<int:salesperson_id>/clients/<int:client_id>", methods=["GET"])
 def display_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a GET /salespeople/{salesperson_id}/clients endpoint. All rows in
@@ -79,7 +96,7 @@ def display_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: in
     return display_client_by_client_id_and_salesperson_id(salesperson_id, client_id)
 
 
-@blueprint.route('', methods=['POST'])
+@blueprint.route("", methods=["POST"])
 def create_salesperson_endpoint():
     """
     Implements a POST /salespeople endpoint. A new row in the salespeople table
@@ -90,7 +107,7 @@ def create_salesperson_endpoint():
     return create_salesperson(request.json)
 
 
-@blueprint.route('/<int:salesperson_id>/clients', methods=['POST'])
+@blueprint.route("/<int:salesperson_id>/clients", methods=["POST"])
 def create_salesperson_client_endpoint(salesperson_id: int):
     """
     Implements a POST /salespeople/{salesperson_id}/clients endpoint. A new
@@ -105,8 +122,12 @@ def create_salesperson_client_endpoint(salesperson_id: int):
         Salesperson.query.get_or_404(salesperson_id)
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
-        client_obj = create_model_obj(Client,
-                                      generate_create_update_argd(Client, request.json, salesperson_id=salesperson_id))
+        client_obj = create_model_obj(
+            Client,
+            generate_create_update_argd(
+                Client, request.json, salesperson_id=salesperson_id
+            ),
+        )
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)
         db.session.commit()
@@ -115,7 +136,7 @@ def create_salesperson_client_endpoint(salesperson_id: int):
         return handle_exception(exception)
 
 
-@blueprint.route('/<int:salesperson_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:salesperson_id>", methods=["PATCH", "PUT"])
 def update_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a PATCH /salespeople/{salesperson_id} endpoint. The row in
@@ -129,7 +150,9 @@ def update_salesperson_by_id_endpoint(salesperson_id: int):
     return update_salesperson_by_id(salesperson_id, request.json)
 
 
-@blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['PATCH', 'PUT'])
+@blueprint.route(
+    "/<int:salesperson_id>/clients/<int:client_id>", methods=["PATCH", "PUT"]
+)
 def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a PATCH /salespeople/{salesperson_id}/clients/{client_id}
@@ -141,10 +164,12 @@ def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int
     :client_id:      The client_id of the row in the clients table to update.
     :return:         A flask.Response object.
     """
-    return update_client_by_client_id_and_salesperson_id(salesperson_id, client_id, request.json)
+    return update_client_by_client_id_and_salesperson_id(
+        salesperson_id, client_id, request.json
+    )
 
 
-@blueprint.route('/<int:salesperson_id>', methods=['DELETE'])
+@blueprint.route("/<int:salesperson_id>", methods=["DELETE"])
 def delete_salesperson_by_id_endpoint(salesperson_id: int):
     """
     Implements a DELETE /salespeople/{salesperson_id} endpoint. The row in the
@@ -156,7 +181,7 @@ def delete_salesperson_by_id_endpoint(salesperson_id: int):
     return delete_salesperson_by_id(salesperson_id)
 
 
-@blueprint.route('/<int:salesperson_id>/clients/<int:client_id>', methods=['DELETE'])
+@blueprint.route("/<int:salesperson_id>/clients/<int:client_id>", methods=["DELETE"])
 def delete_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int):
     """
     Implements a DELETE /salespeople/{salesperson_id}/clients/{client_id}

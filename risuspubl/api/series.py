@@ -2,32 +2,48 @@
 
 from flask import Blueprint, request
 
-from risuspubl.api.utility import create_table_row_function, delete_table_row_by_id_function, \
-        display_table_row_by_id_function, display_table_row_by_id_and_foreign_key_function, \
-        display_table_rows_function, display_table_rows_by_foreign_id_function, \
-        update_table_row_by_id_function, update_table_row_by_id_and_foreign_key_function
+from risuspubl.api.utility import (
+    create_table_row_function,
+    delete_table_row_by_id_function,
+    display_table_row_by_id_function,
+    display_table_row_by_id_and_foreign_key_function,
+    display_table_rows_function,
+    display_table_rows_by_foreign_id_function,
+    update_table_row_by_id_function,
+    update_table_row_by_id_and_foreign_key_function,
+)
 from risuspubl.dbmodels import Book, Manuscript, Series
 
 
-blueprint = Blueprint('series', __name__, url_prefix='/series')
+blueprint = Blueprint("series", __name__, url_prefix="/series")
 
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
 create_series = create_table_row_function(Series)
 delete_series_by_id = delete_table_row_by_id_function(Series)
-display_book_by_book_id_and_series_id = display_table_row_by_id_and_foreign_key_function(Series, Book)
+display_book_by_book_id_and_series_id = (
+    display_table_row_by_id_and_foreign_key_function(Series, Book)
+)
 display_books_by_series_id = display_table_rows_by_foreign_id_function(Series, Book)
-display_manuscript_by_manuscript_id_and_series_id = display_table_row_by_id_and_foreign_key_function(Series, Manuscript)
-display_manuscripts_by_series_id = display_table_rows_by_foreign_id_function(Series, Manuscript)
+display_manuscript_by_manuscript_id_and_series_id = (
+    display_table_row_by_id_and_foreign_key_function(Series, Manuscript)
+)
+display_manuscripts_by_series_id = display_table_rows_by_foreign_id_function(
+    Series, Manuscript
+)
 display_series_by_id = display_table_row_by_id_function(Series)
 display_series = display_table_rows_function(Series)
-update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key_function(Series, Book)
-update_manuscript_by_manuscript_id_and_series_idr = update_table_row_by_id_and_foreign_key_function(Series, Manuscript)
+update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key_function(
+    Series, Book
+)
+update_manuscript_by_manuscript_id_and_series_idr = (
+    update_table_row_by_id_and_foreign_key_function(Series, Manuscript)
+)
 update_series_by_id = update_table_row_by_id_function(Series)
 
 
-@blueprint.route('', methods=['GET'])
+@blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
     Implements a GET /series endpoint. All rows in the series table are loaded
@@ -38,7 +54,7 @@ def index_endpoint():
     return display_series()
 
 
-@blueprint.route('/<int:series_id>', methods=['GET'])
+@blueprint.route("/<int:series_id>", methods=["GET"])
 def display_series_by_id_endpoint(series_id: int):
     """
     Implements a GET /series/{series_id} endpoint. The row in the series table
@@ -51,7 +67,7 @@ def display_series_by_id_endpoint(series_id: int):
     return display_series_by_id(series_id)
 
 
-@blueprint.route('/<int:series_id>/books', methods=['GET'])
+@blueprint.route("/<int:series_id>/books", methods=["GET"])
 def display_series_books_endpoint(series_id: int):
     """
     Implements a GET /series/{series_id}/books endpoint. All rows in the books
@@ -64,7 +80,7 @@ def display_series_books_endpoint(series_id: int):
     return display_books_by_series_id(series_id)
 
 
-@blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['GET'])
+@blueprint.route("/<int:series_id>/books/<int:book_id>", methods=["GET"])
 def display_series_book_by_id_endpoint(series_id: int, book_id: int):
     """
     Implements a GET /series/{series_id}/books/{book_id} endpoint. The row in
@@ -78,7 +94,7 @@ def display_series_book_by_id_endpoint(series_id: int, book_id: int):
     return display_book_by_book_id_and_series_id(series_id, book_id)
 
 
-@blueprint.route('/<int:series_id>/manuscripts', methods=['GET'])
+@blueprint.route("/<int:series_id>/manuscripts", methods=["GET"])
 def display_series_manuscripts_endpoint(series_id: int):
     """
     Implements a GET /series/{series_id}/manuscripts endpoint. All rows in the
@@ -92,7 +108,7 @@ def display_series_manuscripts_endpoint(series_id: int):
     return display_manuscripts_by_series_id(series_id)
 
 
-@blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['GET'])
+@blueprint.route("/<int:series_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
 def display_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     """
     Implements a GET /series/{series_id}/manuscripts/{manuscript_id} endpoint.
@@ -108,7 +124,7 @@ def display_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int)
     return display_manuscript_by_manuscript_id_and_series_id(series_id, manuscript_id)
 
 
-@blueprint.route('', methods=['POST'])
+@blueprint.route("", methods=["POST"])
 def create_series_endpoint():
     """
     Implements a POST /series endpoint. A new row in the series table is
@@ -119,7 +135,7 @@ def create_series_endpoint():
     return create_series(request.json)
 
 
-@blueprint.route('/<int:series_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:series_id>", methods=["PATCH", "PUT"])
 def update_series_by_id_endpoint(series_id: int):
     """
     Implements a PATCH /series/{series_id} endpoint. The row in the series table
@@ -131,7 +147,7 @@ def update_series_by_id_endpoint(series_id: int):
     return update_series_by_id(series_id, request.json)
 
 
-@blueprint.route('/<int:series_id>/books/<int:book_id>', methods=['PATCH', 'PUT'])
+@blueprint.route("/<int:series_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
 def update_series_book_by_id_endpoint(series_id: int, book_id: int):
     """
     Implements a PATCH /series/{series_id}/books/{book_id} endpoint. The row in
@@ -145,7 +161,9 @@ def update_series_book_by_id_endpoint(series_id: int, book_id: int):
     return update_book_by_book_id_and_series_id(series_id, book_id, request.json)
 
 
-@blueprint.route('/<int:series_id>/manuscripts/<int:manuscript_id>', methods=['PATCH', 'PUT'])
+@blueprint.route(
+    "/<int:series_id>/manuscripts/<int:manuscript_id>", methods=["PATCH", "PUT"]
+)
 def update_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     """
     Implements a PATCH /series/{series_id}/manuscripts/{manuscript_id} endpoint.
@@ -156,10 +174,12 @@ def update_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     :manuscript_id:   The manuscript_id of the row in the manuscripts table to update.
     :return:    A flask.Response object.
     """
-    return update_manuscript_by_manuscript_id_and_series_idr(series_id, manuscript_id, request.json)
+    return update_manuscript_by_manuscript_id_and_series_idr(
+        series_id, manuscript_id, request.json
+    )
 
 
-@blueprint.route('/<int:series_id>', methods=['DELETE'])
+@blueprint.route("/<int:series_id>", methods=["DELETE"])
 def delete_series_by_id_endpoint(series_id: int):
     """
     Implements a DELETE /series/{series_id} endpoint. The row in the series

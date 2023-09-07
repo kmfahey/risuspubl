@@ -10,24 +10,28 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fb4de94b2a88'
-down_revision = '6e9d47cf2b9e'
+revision = "fb4de94b2a88"
+down_revision = "6e9d47cf2b9e"
 branch_labels = None
 depends_on = None
 
 
 def upgrade():
-    op.execute("""
+    op.execute(
+        """
 ALTER TABLE sales_records
 ADD CONSTRAINT fk_book
 FOREIGN KEY (book_id)
 REFERENCES books (book_id)
 ON DELETE RESTRICT;
-""")
+"""
+    )
 
 
 def downgrade():
-    op.execute("""
+    op.execute(
+        """
 ALTER TABLE sales_records
 DROP CONSTRAINT fk_book;
-""")
+"""
+    )
