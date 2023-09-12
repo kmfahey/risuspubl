@@ -2,6 +2,7 @@
 
 import os
 import flask
+from decouple import config
 
 import risuspubl.api.authors
 import risuspubl.api.books
@@ -14,11 +15,18 @@ import risuspubl.api.series
 from risuspubl.dbmodels import db
 
 
+DB_USER = config('DB_USER')
+DB_PASSWORD = config('DB_PASSWORD')
+DB_HOST = config('DB_HOST')
+DB_PORT = config('DB_PORT')
+DB_NAME = config('DB_NAME')
+
+
 def create_app(test_config=None):
     app = flask.Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY="dev",
-        SQLALCHEMY_DATABASE_URI="postgresql://postgres@localhost:5432/risuspublishing",
+        SQLALCHEMY_DATABASE_URI=f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
         SQLALCHEMY_ECHO=True,
     )
