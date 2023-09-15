@@ -1,4 +1,4 @@
---
+-- 01. --
 -- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -25,8 +25,243 @@ COPY public.authors (author_id, first_name, last_name) FROM stdin;
 20	Valentine	Camillo
 \.
 
-
+-- 02. --
+-- Data for Name: editors; Type: TABLE DATA; Schema: public; Owner: postgres
 --
+
+COPY public.editors (editor_id, first_name, last_name, salary) FROM stdin;
+1	Raymond	Livingston	94000
+2	Elise	Winters	77000
+3	Jay	Villanueva	89000
+4	Veronica	Horn	84000
+5	Hugo	Olsen	82000
+6	Mason	Slater	86000
+7	Zachariah	Fry	82000
+8	Brianna	Foster	95000
+9	Jeremiah	Wallace	67000
+10	Monica	Barrett	65000
+\.
+
+-- 03. --
+-- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.series (series_id, title, volumes) FROM stdin;
+1	The Owl in the Air	2
+2	Sign of the Hollow Staircase	5
+3	Fatal Demon	2
+4	Crime of the Orange Tourists	4
+5	Sign of the Absent Puppet	3
+6	Khan's Vow	3
+7	Made for Duty	2
+8	The Scarlet Violin	2
+9	Mister Silver Fox	3
+10	Legacy Fading	5
+\.
+
+-- 04. --
+-- Data for Name: salespeople; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.salespeople (salesperson_id, first_name, last_name, salary) FROM stdin;
+1	Evin	York	65000
+2	Jeana	Alpin	75000
+3	Gertrude	Hanover	77000
+4	Honey	Wessex	64000
+5	Nala	Plantagenet	75000
+6	Nannie	Normandy	81000
+7	Rigmor	Stuart	85000
+8	Kyler	Blois	77000
+9	Anouk	Lancaster	67000
+10	Matilda	Saxe	67000
+11	Joshua	Woodward	69000
+12	Eric	Davidson	78000
+13	Marco	Hart	76000
+14	Donald	Cruz	61000
+15	Anthony	Booker	73000
+16	Harrison	Blair	80000
+17	Nicholas	Rowland	62000
+18	Dexter	Mccoy	85000
+19	Luke	Olsen	70000
+20	Yasin	Lang	79000
+\.
+
+-- 05. --
+-- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.books (book_id, editor_id, series_id, title, publication_date, edition_number, is_in_print) FROM stdin;
+2	8	\N	Silence the Truth	2015-07-19	1	f
+3	5	\N	Burnt Skies	2011-03-19	1	t
+4	8	\N	Crime of the Quiet Baker	2002-05-20	2	t
+5	2	\N	The Code of the Orb	2005-11-02	4	t
+6	8	\N	Crime of the Scarred Lodger	2006-05-24	1	t
+7	3	\N	Dream on Fire	2001-08-22	1	t
+9	9	\N	The Blazing Axe	2008-08-06	1	t
+10	8	\N	Clue of the Hollow Claw	2007-01-28	2	t
+11	7	\N	The Banished Time	2014-10-13	2	t
+12	10	\N	Sign of the Crooked Turnip	2020-03-03	1	t
+13	8	\N	Zodiac Circling	2015-05-15	4	t
+14	1	\N	Equinox of Mars	2018-07-12	1	f
+15	4	\N	Naughty and Not Nice	2019-01-22	3	t
+17	4	\N	Year of Mercury	1994-08-11	5	t
+18	5	\N	Sign of the Forgotten Pyramid	2004-06-07	2	t
+19	2	\N	What Happened in Vegas	2010-06-22	3	t
+20	4	\N	The Heirs of the Lodestar	2012-02-24	5	t
+21	1	\N	Son of Death	2017-12-07	3	t
+22	8	\N	Sign of the Concave Claw	2021-02-03	1	t
+23	2	\N	The Hand of the Blessed	2018-02-28	1	t
+24	5	\N	Stars and the Glass	1997-03-25	2	t
+29	5	\N	Whisper of Blood	1998-02-07	1	t
+31	10	\N	Crimson Benediction	2017-07-03	2	t
+32	4	\N	2099: Rigel	1997-07-15	5	t
+36	7	\N	The Circle of the Frontier	2006-09-04	5	f
+39	8	\N	Oceans of Algorab	1992-04-26	3	t
+40	10	\N	Enemy of Glass	2015-11-10	1	f
+41	1	\N	Mask of Silence	1999-05-18	3	t
+42	2	\N	Death of the Chinese Monkey	2004-03-27	1	t
+44	5	\N	Clue of the Cold Puppet	2006-08-01	2	t
+46	2	\N	The Horizon of Zion	2007-07-06	5	t
+47	7	\N	Touch in the Dark	2007-03-05	2	t
+50	3	\N	The Tomb in the Mist	2018-03-29	2	t
+52	1	\N	Hot Young Stud	2020-01-30	1	t
+53	9	\N	The Blood in the Abyss	2002-02-15	4	t
+54	7	\N	The Remains of Nine	2020-03-10	3	t
+55	9	\N	The Stranger in the Lake	1997-03-25	1	t
+56	8	\N	Maybe, Probably	2007-02-19	1	f
+57	10	\N	Crime of the Kissing Ringmaster	1996-11-05	4	t
+58	10	\N	The Crystal in the Winter	2016-01-22	5	f
+59	8	\N	To Trap a Kiss	1990-07-22	1	t
+60	5	\N	Savage Rites	2020-05-30	2	f
+61	8	\N	The Blessed Beast	1991-12-30	1	t
+62	1	\N	Devil's Advent	2019-01-20	3	t
+63	9	\N	His and Her Summer	2000-08-13	1	t
+69	6	\N	Steel Alley	1999-02-10	1	t
+71	2	\N	The Bloodless Oracle	2007-08-27	2	t
+74	2	\N	Death of the Stuffed Viper	2013-03-04	4	t
+75	2	\N	Savage Wolf	2021-08-01	2	t
+76	4	\N	Mermaids and Sirens	2010-03-29	4	t
+77	4	\N	Secret of the Mute Mermaid	2000-02-09	1	t
+78	4	\N	Built for Evil	1993-12-12	3	t
+79	6	\N	Mystery of the Spanish Juror	2006-04-02	1	t
+82	2	\N	Khan's Hymn	1998-01-28	3	f
+83	10	\N	Scent of Evil	2004-07-23	2	t
+84	2	\N	The Bride in the Vale	2002-04-30	4	t
+85	9	\N	A God Named Sin	2022-06-27	5	t
+86	5	\N	Licensed for Slaughter	2018-02-05	2	t
+87	10	\N	Heart of Flax	2019-11-25	3	t
+88	5	\N	Fog of the Heart	1993-10-31	4	t
+89	3	\N	2105: Heretic	1999-08-03	1	t
+90	4	\N	Case of the One-Toed Beast	2014-04-12	4	t
+91	5	\N	Fallen Game	2015-02-03	2	t
+92	1	\N	Case of the Sacred Weasel	2022-03-23	1	t
+93	5	\N	Enemy of Winter	2020-03-17	3	t
+95	9	\N	Fool's Legacy	2010-12-28	1	f
+96	2	\N	Case of the Sacred Ferret	2016-12-02	2	t
+97	8	\N	Dragon's End	2002-10-06	3	t
+98	8	\N	Dangerous Illusion	2011-01-25	1	t
+99	9	\N	Abyss of Bones	2004-06-24	3	t
+26	3	8	Crime of the Hairless Stranger	2019-07-24	4	t
+81	6	2	Angel's Return	2006-08-09	1	f
+38	10	1	His Majesty My King	2015-07-22	3	t
+101	4	9	Death of the Filthy Beast	2020-01-01	4	t
+67	10	4	The Accidental Wedding	2002-08-19	2	t
+27	7	10	The Scarlet Cradle	2014-07-16	1	t
+28	3	10	Loaded Vice	1995-08-26	1	t
+33	2	7	Two of a Kind	1991-08-01	1	t
+25	6	9	Tower of Acheron	2005-11-04	1	t
+70	3	5	Secret of the Pock-Marked Librarian	1992-07-20	2	t
+48	1	7	Cloaked Heart	1996-10-05	1	t
+64	9	7	Dust Raging	2014-11-25	5	f
+68	3	8	Something Gained	1995-10-26	1	t
+94	10	1	Alpha Grieving	2019-03-09	4	t
+65	10	9	The Children of Shangri-La	2020-08-14	2	t
+80	9	2	Kolob Returning	1992-09-04	3	t
+73	10	5	Sword's Legacy	2006-12-17	4	t
+100	8	5	Death of the Fake Pygmy	2017-11-06	1	t
+49	8	9	Crime of the Voiceless Mermaid	2020-04-11	2	t
+8	5	8	Elysium Crying	2017-04-21	4	f
+45	9	1	American Born	2008-05-02	2	t
+66	10	7	The Burden of the Frontier	2001-04-01	5	t
+43	3	10	Chosen for Pleasure	1995-03-01	4	t
+34	6	10	The Wailing Portrait	1990-03-16	3	t
+35	3	4	2132: Omega	2009-07-30	3	t
+1	5	7	Whisper of Menace	2003-11-04	5	f
+51	7	5	The Owl in the Dark	2000-11-16	5	t
+72	10	6	Blue Sanctuary	1999-09-12	1	t
+37	9	8	Secret of the Ugly Ringmaster	2015-12-06	1	t
+16	8	5	Chain the Specter	2018-11-19	1	t
+30	3	1	Clue of the Forgotten Claw	1990-07-14	5	t
+\.
+
+-- 06. --
+-- Data for Name: authors_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.authors_metadata (author_metadata_id, author_id, age, biography, photo_url, photo_res_horiz, photo_res_vert) FROM stdin;
+1	1	65	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/41f547c14a46ba67.jpeg	541	811
+2	2	72	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/646d3e94b815c441.jpeg	974	1461
+3	3	29	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/cebfd92aa9a39c29.jpeg	503	754
+4	4	26	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/96e52a9b12aad416.jpeg	522	783
+5	5	38	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/af71178c8671e791.jpeg	944	1416
+6	6	38	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/d351137bda4e2efe.jpeg	843	1264
+7	7	30	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/948b2dc9a8aedcba.jpeg	754	1131
+8	8	54	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c84c5b81b1bdc3eb.jpeg	704	1056
+9	9	58	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/93a854b8b2e8966f.jpeg	308	462
+10	10	70	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/21b252e51a46c8ed.jpeg	237	355
+11	11	42	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/1fc969da2fd53ff9.jpeg	626	939
+12	12	40	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/45a2aa2dff1317c1.jpeg	323	484
+13	13	25	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/eae7964abed5bf99.jpeg	764	1146
+14	14	49	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/8a31bceb497923fe.jpeg	653	979
+15	15	29	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c54d5b78e4e4e123.jpeg	719	1078
+16	16	39	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c8e4a559d2396948.jpeg	419	628
+17	17	31	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/8c368564a63d6a83.jpeg	878	1317
+18	18	39	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/f496758d98855f99.jpeg	662	993
+19	19	74	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/38a1c621afa1b4e6.jpeg	725	1087
+20	20	24	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/74cf937a3875b42e.jpeg	468	702
+\.
+
+-- 07. --
+-- Data for Name: manuscripts; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.manuscripts (manuscript_id, editor_id, series_id, working_title, due_date, advance) FROM stdin;
+1	2	\N	The Starless Time	2024-02-09	5000
+2	2	\N	Mister Night	2023-10-26	5000
+3	9	\N	Chain the Truth	2023-11-23	5000
+4	6	\N	Case of the Giant Lynx	2023-08-06	7000
+5	6	\N	The Children of Zion	2024-01-20	7000
+6	8	\N	The Word of the Heir	2023-09-25	7000
+7	8	8	The Crooked Island	2023-09-28	8000
+8	7	\N	Scoundrel's Gold	2023-10-18	9000
+9	6	\N	The Widow in the Portrait	2023-12-10	9000
+10	2	\N	Metal Frontier	2024-03-08	10000
+11	7	\N	Old Town	2023-03-06	10000
+12	1	\N	Perfect Alley	2024-06-27	11000
+13	3	\N	The Dynasty of Legend	2023-02-22	13000
+14	1	9	Strange Tides	2023-06-10	14000
+15	10	5	Darling Dearest	2023-03-08	16000
+16	4	\N	2132: Rigel	2023-08-17	17000
+17	4	\N	The Thorned Stone	2023-12-20	18000
+18	8	10	The Last Marigold	2023-01-15	19000
+19	4	\N	Brazen and Buff	2024-03-15	20000
+20	8	\N	Prophecy Returning	2023-04-28	20000
+21	5	\N	The Voice in the Mist	2023-07-05	21000
+22	2	\N	Zodiac Sinking	2023-03-14	22000
+23	6	\N	Mystery of the Scarred Tourists	2023-04-17	22000
+24	5	\N	Case of the Stuffed Shih Tzu	2023-04-19	23000
+25	4	5	The Burden of the Exiled	2023-07-04	25000
+26	3	\N	Wanted for Pleasure	2024-03-22	28000
+27	6	4	Wanted for Gold	2023-03-26	31000
+28	4	\N	The Ember in the Dark	2023-02-21	32000
+29	5	\N	The Return of Atlas	2023-03-15	32000
+30	6	\N	Faceless Tribunal	2024-06-24	33000
+31	6	3	The Brute in the West	2023-10-14	35000
+32	4	\N	Copper Heart	2023-10-06	42000
+33	5	\N	Case of the Giant Falcon	2023-01-04	45000
+\.
+
+-- 08. --
 -- Data for Name: authors_books; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -141,8 +376,7 @@ COPY public.authors_books (author_id, book_id) FROM stdin;
 4	101
 \.
 
-
---
+-- 09. --
 -- Data for Name: authors_manuscripts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -187,145 +421,7 @@ COPY public.authors_manuscripts (author_id, manuscript_id) FROM stdin;
 12	33
 \.
 
-
---
--- Data for Name: authors_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.authors_metadata (author_metadata_id, author_id, age, biography, photo_url, photo_res_horiz, photo_res_vert) FROM stdin;
-1	1	65	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/41f547c14a46ba67.jpeg	541	811
-2	2	72	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/646d3e94b815c441.jpeg	974	1461
-3	3	29	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/cebfd92aa9a39c29.jpeg	503	754
-4	4	26	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/96e52a9b12aad416.jpeg	522	783
-5	5	38	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/af71178c8671e791.jpeg	944	1416
-6	6	38	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/d351137bda4e2efe.jpeg	843	1264
-7	7	30	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/948b2dc9a8aedcba.jpeg	754	1131
-8	8	54	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c84c5b81b1bdc3eb.jpeg	704	1056
-9	9	58	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/93a854b8b2e8966f.jpeg	308	462
-10	10	70	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/21b252e51a46c8ed.jpeg	237	355
-11	11	42	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/1fc969da2fd53ff9.jpeg	626	939
-12	12	40	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/45a2aa2dff1317c1.jpeg	323	484
-13	13	25	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/eae7964abed5bf99.jpeg	764	1146
-14	14	49	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/8a31bceb497923fe.jpeg	653	979
-15	15	29	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c54d5b78e4e4e123.jpeg	719	1078
-16	16	39	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/c8e4a559d2396948.jpeg	419	628
-17	17	31	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/8c368564a63d6a83.jpeg	878	1317
-18	18	39	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/f496758d98855f99.jpeg	662	993
-19	19	74	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/38a1c621afa1b4e6.jpeg	725	1087
-20	20	24	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/74cf937a3875b42e.jpeg	468	702
-\.
-
-
---
--- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.books (book_id, editor_id, series_id, title, publication_date, edition_number, is_in_print) FROM stdin;
-2	8	\N	Silence the Truth	2015-07-19	1	f
-3	5	\N	Burnt Skies	2011-03-19	1	t
-4	8	\N	Crime of the Quiet Baker	2002-05-20	2	t
-5	2	\N	The Code of the Orb	2005-11-02	4	t
-6	8	\N	Crime of the Scarred Lodger	2006-05-24	1	t
-7	3	\N	Dream on Fire	2001-08-22	1	t
-9	9	\N	The Blazing Axe	2008-08-06	1	t
-10	8	\N	Clue of the Hollow Claw	2007-01-28	2	t
-11	7	\N	The Banished Time	2014-10-13	2	t
-12	10	\N	Sign of the Crooked Turnip	2020-03-03	1	t
-13	8	\N	Zodiac Circling	2015-05-15	4	t
-14	1	\N	Equinox of Mars	2018-07-12	1	f
-15	4	\N	Naughty and Not Nice	2019-01-22	3	t
-17	4	\N	Year of Mercury	1994-08-11	5	t
-18	5	\N	Sign of the Forgotten Pyramid	2004-06-07	2	t
-19	2	\N	What Happened in Vegas	2010-06-22	3	t
-20	4	\N	The Heirs of the Lodestar	2012-02-24	5	t
-21	1	\N	Son of Death	2017-12-07	3	t
-22	8	\N	Sign of the Concave Claw	2021-02-03	1	t
-23	2	\N	The Hand of the Blessed	2018-02-28	1	t
-24	5	\N	Stars and the Glass	1997-03-25	2	t
-29	5	\N	Whisper of Blood	1998-02-07	1	t
-31	10	\N	Crimson Benediction	2017-07-03	2	t
-32	4	\N	2099: Rigel	1997-07-15	5	t
-36	7	\N	The Circle of the Frontier	2006-09-04	5	f
-39	8	\N	Oceans of Algorab	1992-04-26	3	t
-40	10	\N	Enemy of Glass	2015-11-10	1	f
-41	1	\N	Mask of Silence	1999-05-18	3	t
-42	2	\N	Death of the Chinese Monkey	2004-03-27	1	t
-44	5	\N	Clue of the Cold Puppet	2006-08-01	2	t
-46	2	\N	The Horizon of Zion	2007-07-06	5	t
-47	7	\N	Touch in the Dark	2007-03-05	2	t
-50	3	\N	The Tomb in the Mist	2018-03-29	2	t
-52	1	\N	Hot Young Stud	2020-01-30	1	t
-53	9	\N	The Blood in the Abyss	2002-02-15	4	t
-54	7	\N	The Remains of Nine	2020-03-10	3	t
-55	9	\N	The Stranger in the Lake	1997-03-25	1	t
-56	8	\N	Maybe, Probably	2007-02-19	1	f
-57	10	\N	Crime of the Kissing Ringmaster	1996-11-05	4	t
-58	10	\N	The Crystal in the Winter	2016-01-22	5	f
-59	8	\N	To Trap a Kiss	1990-07-22	1	t
-60	5	\N	Savage Rites	2020-05-30	2	f
-61	8	\N	The Blessed Beast	1991-12-30	1	t
-62	1	\N	Devil's Advent	2019-01-20	3	t
-63	9	\N	His and Her Summer	2000-08-13	1	t
-69	6	\N	Steel Alley	1999-02-10	1	t
-71	2	\N	The Bloodless Oracle	2007-08-27	2	t
-74	2	\N	Death of the Stuffed Viper	2013-03-04	4	t
-75	2	\N	Savage Wolf	2021-08-01	2	t
-76	4	\N	Mermaids and Sirens	2010-03-29	4	t
-77	4	\N	Secret of the Mute Mermaid	2000-02-09	1	t
-78	4	\N	Built for Evil	1993-12-12	3	t
-79	6	\N	Mystery of the Spanish Juror	2006-04-02	1	t
-82	2	\N	Khan's Hymn	1998-01-28	3	f
-83	10	\N	Scent of Evil	2004-07-23	2	t
-84	2	\N	The Bride in the Vale	2002-04-30	4	t
-85	9	\N	A God Named Sin	2022-06-27	5	t
-86	5	\N	Licensed for Slaughter	2018-02-05	2	t
-87	10	\N	Heart of Flax	2019-11-25	3	t
-88	5	\N	Fog of the Heart	1993-10-31	4	t
-89	3	\N	2105: Heretic	1999-08-03	1	t
-90	4	\N	Case of the One-Toed Beast	2014-04-12	4	t
-91	5	\N	Fallen Game	2015-02-03	2	t
-92	1	\N	Case of the Sacred Weasel	2022-03-23	1	t
-93	5	\N	Enemy of Winter	2020-03-17	3	t
-95	9	\N	Fool's Legacy	2010-12-28	1	f
-96	2	\N	Case of the Sacred Ferret	2016-12-02	2	t
-97	8	\N	Dragon's End	2002-10-06	3	t
-98	8	\N	Dangerous Illusion	2011-01-25	1	t
-99	9	\N	Abyss of Bones	2004-06-24	3	t
-26	3	8	Crime of the Hairless Stranger	2019-07-24	4	t
-81	6	2	Angel's Return	2006-08-09	1	f
-38	10	1	His Majesty My King	2015-07-22	3	t
-101	4	9	Death of the Filthy Beast	2020-01-01	4	t
-67	10	4	The Accidental Wedding	2002-08-19	2	t
-27	7	10	The Scarlet Cradle	2014-07-16	1	t
-28	3	10	Loaded Vice	1995-08-26	1	t
-33	2	7	Two of a Kind	1991-08-01	1	t
-25	6	9	Tower of Acheron	2005-11-04	1	t
-70	3	5	Secret of the Pock-Marked Librarian	1992-07-20	2	t
-48	1	7	Cloaked Heart	1996-10-05	1	t
-64	9	7	Dust Raging	2014-11-25	5	f
-68	3	8	Something Gained	1995-10-26	1	t
-94	10	1	Alpha Grieving	2019-03-09	4	t
-65	10	9	The Children of Shangri-La	2020-08-14	2	t
-80	9	2	Kolob Returning	1992-09-04	3	t
-73	10	5	Sword's Legacy	2006-12-17	4	t
-100	8	5	Death of the Fake Pygmy	2017-11-06	1	t
-49	8	9	Crime of the Voiceless Mermaid	2020-04-11	2	t
-8	5	8	Elysium Crying	2017-04-21	4	f
-45	9	1	American Born	2008-05-02	2	t
-66	10	7	The Burden of the Frontier	2001-04-01	5	t
-43	3	10	Chosen for Pleasure	1995-03-01	4	t
-34	6	10	The Wailing Portrait	1990-03-16	3	t
-35	3	4	2132: Omega	2009-07-30	3	t
-1	5	7	Whisper of Menace	2003-11-04	5	f
-51	7	5	The Owl in the Dark	2000-11-16	5	t
-72	10	6	Blue Sanctuary	1999-09-12	1	t
-37	9	8	Secret of the Ugly Ringmaster	2015-12-06	1	t
-16	8	5	Chain the Specter	2018-11-19	1	t
-30	3	1	Clue of the Forgotten Claw	1990-07-14	5	t
-\.
-
-
---
+-- 10. --
 -- Data for Name: clients; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -352,67 +448,7 @@ COPY public.clients (client_id, salesperson_id, email_address, phone_number, bus
 20	11	contact@KeelingAndSons.com	15671455949	Keeling & Sons Co.	114C Southampton Ave.	Racine	WI	534026620	USA
 \.
 
-
---
--- Data for Name: editors; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.editors (editor_id, first_name, last_name, salary) FROM stdin;
-1	Raymond	Livingston	94000
-2	Elise	Winters	77000
-3	Jay	Villanueva	89000
-4	Veronica	Horn	84000
-5	Hugo	Olsen	82000
-6	Mason	Slater	86000
-7	Zachariah	Fry	82000
-8	Brianna	Foster	95000
-9	Jeremiah	Wallace	67000
-10	Monica	Barrett	65000
-\.
-
-
---
--- Data for Name: manuscripts; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.manuscripts (manuscript_id, editor_id, series_id, working_title, due_date, advance) FROM stdin;
-1	2	\N	The Starless Time	2024-02-09	5000
-2	2	\N	Mister Night	2023-10-26	5000
-3	9	\N	Chain the Truth	2023-11-23	5000
-4	6	\N	Case of the Giant Lynx	2023-08-06	7000
-5	6	\N	The Children of Zion	2024-01-20	7000
-6	8	\N	The Word of the Heir	2023-09-25	7000
-7	8	8	The Crooked Island	2023-09-28	8000
-8	7	\N	Scoundrel's Gold	2023-10-18	9000
-9	6	\N	The Widow in the Portrait	2023-12-10	9000
-10	2	\N	Metal Frontier	2024-03-08	10000
-11	7	\N	Old Town	2023-03-06	10000
-12	1	\N	Perfect Alley	2024-06-27	11000
-13	3	\N	The Dynasty of Legend	2023-02-22	13000
-14	1	9	Strange Tides	2023-06-10	14000
-15	10	5	Darling Dearest	2023-03-08	16000
-16	4	\N	2132: Rigel	2023-08-17	17000
-17	4	\N	The Thorned Stone	2023-12-20	18000
-18	8	10	The Last Marigold	2023-01-15	19000
-19	4	\N	Brazen and Buff	2024-03-15	20000
-20	8	\N	Prophecy Returning	2023-04-28	20000
-21	5	\N	The Voice in the Mist	2023-07-05	21000
-22	2	\N	Zodiac Sinking	2023-03-14	22000
-23	6	\N	Mystery of the Scarred Tourists	2023-04-17	22000
-24	5	\N	Case of the Stuffed Shih Tzu	2023-04-19	23000
-25	4	5	The Burden of the Exiled	2023-07-04	25000
-26	3	\N	Wanted for Pleasure	2024-03-22	28000
-27	6	4	Wanted for Gold	2023-03-26	31000
-28	4	\N	The Ember in the Dark	2023-02-21	32000
-29	5	\N	The Return of Atlas	2023-03-15	32000
-30	6	\N	Faceless Tribunal	2024-06-24	33000
-31	6	3	The Brute in the West	2023-10-14	35000
-32	4	\N	Copper Heart	2023-10-06	42000
-33	5	\N	Case of the Giant Falcon	2023-01-04	45000
-\.
-
-
---
+-- 11. --
 -- Data for Name: sales_records; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -17806,48 +17842,3 @@ COPY public.sales_records (sales_record_id, book_id, year, month, copies_sold, g
 17387	101	2022	12	75	977.08	100.2
 \.
 
-
---
--- Data for Name: salespeople; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.salespeople (salesperson_id, first_name, last_name, salary) FROM stdin;
-1	Evin	York	65000
-2	Jeana	Alpin	75000
-3	Gertrude	Hanover	77000
-4	Honey	Wessex	64000
-5	Nala	Plantagenet	75000
-6	Nannie	Normandy	81000
-7	Rigmor	Stuart	85000
-8	Kyler	Blois	77000
-9	Anouk	Lancaster	67000
-10	Matilda	Saxe	67000
-11	Joshua	Woodward	69000
-12	Eric	Davidson	78000
-13	Marco	Hart	76000
-14	Donald	Cruz	61000
-15	Anthony	Booker	73000
-16	Harrison	Blair	80000
-17	Nicholas	Rowland	62000
-18	Dexter	Mccoy	85000
-19	Luke	Olsen	70000
-20	Yasin	Lang	79000
-\.
-
-
---
--- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.series (series_id, title, volumes) FROM stdin;
-1	The Owl in the Air	2
-2	Sign of the Hollow Staircase	5
-3	Fatal Demon	2
-4	Crime of the Orange Tourists	4
-5	Sign of the Absent Puppet	3
-6	Khan's Vow	3
-7	Made for Duty	2
-8	The Scarlet Violin	2
-9	Mister Silver Fox	3
-10	Legacy Fading	5
-\.

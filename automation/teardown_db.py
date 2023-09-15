@@ -9,7 +9,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 
 if len(sys.argv) != 2:
-    print("Usage: setup_db.py <POSTGRES_PASSWORD>")
+    print("Usage: teardown_db.py <POSTGRES_PASSWORD>")
     sys.exit(1)
 
 postgres_user = "postgres"

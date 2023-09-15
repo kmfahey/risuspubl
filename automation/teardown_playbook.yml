@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  tags:
+    - teardown
+  vars_prompt:
+    - name: "postgres_password"
+      prompt: "Enter the PostgreSQL postgres user password"
+      private: yes
+
+  tasks:
+    - name: Run user and database drop script
+      command:
+        cmd: "python teardown_db.py {{ postgres_password }}"
+        chdir: "{{ playbook_dir }}"
