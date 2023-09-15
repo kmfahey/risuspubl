@@ -9,47 +9,47 @@
       private: yes
 
   tasks:
-#    - name: Check if PostgreSQL is running
-#      command: pg_isready
-#      register: pg_check
-#      ignore_errors: yes  # This allows the playbook to continue even if pg_isready fails.
-#
-#    - name: Fail if PostgreSQL is not running
-#      fail:
-#        msg: "PostgreSQL server is not running!"
-#      when: pg_check.rc != 0
-#
-#    - name: Check if .env file exists
-#      stat:
-#        path: "{{ playbook_dir }}/.env"
-#      register: env_file
-#
-#    - name: Fail if .env does not exist
-#      fail:
-#        msg: ".env file does not exist!"
-#      when: not env_file.stat.exists
-#
-#    # Assuming .env has executable permissions, this step will try to run it.
-#    # If it's not valid shell script, it'll produce an error.
-#    - name: Validate .env as a shell script
-#      command: "bash -n {{ playbook_dir }}/.env"
-#      register: env_validation
-#      ignore_errors: yes
-#
-#    - name: Fail if .env is not a valid shell script
-#      fail:
-#        msg: ".env is not a valid shell script!"
-#      when: env_validation.rc != 0
-#
-#    - name: Check if .env contains required variables
-#      shell: "grep -E '^(DB_USER|DB_PASSWORD|DB_HOST|DB_PORT|DB_NAME)=' {{ playbook_dir }}/.env"
-#      register: env_vars_check
-#      ignore_errors: yes
-#
-#    - name: Fail if .env does not define all necessary variables
-#      fail:
-#        msg: ".env does not define all necessary variables!"
-#      when: '"DB_USER" not in env_vars_check.stdout or "DB_PASSWORD" not in env_vars_check.stdout or "DB_HOST" not in env_vars_check.stdout or "DB_PORT" not in env_vars_check.stdout or "DB_NAME" not in env_vars_check.stdout'
+    - name: Check if PostgreSQL is running
+      command: pg_isready
+      register: pg_check
+      ignore_errors: yes  # This allows the playbook to continue even if pg_isready fails.
+
+    - name: Fail if PostgreSQL is not running
+      fail:
+        msg: "PostgreSQL server is not running!"
+      when: pg_check.rc != 0
+
+    - name: Check if .env file exists
+      stat:
+        path: "{{ playbook_dir }}/../.env"
+      register: env_file
+
+    - name: Fail if .env does not exist
+      fail:
+        msg: ".env file does not exist!"
+      when: not env_file.stat.exists
+
+    # Assuming .env has executable permissions, this step will try to run it.
+    # If it's not valid shell script, it'll produce an error.
+    - name: Validate .env as a shell script
+      command: "bash -n {{ playbook_dir }}/.env"
+      register: env_validation
+      ignore_errors: yes
+
+    - name: Fail if .env is not a valid shell script
+      fail:
+        msg: ".env is not a valid shell script!"
+      when: env_validation.rc != 0
+
+    - name: Check if .env contains required variables
+      shell: "grep -E '^(DB_USER|DB_PASSWORD|DB_HOST|DB_PORT|DB_NAME)=' {{ playbook_dir }}/.env"
+      register: env_vars_check
+      ignore_errors: yes
+
+    - name: Fail if .env does not define all necessary variables
+      fail:
+        msg: ".env does not define all necessary variables!"
+      when: '"DB_USER" not in env_vars_check.stdout or "DB_PASSWORD" not in env_vars_check.stdout or "DB_HOST" not in env_vars_check.stdout or "DB_PORT" not in env_vars_check.stdout or "DB_NAME" not in env_vars_check.stdout'
 
     - name: Setup PostgreSQL Database and User
       command:
