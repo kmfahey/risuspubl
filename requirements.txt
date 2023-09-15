@@ -9,3 +9,4 @@ ansible==8.4.0
 ansible-core==2.15.4
 resolvelib==1.0.1
 psycopg2==2.9.7
+Flask_Migrate==4.0.5
