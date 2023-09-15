@@ -1,4 +1,19 @@
--- 01. --
+-- The tables' data are loaded in this order to manage foreign key dependencies.
+-- 
+-- order   table                   foreign key dependencies
+-- 1       authors
+-- 2       editors
+-- 3       series
+-- 4       salespeople
+-- 5       books                   series (#3)
+-- 6       authors_metadata        authors (#1)
+-- 7       manuscripts             editors (#2), series (#3)
+-- 8       authors_books           authors (#1), books (#5)
+-- 9       authors_manuscripts     authors (#1), manuscripts (#7)
+-- 10      clients                 salespeople (#4)
+-- 11      sales_records           authors (#1), books (#5)
+
+-- 1. --
 -- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -25,7 +40,7 @@ COPY public.authors (author_id, first_name, last_name) FROM stdin;
 20	Valentine	Camillo
 \.
 
--- 02. --
+-- 2. --
 -- Data for Name: editors; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -42,7 +57,7 @@ COPY public.editors (editor_id, first_name, last_name, salary) FROM stdin;
 10	Monica	Barrett	65000
 \.
 
--- 03. --
+-- 3. --
 -- Data for Name: series; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -59,7 +74,7 @@ COPY public.series (series_id, title, volumes) FROM stdin;
 10	Legacy Fading	5
 \.
 
--- 04. --
+-- 4. --
 -- Data for Name: salespeople; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -86,7 +101,7 @@ COPY public.salespeople (salesperson_id, first_name, last_name, salary) FROM std
 20	Yasin	Lang	79000
 \.
 
--- 05. --
+-- 5. --
 -- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -194,7 +209,7 @@ COPY public.books (book_id, editor_id, series_id, title, publication_date, editi
 30	3	1	Clue of the Forgotten Claw	1990-07-14	5	t
 \.
 
--- 06. --
+-- 6. --
 -- Data for Name: authors_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -221,7 +236,7 @@ COPY public.authors_metadata (author_metadata_id, author_id, age, biography, pho
 20	20	24	Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.	https://risuspublishing.com/cms/img/74cf937a3875b42e.jpeg	468	702
 \.
 
--- 07. --
+-- 7. --
 -- Data for Name: manuscripts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -261,7 +276,7 @@ COPY public.manuscripts (manuscript_id, editor_id, series_id, working_title, due
 33	5	\N	Case of the Giant Falcon	2023-01-04	45000
 \.
 
--- 08. --
+-- 8. --
 -- Data for Name: authors_books; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -376,7 +391,7 @@ COPY public.authors_books (author_id, book_id) FROM stdin;
 4	101
 \.
 
--- 09. --
+-- 9. --
 -- Data for Name: authors_manuscripts; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
