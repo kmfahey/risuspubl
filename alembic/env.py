@@ -5,8 +5,6 @@ from sqlalchemy import pool
 
 from alembic import context
 
-import decouple
-
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -25,19 +23,6 @@ target_metadata = None
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-
-
-DB_USER = decouple.config('DB_USER')
-DB_PASSWORD = decouple.config('DB_PASSWORD')
-DB_HOST = decouple.config('DB_HOST')
-DB_PORT = decouple.config('DB_PORT')
-DB_NAME = decouple.config('DB_NAME')
-
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-# Create an engine bound to the migration engine's scope
-# This will use the DATABASE_URL to interact with the database during migrations
-config.set_main_option('sqlalchemy.url', DATABASE_URL)
 
 
 def run_migrations_offline():
@@ -78,7 +63,9 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()
