@@ -17,12 +17,63 @@ os.environ[
 faker_obj = faker.Faker()
 
 
+
+class Generate:
+    faker_obj = faker.Faker()
+
+    def __init__(self, db):
+        self.db = db
+
+    @classmethod
+    def author_dict(cls):
+        return dict(first_name=faker_obj.first_name(), last_name=faker_obj.last_name())
+
+    @classmethod
+    def editor_dict(cls):
+        return dict(
+            first_name=faker_obj.first_name(),
+            last_name=faker_obj.last_name(),
+            salary=random.randint(65, 95) * 1000,
+        )
+
+    @classmethod
+    def manuscript_dict(cls, editor_obj):
+        return dict(
+            advance=random.randint(10,20)*1000,
+            due_date=faker_obj.date_this_century().isoformat(),
+            editor_id=editor_obj.editor_id,
+            series_id=None,
+            working_title="Brazen and Buff")
+
+    @classmethod
+    def book_dict(cls, editor_obj):
+        return dict(
+            edition_number=random.randint(1, 5),
+            editor_id=editor_obj.editor_id,
+            is_in_print=bool(random.randint(0, 1)),
+            publication_date=faker_obj.date_this_century().isoformat(),
+            title="The Accidental Wedding",
+        )
+
+    def author_obj(self):
+        author_obj = Author(**self.author_dict())
+        self.db.session.add(author_obj)
+        self.db.session.commit()
+        return author_obj
+
+    def editor_obj(self):
+        editor_obj = Editor(**self.editor_dict())
+        self.db.session.add(editor_obj)
+        self.db.session.commit()
+        return editor_obj
+
+
 def test_author_create_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    author_dict = dict(
-        first_name=faker_obj.first_name(), last_name=faker_obj.last_name()
-    )
+    generate = Generate(db)
+
+    author_dict = generate.author_dict()
     response = client.post("/authors", json=author_dict)
     assert response.status_code == 200
     author_objs = db.session.query(Author).all()
@@ -34,27 +85,13 @@ def test_author_create_endpoint(fresh_tables_db, staged_app_client):
 def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
+    generate = Generate(db)
 
     def _setup():
-        author_obj = Author(
-            first_name=faker_obj.first_name(), last_name=faker_obj.last_name()
-        )
-        db.session.add(author_obj)
-        editor_obj = Editor(
-            first_name=faker_obj.first_name(),
-            last_name=faker_obj.last_name(),
-            salary=random.randint(65, 95) * 1000,
-        )
-        db.session.add(editor_obj)
-        db.session.commit()
+        author_obj = generate.author_obj()
+        editor_obj = generate.editor_obj()
 
-        book_dict = dict(
-            title="The Accidental Wedding",
-            publication_date=faker_obj.date_this_century().isoformat(),
-            edition_number=random.randint(1, 5),
-            is_in_print=bool(random.randint(0, 1)),
-            editor_id=editor_obj.editor_id,
-        )
+        book_dict = generate.book_dict(editor_obj)
 
         return author_obj.author_id, book_dict
 
@@ -91,8 +128,19 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     resp_jsobj = _test(response, book_dict)
     assert resp_jsobj["series_id"] == book_dict["series_id"], (resp_jsobj, book_dict)
 
+    # Cleanup
+    for table in reversed(db.metadata.sorted_tables):
+        db.session.execute(table.delete())
 
-# def test_create_author_manuscript_endpoint
+    bogus_author_id = random.randint(1, 10)
+    response = client.post("f/authors/{bogus_author_id}/", json=book_dict)
+    assert response.status_code == 404
+
+
+#def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
+#    db = fresh_tables_db
+#    app, client = staged_app_client
+#    generate = Generate(db)
 
 # def test_create_author_metadata_endpoint
 
@@ -138,10 +186,9 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
 def test_index_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    author_dicts = [
-        dict(first_name=faker_obj.first_name(), last_name=faker_obj.last_name())
-        for _ in range(10)
-    ]
+    generate = Generate(db)
+
+    author_dicts = [generate.author_dict() for _ in range(10)]
     for author_dict in author_dicts:
         db.session.add(Author(**author_dict))
     db.session.commit()
