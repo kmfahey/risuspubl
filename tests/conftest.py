@@ -1,24 +1,18 @@
 #!/usr/bin/python3
 
 import os
-import warnings
+import math
+import random
+from datetime import date
 
+import faker
 import pytest
 import psycopg2
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-import risuspubl.api.authors
-import risuspubl.api.books
-import risuspubl.api.clients
-import risuspubl.api.editors
-import risuspubl.api.manuscripts
-import risuspubl.api.sales_records
-import risuspubl.api.salespeople
-import risuspubl.api.series
 
 from risuspubl.dbmodels import db
 from risuspubl.flaskapp import create_app
 
+from risuspubl.dbmodels import Author, Editor, Series, Manuscript, AuthorMetadata
 
 # Set environment variable for Flask's configuration
 os.environ[
@@ -51,7 +45,8 @@ def pytest_sessionstart(session):
             and "does not exist" in str(e)
         ):
             pytest.exit(
-                f"The user '{TARGET_USER}' does not exist or wrong password provided. Please run ansible with setup_playbook.yml."
+                f"The user '{TARGET_USER}' does not exist or wrong password "
+                + "provided. Please run ansible with setup_playbook.yml."
             )
         pytest.exit(f"Failed to connect to the PostgreSQL server. Error: {str(e)}")
 
@@ -63,7 +58,8 @@ def pytest_sessionstart(session):
             )
             if not cursor.fetchone():
                 pytest.exit(
-                    f"The test database '{TARGET_DATABASE}' does not exist. Please run ansible with setup_playbook.yml."
+                    f"The test database '{TARGET_DATABASE}' does not exist. "
+                    + "Please run ansible with setup_playbook.yml."
                 )
     finally:
         conn.close()
@@ -84,7 +80,7 @@ def staged_app_client():
     # Create the Flask app instance using the test config
     app = create_app(
         dict(
-            SQLALCHEMY_DATABASE_URI=f"postgresql://pguser:pguser@localhost:5432/risusp_test"
+            SQLALCHEMY_DATABASE_URI="postgresql://pguser:pguser@localhost:5432/risusp_test"
         )
     )
     app_context = app.app_context()
@@ -100,4 +96,3 @@ def staged_app_client():
         db.session.close()
 
         db.drop_all()
-

@@ -2,12 +2,12 @@
 
 import os
 import random
+import math
 from datetime import date
 
 import faker
 import pytest
-from sqlalchemy.exc import LegacyAPIWarning
-from risuspubl.dbmodels import Author, Editor, Book, Series
+from risuspubl.dbmodels import Author, AuthorMetadata, Book, Editor, Manuscript, Series
 
 
 # Set environment variable for Flask's configuration
@@ -17,6 +17,14 @@ os.environ[
 
 
 class Generate:
+    lorem_ipsum = """\
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor \
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis \
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore \
+eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt \
+in culpa qui officia deserunt mollit anim id est laborum."""
+
     faker_obj = faker.Faker()
 
     book_titles = [
@@ -63,24 +71,21 @@ class Generate:
 
     @classmethod
     def author_dict(cls):
-        return dict(first_name=cls.faker_obj.first_name(), last_name=cls.faker_obj.last_name())
-
-    @classmethod
-    def editor_dict(cls):
         return dict(
-            first_name=cls.faker_obj.first_name(),
-            last_name=cls.faker_obj.last_name(),
-            salary=random.randint(65, 95) * 1000,
+            first_name=cls.faker_obj.first_name(), last_name=cls.faker_obj.last_name()
         )
 
     @classmethod
-    def manuscript_dict(cls, editor_obj):
+    def author_metadata_dict(cls, author_obj):
+        photo_res_horiz = random.randint(200, 1000)
+        photo_res_vert = math.floor(photo_res_horiz * 1.5)
         return dict(
-            advance=random.randint(10, 20) * 1000,
-            due_date=cls.faker_obj.date_between_dates(date.today(), date(date.today().year + 2, date.today().month, 1)).isoformat(),
-            editor_id=editor_obj.editor_id,
-            series_id=None,
-            working_title=random.choice(cls.manuscript_titles),
+            age=random.randint(18, 75),
+            author_id=author_obj.author_id,
+            biography=cls.lorem_ipsum,
+            photo_url=f"https://risuspublishing.com/cms/img/{cls.hexdigits(16)}.jpeg",
+            photo_res_horiz=photo_res_horiz,
+            photo_res_vert=photo_res_vert,
         )
 
     @classmethod
@@ -94,16 +99,42 @@ class Generate:
         )
 
     @classmethod
+    def editor_dict(cls):
+        return dict(
+            first_name=cls.faker_obj.first_name(),
+            last_name=cls.faker_obj.last_name(),
+            salary=random.randint(65, 95) * 1000,
+        )
+
+    @classmethod
+    def hexdigits(cls, number_of_chars):
+        return "".join(
+            chr(random.choice(cls.hexdigit_codepts) for _ in range(number_of_chars))
+        )
+
+    @classmethod
+    def manuscript_dict(cls, editor_obj):
+        return dict(
+            advance=random.randint(10, 20) * 1000,
+            due_date=cls.faker_obj.date_between_dates(
+                date.today(), date(date.today().year + 2, date.today().month, 1)
+            ).isoformat(),
+            editor_id=editor_obj.editor_id,
+            series_id=None,
+            working_title=random.choice(cls.manuscript_titles),
+        )
+
+    @classmethod
     def series_dict(cls):
         return dict(
             title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
         )
 
-    def manuscript_obj(self, editor_obj):
-        manuscript_obj = Manuscript(**self.manuscript_dict(editor_obj))
-        self.db.session.add(manuscript_obj)
+    def author_metadata_obj(self, author_obj):
+        author_metadata_obj = AuthorMetadata(**self.author_metadata_dict(author_obj))
+        self.db.session.add(author_metadata_obj)
         self.db.session.commit()
-        return manuscript_obj
+        return author_metadata_obj
 
     def author_obj(self):
         author_obj = Author(**self.author_dict())
@@ -116,6 +147,12 @@ class Generate:
         self.db.session.add(editor_obj)
         self.db.session.commit()
         return editor_obj
+
+    def manuscript_obj(self, editor_obj):
+        manuscript_obj = Manuscript(**self.manuscript_dict(editor_obj))
+        self.db.session.add(manuscript_obj)
+        self.db.session.commit()
+        return manuscript_obj
 
     def series_obj(self):
         series_obj = Series(**self.series_dict())
@@ -246,7 +283,11 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
     assert response.status_code == 404
 
 
-# def test_create_author_metadata_endpoint
+def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
+    db = fresh_tables_db
+    app, client = staged_app_client
+    generate = Generate(db)
+
 
 # def test_create_authors_book_endpoint
 
