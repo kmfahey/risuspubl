@@ -334,8 +334,7 @@ def generate_create_update_argd(model_class, request_json, **argd):
             "series_id": _validate_int("series_id", json.get("series_id"), 0),
             "working_title": _validate_str("working_title", json.get("working_title")),
             "due_date": _validate_date(
-                "due_date", json.get("due_date"), tm_date_str, "2024-07-01"
-            ),
+                "due_date", json.get("due_date"), tm_date_str, date(date.today().year + 2, date.today().month, 1).isoformat()),
             "advance": _validate_int("advance", json.get("advance"), 5000, 100000),
         },
         Client: lambda json: {
