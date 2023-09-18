@@ -5,18 +5,20 @@ import random
 import math
 from datetime import date
 
+import pprint
+import json
 import faker
 import pytest
 from risuspubl.dbmodels import Author, AuthorMetadata, Book, Editor, Manuscript, Series
 
 
 # Set environment variable for Flask's configuration
-os.environ[
-    "FLASK_ENV"
-] = "testing"  # This should be set before creating the app instance.
+os.environ["FLASK_ENV"] = "testing"
+# This should be set before creating the app instance.
 
 
-class Generate:
+# called it Genius because Generator already has a definition in python.
+class Genius:
     lorem_ipsum = """\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor \
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis \
@@ -66,40 +68,46 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         "Legacy Fading",
     ]
 
+    hexdigit_cp = tuple(range(48, 58)) + tuple(range(97, 103))
+
     def __init__(self, db):
         self.db = db
 
     @classmethod
-    def author_dict(cls):
+    def gen_author_dict(cls):
         return dict(
             first_name=cls.faker_obj.first_name(), last_name=cls.faker_obj.last_name()
         )
 
     @classmethod
-    def author_metadata_dict(cls, author_obj):
+    def gen_author_metadata_dict(cls, author_id=None):
         photo_res_horiz = random.randint(200, 1000)
         photo_res_vert = math.floor(photo_res_horiz * 1.5)
-        return dict(
+        retdict = dict(
             age=random.randint(18, 75),
-            author_id=author_obj.author_id,
             biography=cls.lorem_ipsum,
-            photo_url=f"https://risuspublishing.com/cms/img/{cls.hexdigits(16)}.jpeg",
+            photo_url=f"https://risuspublishing.com/cms/img/{cls.gen_hexdigits(16)}.jpeg",
             photo_res_horiz=photo_res_horiz,
             photo_res_vert=photo_res_vert,
         )
+        if author_id is not None:
+            retdict["author_id"] = author_id
+        return retdict
 
     @classmethod
-    def book_dict(cls, editor_obj):
-        return dict(
+    def gen_book_dict(cls, editor_id=None):
+        retdict = dict(
             edition_number=random.randint(1, 5),
-            editor_id=editor_obj.editor_id,
             is_in_print=bool(random.randint(0, 1)),
             publication_date=cls.faker_obj.date_this_century().isoformat(),
             title=random.choice(cls.book_titles),
         )
+        if editor_id is not None:
+            retdict["editor_id"] = editor_id
+        return retdict
 
     @classmethod
-    def editor_dict(cls):
+    def gen_editor_dict(cls):
         return dict(
             first_name=cls.faker_obj.first_name(),
             last_name=cls.faker_obj.last_name(),
@@ -107,55 +115,62 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         )
 
     @classmethod
-    def hexdigits(cls, number_of_chars):
+    def gen_hexdigits(cls, number_of_chars):
         return "".join(
-            chr(random.choice(cls.hexdigit_codepts) for _ in range(number_of_chars))
+            chr(random.choice(cls.hexdigit_cp)) for _ in range(number_of_chars)
         )
 
     @classmethod
-    def manuscript_dict(cls, editor_obj):
-        return dict(
+    def gen_manuscript_dict(cls, editor_id=None, series_id=None):
+        retdict = dict(
             advance=random.randint(10, 20) * 1000,
             due_date=cls.faker_obj.date_between_dates(
                 date.today(), date(date.today().year + 2, date.today().month, 1)
             ).isoformat(),
-            editor_id=editor_obj.editor_id,
             series_id=None,
             working_title=random.choice(cls.manuscript_titles),
         )
+        if editor_id is not None:
+            retdict["editor_id"] = editor_id
+        if series_id is not None:
+            retdict["series_id"] = series_id
+        return retdict
 
     @classmethod
-    def series_dict(cls):
+    def gen_series_dict(cls):
         return dict(
-            title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
+            title=random.choice(cls.series_titles),
+            volumes=random.randint(1, 5)
         )
 
-    def author_metadata_obj(self, author_obj):
-        author_metadata_obj = AuthorMetadata(**self.author_metadata_dict(author_obj))
+    def gen_author_metadata_obj(self, author_obj):
+        author_metadata_obj = AuthorMetadata(
+            **self.gen_author_metadata_dict(author_obj)
+        )
         self.db.session.add(author_metadata_obj)
         self.db.session.commit()
         return author_metadata_obj
 
-    def author_obj(self):
-        author_obj = Author(**self.author_dict())
+    def gen_author_obj(self):
+        author_obj = Author(**self.gen_author_dict())
         self.db.session.add(author_obj)
         self.db.session.commit()
         return author_obj
 
-    def editor_obj(self):
-        editor_obj = Editor(**self.editor_dict())
+    def gen_editor_obj(self):
+        editor_obj = Editor(**self.gen_editor_dict())
         self.db.session.add(editor_obj)
         self.db.session.commit()
         return editor_obj
 
-    def manuscript_obj(self, editor_obj):
-        manuscript_obj = Manuscript(**self.manuscript_dict(editor_obj))
+    def gen_manuscript_obj(self, editor_id=None):
+        manuscript_obj = Manuscript(**self.gen_manuscript_dict(editor_obj.editor_id))
         self.db.session.add(manuscript_obj)
         self.db.session.commit()
         return manuscript_obj
 
-    def series_obj(self):
-        series_obj = Series(**self.series_dict())
+    def gen_series_obj(self):
+        series_obj = Series(**self.gen_series_dict())
         self.db.session.add(series_obj)
         self.db.session.commit()
         return series_obj
@@ -164,9 +179,9 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 def test_author_create_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    generate = Generate(db)
+    genius = Genius(db)
 
-    author_dict = generate.author_dict()
+    author_dict = genius.gen_author_dict()
     response = client.post("/authors", json=author_dict)
     assert response.status_code == 200
     author_objs = db.session.query(Author).all()
@@ -178,13 +193,13 @@ def test_author_create_endpoint(fresh_tables_db, staged_app_client):
 def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    generate = Generate(db)
+    genius = Genius(db)
 
     def _setup():
-        author_obj = generate.author_obj()
-        editor_obj = generate.editor_obj()
+        author_obj = genius.gen_author_obj()
+        editor_obj = genius.gen_editor_obj()
 
-        book_dict = generate.book_dict(editor_obj)
+        book_dict = genius.gen_book_dict(editor_obj.editor_id)
 
         return author_obj.author_id, book_dict
 
@@ -212,7 +227,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     # Testing with series_id
     author_id, book_dict = _setup()
 
-    series_obj = generate.series_obj()
+    series_obj = genius.gen_series_obj()
     book_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
@@ -231,13 +246,13 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
 def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    generate = Generate(db)
+    genius = Genius(db)
 
     def _setup():
-        author_obj = generate.author_obj()
-        editor_obj = generate.editor_obj()
+        author_obj = genius.gen_author_obj()
+        editor_obj = genius.gen_editor_obj()
 
-        manuscript_dict = generate.manuscript_dict(editor_obj)
+        manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id)
 
         return author_obj.author_id, manuscript_dict
 
@@ -264,7 +279,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
     # Testing with series_id
     author_id, manuscript_dict = _setup()
 
-    series_obj = generate.series_obj()
+    series_obj = genius.gen_series_obj()
     manuscript_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/manuscripts", json=manuscript_dict)
@@ -286,7 +301,41 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
 def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    generate = Generate(db)
+    genius = Genius(db)
+
+    author_obj = genius.gen_author_obj()
+    metadata_dict = genius.gen_author_metadata_dict()
+
+    response = client.post(
+        f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
+    )
+
+    resp_jsobj = response.get_json()
+    assert response.status_code == 200
+    assert resp_jsobj["age"] == metadata_dict["age"]
+    assert resp_jsobj["author_id"] == author_obj.author_id
+    assert resp_jsobj["biography"] == metadata_dict["biography"]
+    assert resp_jsobj["photo_res_horiz"] == metadata_dict["photo_res_horiz"]
+    assert resp_jsobj["photo_res_vert"] == metadata_dict["photo_res_vert"]
+    assert resp_jsobj["photo_url"] == metadata_dict["photo_url"]
+
+    other_metadata_dict = genius.gen_author_metadata_dict(author_obj.author_id)
+
+    other_response = client.post(
+        f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
+    )
+
+    assert other_response.status_code == 400
+
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_obj.author_id:
+        bogus_author_id = random.randint(1, 10)
+
+    failed_response = client.post(
+        f"/authors/{bogus_author_id}/metadata", json=metadata_dict
+    )
+
+    assert failed_response.status_code == 404
 
 
 # def test_create_authors_book_endpoint
@@ -331,9 +380,9 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
 def test_index_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
-    generate = Generate(db)
+    genius = Genius(db)
 
-    author_dicts = [generate.author_dict() for _ in range(10)]
+    author_dicts = [genius.gen_author_dict() for _ in range(10)]
     for author_dict in author_dicts:
         db.session.add(Author(**author_dict))
     db.session.commit()

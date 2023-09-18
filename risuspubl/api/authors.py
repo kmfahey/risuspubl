@@ -36,6 +36,48 @@ display_authors = display_table_rows_function(Author)
 update_author_by_id = update_table_row_by_id_function(Author)
 
 
+def _check_json_req_props(sqlal_model_cls, request_json, excl_cols):
+    def _prop_expr(keys_list):
+        match len(keys_list):
+            case 1:
+                return f"property '{keys_list[0]}'"
+            case 2:
+                return f"properties '{keys_list[0]}' and '{keys_list[1]}'"
+            case _:
+                return (
+                    "properties '"
+                    + "', '".join(keys_list[:-1])
+                    + f"', and '{keys_list[-1]}'"
+                )
+
+    request_json_prop = set(request_json.keys())
+    columns = set(map(lambda c: c.name, sqlal_model_cls.__table__.columns))
+    expected_prop = columns - excl_cols
+    # raise ValueError(dict(columns=columns, expected_prop=expected_prop, request_json_prop=request_json_prop))
+    if expected_prop == request_json_prop:
+        return True
+    errors = list()
+    missing_prop = expected_prop - request_json_prop
+    unexpected_prop = request_json_prop - expected_prop
+
+    if len(missing_prop):
+        errors.append(
+            "Request missing expected " + _prop_expr(sorted(missing_prop)) + "."
+        )
+    if len(unexpected_prop):
+        errors.append(
+            "Request included unexpected " + _prop_expr(sorted(unexpected_prop)) + "."
+        )
+
+    match len(errors):
+        case 0:
+            return True
+        case 1:
+            raise ValueError(errors[0])
+        case 2:
+            raise ValueError(f"{errors[0]} {errors[1]}")
+
+
 @blueprint.route("/<int:author_id>/metadata", methods=["GET"])
 def display_author_metadata_endpoint(author_id: int):
     """
@@ -627,6 +669,10 @@ def create_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
+        Author.query.get_or_404(author_id)
+        _check_json_req_props(
+            AuthorMetadata, request.json, {"author_id", "author_metadata_id"}
+        )
         results = tuple(
             AuthorMetadata.query.where(AuthorMetadata.author_id == author_id)
         )
@@ -634,8 +680,10 @@ def create_author_metadata_endpoint(author_id: int):
             raise ValueError(
                 f"metadata for author with id {author_id} already exists; cannot create anew"
             )
+
+        request_dict = dict(author_id=author_id, **request.json)
         author_metadata_obj = create_model_obj(
-            AuthorMetadata, generate_create_update_argd(AuthorMetadata, request.json)
+            AuthorMetadata, generate_create_update_argd(AuthorMetadata, request_dict)
         )
         db.session.add(author_metadata_obj)
         db.session.commit()
