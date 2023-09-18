@@ -36,7 +36,9 @@ display_authors = display_table_rows_function(Author)
 update_author_by_id = update_table_row_by_id_function(Author)
 
 
-def _check_json_req_props(sqlal_model_cls, request_json, excl_cols):
+def _check_json_req_props(
+    sqlal_model_cls, request_json, excl_cols, optional_cols=set()
+):
     def _prop_expr(keys_list):
         match len(keys_list):
             case 1:
@@ -57,8 +59,8 @@ def _check_json_req_props(sqlal_model_cls, request_json, excl_cols):
     if expected_prop == request_json_prop:
         return True
     errors = list()
-    missing_prop = expected_prop - request_json_prop
-    unexpected_prop = request_json_prop - expected_prop
+    missing_prop = expected_prop - request_json_prop - optional_cols
+    unexpected_prop = request_json_prop - expected_prop - optional_cols
 
     if len(missing_prop):
         errors.append(
@@ -681,9 +683,9 @@ def create_author_metadata_endpoint(author_id: int):
                 f"metadata for author with id {author_id} already exists; cannot create anew"
             )
 
-        request_dict = dict(author_id=author_id, **request.json)
+        query_dict = dict(author_id=author_id, **request.json)
         author_metadata_obj = create_model_obj(
-            AuthorMetadata, generate_create_update_argd(AuthorMetadata, request_dict)
+            AuthorMetadata, generate_create_update_argd(AuthorMetadata, query_dict)
         )
         db.session.add(author_metadata_obj)
         db.session.commit()
@@ -806,6 +808,9 @@ def create_author_book_endpoint(author_id: int):
         Author.query.get_or_404(author_id)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
+        _check_json_req_props(
+            Book, request.json, {"author_id", "book_id"}, {"series_id"}
+        )
         book_obj = create_model_obj(
             Book,
             generate_create_update_argd(Book, request.json),

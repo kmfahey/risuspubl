@@ -213,6 +213,10 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
         assert resp_jsobj["title"] == book_dict["title"]
         return resp_jsobj
 
+    def _cleanup():
+        for table in reversed(db.metadata.sorted_tables):
+            db.session.execute(table.delete())
+
     author_id, book_dict = _setup()
 
     # Testing without series_id
@@ -220,9 +224,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     resp_jsobj = _test(response, book_dict)
     assert resp_jsobj["series_id"] is None
 
-    # Cleanup
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
+    _cleanup()
 
     # Testing with series_id
     author_id, book_dict = _setup()
@@ -234,13 +236,22 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     resp_jsobj = _test(response, book_dict)
     assert resp_jsobj["series_id"] == book_dict["series_id"], (resp_jsobj, book_dict)
 
-    # Cleanup
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
+    _cleanup()
 
+    # Testing with bogus id
     bogus_author_id = random.randint(1, 10)
     response = client.post("f/authors/{bogus_author_id}/", json=book_dict)
     assert response.status_code == 404
+
+    _cleanup()
+
+    # Testing with including author_id in POSTed json
+    author_id, book_dict = _setup()
+
+    book_dict["author_id"] = author_id
+
+    response = client.post(f"/authors/{author_id}/books", json=book_dict)
+    assert response.status_code == 400
 
 
 def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
