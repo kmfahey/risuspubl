@@ -188,6 +188,26 @@ def _test_book_resp(response, book_dict):
     return resp_jsobj
 
 
+def _test_book_resp_oop(db, response, book_dict):
+    assert response.status_code == 200, response.data
+
+    resp_jsobj = response.get_json()
+    assert resp_jsobj["edition_number"] == book_dict["edition_number"]
+    assert resp_jsobj["editor_id"] == book_dict["editor_id"]
+    assert resp_jsobj["is_in_print"] == book_dict["is_in_print"]
+    assert resp_jsobj["publication_date"] == book_dict["publication_date"]
+    assert resp_jsobj["title"] == book_dict["title"]
+
+    book_obj = db.session.query(Book).get(resp_jsobj["book_id"])
+    assert book_dict["edition_number"] == book_obj.edition_number
+    assert book_dict["editor_id"] == book_obj.editor_id
+    assert book_dict["is_in_print"] == book_obj.is_in_print
+    assert book_dict["publication_date"] == book_obj.publication_date.isoformat()
+    assert book_dict["title"] == book_obj.title
+
+    return resp_jsobj, book_obj
+
+
 def _test_manuscript_resp(response, manuscript_dict):
     assert response.status_code == 200, response.data
     resp_jsobj = response.get_json()
@@ -203,7 +223,7 @@ def _cleanup__empty_all_tables(db):
         db.session.execute(table.delete())
 
 
-def test_author_create_endpoint(fresh_tables_db, staged_app_client): # 1/83
+def test_author_create_endpoint(fresh_tables_db, staged_app_client):  # 1/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -211,13 +231,13 @@ def test_author_create_endpoint(fresh_tables_db, staged_app_client): # 1/83
     author_dict = genius.gen_author_dict()
     response = client.post("/authors", json=author_dict)
     assert response.status_code == 200
-    author_objs = db.session.query(Author).all()
-    assert len(author_objs) == 1
-    assert author_objs[0].first_name == author_dict["first_name"]
-    assert author_objs[0].last_name == author_dict["last_name"]
+    resp_jsobj = response.get_json()
+    author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
+    assert author_obj.first_name == author_dict["first_name"]
+    assert author_obj.last_name == author_dict["last_name"]
 
 
-def test_create_author_book_endpoint(fresh_tables_db, staged_app_client): # 2/83
+def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -234,8 +254,9 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client): # 2/83
 
     # Testing without series_id
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj = _test_book_resp(response, book_dict)
+    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
     assert resp_jsobj["series_id"] is None
+    assert book_obj.series_id is None
 
     _cleanup__empty_all_tables(db)
 
@@ -246,8 +267,9 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client): # 2/83
     book_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj = _test_book_resp(response, book_dict)
-    assert resp_jsobj["series_id"] == book_dict["series_id"], (resp_jsobj, book_dict)
+    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    assert book_dict["series_id"] == resp_jsobj["series_id"]
+    assert book_dict["series_id"] == book_obj.series_id
 
     _cleanup__empty_all_tables(db)
 
@@ -267,7 +289,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client): # 2/83
     assert response.status_code == 400
 
 
-def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): # 3/83
+def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 3/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -318,7 +340,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): 
     assert response.status_code == 404
 
 
-def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client): # 4/83
+def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  # 4/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -359,7 +381,7 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client): # 
     assert failed_response.status_code == 404
 
 
-def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client): # 5/83
+def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -436,7 +458,7 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client): # 5/8
     assert response.status_code == 400, response.data
 
 
-def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client): # 6/83
+def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 6/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -448,7 +470,9 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
 
         if w_series_id:
             series_obj = genius.gen_series_obj()
-            manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id, series_obj.series_id)
+            manuscript_dict = genius.gen_manuscript_dict(
+                editor_obj.editor_id, series_obj.series_id
+            )
         else:
             manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id)
 
@@ -547,7 +571,7 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
 # def test_display_authors_manuscripts_endpoint # 23/83
 
 
-def test_index_endpoint(fresh_tables_db, staged_app_client): # 24/83
+def test_index_endpoint(fresh_tables_db, staged_app_client):  # 24/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
