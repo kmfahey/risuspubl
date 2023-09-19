@@ -95,7 +95,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return retdict
 
     @classmethod
-    def gen_book_dict(cls, editor_id=None):
+    def gen_book_dict(cls, editor_id=None, series_id=None):
         retdict = dict(
             edition_number=random.randint(1, 5),
             is_in_print=bool(random.randint(0, 1)),
@@ -104,6 +104,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         )
         if editor_id is not None:
             retdict["editor_id"] = editor_id
+        if series_id is not None:
+            retdict["series_id"] = series_id
         return retdict
 
     @classmethod
@@ -139,8 +141,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
     @classmethod
     def gen_series_dict(cls):
         return dict(
-            title=random.choice(cls.series_titles),
-            volumes=random.randint(1, 5)
+            title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
         )
 
     def gen_author_metadata_obj(self, author_obj):
@@ -176,6 +177,22 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return series_obj
 
 
+def _test_book_resp(response, book_dict):
+    assert response.status_code == 200, response.data
+    resp_jsobj = response.get_json()
+    assert resp_jsobj["edition_number"] == book_dict["edition_number"]
+    assert resp_jsobj["editor_id"] == book_dict["editor_id"]
+    assert resp_jsobj["is_in_print"] == book_dict["is_in_print"]
+    assert resp_jsobj["publication_date"] == book_dict["publication_date"]
+    assert resp_jsobj["title"] == book_dict["title"]
+    return resp_jsobj
+
+
+def _cleanup__empty_all_tables(db):
+    for table in reversed(db.metadata.sorted_tables):
+        db.session.execute(table.delete())
+
+
 def test_author_create_endpoint(fresh_tables_db, staged_app_client):
     db = fresh_tables_db
     app, client = staged_app_client
@@ -203,28 +220,14 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
 
         return author_obj.author_id, book_dict
 
-    def _test(response, book_dict):
-        assert response.status_code == 200
-        resp_jsobj = response.get_json()
-        assert resp_jsobj["edition_number"] == book_dict["edition_number"]
-        assert resp_jsobj["editor_id"] == book_dict["editor_id"]
-        assert resp_jsobj["is_in_print"] == book_dict["is_in_print"]
-        assert resp_jsobj["publication_date"] == book_dict["publication_date"]
-        assert resp_jsobj["title"] == book_dict["title"]
-        return resp_jsobj
-
-    def _cleanup():
-        for table in reversed(db.metadata.sorted_tables):
-            db.session.execute(table.delete())
-
     author_id, book_dict = _setup()
 
     # Testing without series_id
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj = _test(response, book_dict)
+    resp_jsobj = _test_book_resp(response, book_dict)
     assert resp_jsobj["series_id"] is None
 
-    _cleanup()
+    _cleanup__empty_all_tables(db)
 
     # Testing with series_id
     author_id, book_dict = _setup()
@@ -233,17 +236,17 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     book_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj = _test(response, book_dict)
+    resp_jsobj = _test_book_resp(response, book_dict)
     assert resp_jsobj["series_id"] == book_dict["series_id"], (resp_jsobj, book_dict)
 
-    _cleanup()
+    _cleanup__empty_all_tables(db)
 
     # Testing with bogus id
     bogus_author_id = random.randint(1, 10)
     response = client.post("f/authors/{bogus_author_id}/", json=book_dict)
     assert response.status_code == 404
 
-    _cleanup()
+    _cleanup__empty_all_tables(db)
 
     # Testing with including author_id in POSTed json
     author_id, book_dict = _setup()
@@ -283,9 +286,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
     resp_jsobj = _test(response, manuscript_dict)
     assert resp_jsobj["series_id"] is None
 
-    # Cleanup
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
+    _cleanup__empty_all_tables(db)
 
     # Testing with series_id
     author_id, manuscript_dict = _setup()
@@ -300,9 +301,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
         manuscript_dict,
     )
 
-    # Cleanup
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
+    _cleanup__empty_all_tables(db)
 
     bogus_author_id = random.randint(1, 10)
     response = client.post("f/authors/{bogus_author_id}/", json=manuscript_dict)
@@ -338,9 +337,10 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
 
     assert other_response.status_code == 400
 
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    # Done this way to ensure it isn't accidentally equal to author_obj.author_id
+    bogus_author_id = random.choice(
+        range(author_obj.author_id + 1, author_obj.author_id + 10)
+    )
 
     failed_response = client.post(
         f"/authors/{bogus_author_id}/metadata", json=metadata_dict
@@ -349,7 +349,82 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
     assert failed_response.status_code == 404
 
 
-# def test_create_authors_book_endpoint
+def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):
+    db = fresh_tables_db
+    app, client = staged_app_client
+    genius = Genius(db)
+
+    def _setup(w_series_id=False):
+        author_obj_no1 = genius.gen_author_obj()
+        author_obj_no2 = genius.gen_author_obj()
+        editor_obj = genius.gen_editor_obj()
+
+        if w_series_id:
+            series_obj = genius.gen_series_obj()
+            book_dict = genius.gen_book_dict(editor_obj.editor_id, series_obj.series_id)
+        else:
+            book_dict = genius.gen_book_dict(editor_obj.editor_id)
+
+        return author_obj_no1.author_id, author_obj_no2.author_id, book_dict
+
+    # Testing without series id
+
+    author_no1_id, author_no2_id, book_dict = _setup()
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
+    )
+    resp_jsobj = _test_book_resp(response, book_dict)
+    assert resp_jsobj["series_id"] is None
+    _cleanup__empty_all_tables(db)
+
+    # Testing with series id
+    author_no1_id, author_no2_id, book_dict = _setup(w_series_id=True)
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
+    )
+    resp_jsobj = _test_book_resp(response, book_dict)
+    assert resp_jsobj["series_id"] == book_dict["series_id"]
+
+    _cleanup__empty_all_tables(db)
+
+    # Testing with bogus author_id, first position
+    author_id, _, book_dict = _setup()
+    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    response = client.post(
+        f"/authors/{author_id}/{bogus_author_id}/books", json=book_dict
+    )
+    assert response.status_code == 404
+
+    _cleanup__empty_all_tables(db)
+
+    # Testing with bogus author_id, second position
+    author_id, _, book_dict = _setup()
+    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    response = client.post(
+        f"/authors/{bogus_author_id}/{author_id}/books", json=book_dict
+    )
+    assert response.status_code == 404
+
+    _cleanup__empty_all_tables(db)
+
+    # Testing with unexpected property
+    author_no1_id, author_no2_id, book_dict = _setup()
+    book_dict["unexpected_prop"] = True
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
+    )
+    assert response.status_code == 400, response.data
+
+    _cleanup__empty_all_tables(db)
+
+    # Testing with missing property
+    author_no1_id, author_no2_id, book_dict = _setup()
+    del book_dict["title"]
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
+    )
+    assert response.status_code == 400, response.data
+
 
 # def test_create_authors_manuscript_endpoint
 
