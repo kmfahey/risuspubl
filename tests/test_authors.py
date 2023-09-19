@@ -188,12 +188,22 @@ def _test_book_resp(response, book_dict):
     return resp_jsobj
 
 
+def _test_manuscript_resp(response, manuscript_dict):
+    assert response.status_code == 200, response.data
+    resp_jsobj = response.get_json()
+    assert resp_jsobj["editor_id"] == manuscript_dict["editor_id"]
+    assert resp_jsobj["working_title"] == manuscript_dict["working_title"]
+    assert resp_jsobj["due_date"] == manuscript_dict["due_date"]
+    assert resp_jsobj["advance"] == manuscript_dict["advance"]
+    return resp_jsobj
+
+
 def _cleanup__empty_all_tables(db):
     for table in reversed(db.metadata.sorted_tables):
         db.session.execute(table.delete())
 
 
-def test_author_create_endpoint(fresh_tables_db, staged_app_client):
+def test_author_create_endpoint(fresh_tables_db, staged_app_client): # 1/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -207,7 +217,7 @@ def test_author_create_endpoint(fresh_tables_db, staged_app_client):
     assert author_objs[0].last_name == author_dict["last_name"]
 
 
-def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
+def test_create_author_book_endpoint(fresh_tables_db, staged_app_client): # 2/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -257,7 +267,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):
     assert response.status_code == 400
 
 
-def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
+def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): # 3/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -308,7 +318,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):
     assert response.status_code == 404
 
 
-def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
+def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client): # 4/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -349,7 +359,7 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):
     assert failed_response.status_code == 404
 
 
-def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):
+def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client): # 5/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -426,44 +436,118 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):
     assert response.status_code == 400, response.data
 
 
-# def test_create_authors_manuscript_endpoint
+def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client): # 6/83
+    db = fresh_tables_db
+    app, client = staged_app_client
+    genius = Genius(db)
 
-# def test_delete_author_book_endpoint
+    def _setup(w_series_id=False):
+        author_obj_no1 = genius.gen_author_obj()
+        author_obj_no2 = genius.gen_author_obj()
+        editor_obj = genius.gen_editor_obj()
 
-# def test_delete_author_by_id_endpoint
+        if w_series_id:
+            series_obj = genius.gen_series_obj()
+            manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id, series_obj.series_id)
+        else:
+            manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id)
 
-# def test_delete_author_manuscript_endpoint
+        return author_obj_no1.author_id, author_obj_no2.author_id, manuscript_dict
 
-# def test_delete_author_metadata_endpoint
+    # Testing without series id
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
+    )
+    resp_jsobj = _test_manuscript_resp(response, manuscript_dict)
+    assert resp_jsobj["series_id"] is None
+    _cleanup__empty_all_tables(db)
 
-# def test_delete_authors_book_endpoint
+    # Testing with series id
+    author_no1_id, author_no2_id, manuscript_dict = _setup(w_series_id=True)
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
+    )
+    resp_jsobj = _test_manuscript_resp(response, manuscript_dict)
+    assert resp_jsobj["series_id"] == manuscript_dict["series_id"]
 
-# def test_delete_authors_manuscript_endpoint
+    _cleanup__empty_all_tables(db)
 
-# def test_display_author_book_by_id_endpoint
+    # Testing with bogus author_id, first position
+    author_id, _, manuscript_dict = _setup()
+    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    response = client.post(
+        f"/authors/{author_id}/{bogus_author_id}/manuscripts", json=manuscript_dict
+    )
+    assert response.status_code == 404
 
-# def test_display_author_books_endpoint
+    _cleanup__empty_all_tables(db)
 
-# def test_display_author_by_id_endpoint
+    # Testing with bogus author_id, second position
+    author_id, _, manuscript_dict = _setup()
+    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    response = client.post(
+        f"/authors/{bogus_author_id}/{author_id}/manuscripts", json=manuscript_dict
+    )
+    assert response.status_code == 404
 
-# def test_display_author_manuscript_by_id_endpoint
+    _cleanup__empty_all_tables(db)
 
-# def test_display_author_manuscripts_endpoint
+    # Testing with unexpected property
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    manuscript_dict["unexpected_prop"] = True
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
+    )
+    assert response.status_code == 400, response.data
 
-# def test_display_author_metadata_endpoint
+    _cleanup__empty_all_tables(db)
 
-# def test_display_authors_book_by_id_endpoint
-
-# def test_display_authors_books_endpoint
-
-# def test_display_authors_by_ids_endpoint
-
-# def test_display_authors_manuscript_by_id_endpoint
-
-# def test_display_authors_manuscripts_endpoint
+    # Testing with missing property
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    del manuscript_dict["working_title"]
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
+    )
+    assert response.status_code == 400, response.data
 
 
-def test_index_endpoint(fresh_tables_db, staged_app_client):
+# def test_delete_author_book_endpoint # 7/83
+
+# def test_delete_author_by_id_endpoint # 8/83
+
+# def test_delete_author_manuscript_endpoint # 9/83
+
+# def test_delete_author_metadata_endpoint # 10/83
+
+# def test_delete_authors_book_endpoint # 11/83
+
+# def test_delete_authors_manuscript_endpoint # 12/83
+
+# def test_display_author_book_by_id_endpoint # 13/83
+
+# def test_display_author_books_endpoint # 14/83
+
+# def test_display_author_by_id_endpoint # 15/83
+
+# def test_display_author_manuscript_by_id_endpoint # 16/83
+
+# def test_display_author_manuscripts_endpoint # 17/83
+
+# def test_display_author_metadata_endpoint # 18/83
+
+# def test_display_authors_book_by_id_endpoint # 19/83
+
+# def test_display_authors_books_endpoint # 20/83
+
+# def test_display_authors_by_ids_endpoint # 21/83
+
+# def test_display_authors_manuscript_by_id_endpoint # 22/83
+
+# def test_display_authors_manuscripts_endpoint # 23/83
+
+
+def test_index_endpoint(fresh_tables_db, staged_app_client): # 24/83
     db = fresh_tables_db
     app, client = staged_app_client
     genius = Genius(db)
@@ -482,14 +566,14 @@ def test_index_endpoint(fresh_tables_db, staged_app_client):
         )
 
 
-# def test_update_author_book_endpoint
+# def test_update_author_book_endpoint # 25/83
 
-# def test_update_author_by_id_endpoint
+# def test_update_author_by_id_endpoint # 26/83
 
-# def test_update_author_manuscript_endpoint
+# def test_update_author_manuscript_endpoint # 27/83
 
-# def test_update_author_metadata_endpoint
+# def test_update_author_metadata_endpoint # 28/83
 
-# def test_update_authors_book_endpoint
+# def test_update_authors_book_endpoint # 29/83
 
-# def test_update_authors_manuscript_endpoint
+# def test_update_authors_manuscript_endpoint # 30/83

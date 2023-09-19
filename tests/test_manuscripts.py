@@ -3,11 +3,11 @@
 
 pass
 
-# manuscripts.delete_manuscript_by_id_endpoint
-# 
-# manuscripts.display_manuscript_by_id_endpoint
-# 
-# manuscripts.index_endpoint
-# 
-# manuscripts.update_manuscript_by_id_endpoint
-# 
+# def manuscripts.delete_manuscript_by_id_endpoint # 53/83
+#
+# def manuscripts.display_manuscript_by_id_endpoint # 54/83
+#
+# def manuscripts.index_endpoint # 55/83
+#
+# def manuscripts.update_manuscript_by_id_endpoint # 56/83
+#

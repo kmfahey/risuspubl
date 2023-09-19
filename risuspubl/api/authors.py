@@ -705,7 +705,6 @@ def author_create_endpoint():
     return create_author(request.json)
 
 
-# HERE
 @blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["POST"])
 def create_authors_book_endpoint(author1_id: int, author2_id: int):
     """
@@ -750,6 +749,7 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
+# HERE
 @blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["POST"])
 def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     """
@@ -768,6 +768,7 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        _check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(
