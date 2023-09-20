@@ -165,7 +165,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return editor_obj
 
     def gen_manuscript_obj(self, editor_id=None):
-        manuscript_obj = Manuscript(**self.gen_manuscript_dict(editor_obj.editor_id))
+        manuscript_obj = Manuscript(**self.gen_manuscript_dict(editor_id))
         self.db.session.add(manuscript_obj)
         self.db.session.commit()
         return manuscript_obj
@@ -179,12 +179,13 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
 def _test_book_resp(response, book_dict):
     assert response.status_code == 200, response.data
+
     resp_jsobj = response.get_json()
-    assert resp_jsobj["edition_number"] == book_dict["edition_number"]
-    assert resp_jsobj["editor_id"] == book_dict["editor_id"]
-    assert resp_jsobj["is_in_print"] == book_dict["is_in_print"]
-    assert resp_jsobj["publication_date"] == book_dict["publication_date"]
-    assert resp_jsobj["title"] == book_dict["title"]
+    assert book_dict["edition_number"] == resp_jsobj["edition_number"]
+    assert book_dict["editor_id"] == resp_jsobj["editor_id"]
+    assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
+    assert book_dict["publication_date"] == resp_jsobj["publication_date"]
+    assert book_dict["title"] == resp_jsobj["title"]
     return resp_jsobj
 
 
@@ -192,11 +193,11 @@ def _test_book_resp_oop(db, response, book_dict):
     assert response.status_code == 200, response.data
 
     resp_jsobj = response.get_json()
-    assert resp_jsobj["edition_number"] == book_dict["edition_number"]
-    assert resp_jsobj["editor_id"] == book_dict["editor_id"]
-    assert resp_jsobj["is_in_print"] == book_dict["is_in_print"]
-    assert resp_jsobj["publication_date"] == book_dict["publication_date"]
-    assert resp_jsobj["title"] == book_dict["title"]
+    assert book_dict["edition_number"] == resp_jsobj["edition_number"]
+    assert book_dict["editor_id"] == resp_jsobj["editor_id"]
+    assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
+    assert book_dict["publication_date"] == resp_jsobj["publication_date"]
+    assert book_dict["title"] == resp_jsobj["title"]
 
     book_obj = db.session.query(Book).get(resp_jsobj["book_id"])
     assert book_dict["edition_number"] == book_obj.edition_number
@@ -210,12 +211,53 @@ def _test_book_resp_oop(db, response, book_dict):
 
 def _test_manuscript_resp(response, manuscript_dict):
     assert response.status_code == 200, response.data
+
     resp_jsobj = response.get_json()
-    assert resp_jsobj["editor_id"] == manuscript_dict["editor_id"]
-    assert resp_jsobj["working_title"] == manuscript_dict["working_title"]
-    assert resp_jsobj["due_date"] == manuscript_dict["due_date"]
-    assert resp_jsobj["advance"] == manuscript_dict["advance"]
+    assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
+    assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
+    assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
+    assert manuscript_dict["advance"] == resp_jsobj["advance"]
     return resp_jsobj
+
+
+def _test_manuscript_resp_oop(db, response, manuscript_dict):
+    assert response.status_code == 200, response.data
+
+    resp_jsobj = response.get_json()
+    assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
+    assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
+    assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
+    assert manuscript_dict["advance"] == resp_jsobj["advance"]
+
+    manuscript_obj = db.session.query(Manuscript).get(resp_jsobj["manuscript_id"])
+    assert manuscript_dict["editor_id"] == manuscript_obj.editor_id
+    assert manuscript_dict["working_title"] == manuscript_obj.working_title
+    assert manuscript_dict["due_date"] == manuscript_obj.due_date.isoformat()
+    assert manuscript_dict["advance"] == manuscript_obj.advance
+
+    return resp_jsobj, manuscript_obj
+
+
+def _test_metadata_resp_oop(db, response, metadata_dict):
+    assert response.status_code == 200, response.data
+
+    resp_jsobj = response.get_json()
+    assert metadata_dict["age"] == resp_jsobj["age"]
+    assert metadata_dict["biography"] == resp_jsobj["biography"]
+    assert metadata_dict["photo_res_horiz"] == resp_jsobj["photo_res_horiz"]
+    assert metadata_dict["photo_res_vert"] == resp_jsobj["photo_res_vert"]
+    assert metadata_dict["photo_url"] == resp_jsobj["photo_url"]
+
+    metadata_obj = db.session.query(AuthorMetadata).get(resp_jsobj["author_metadata_id"])
+    assert metadata_dict["age"] == metadata_obj.age
+    assert metadata_dict["biography"] == metadata_obj.biography
+    assert metadata_dict["photo_res_horiz"] == metadata_obj.photo_res_horiz
+    assert metadata_dict["photo_res_vert"] == metadata_obj.photo_res_vert
+    assert metadata_dict["photo_url"] == metadata_obj.photo_url
+
+    assert resp_jsobj["author_id"] == metadata_obj.author_id
+
+    return resp_jsobj, metadata_obj
 
 
 def _cleanup__empty_all_tables(db):
@@ -302,21 +344,13 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): 
 
         return author_obj.author_id, manuscript_dict
 
-    def _test(response, manuscript_dict):
-        assert response.status_code == 200
-        resp_jsobj = response.get_json()
-        assert resp_jsobj["editor_id"] == manuscript_dict["editor_id"]
-        assert resp_jsobj["working_title"] == manuscript_dict["working_title"]
-        assert resp_jsobj["due_date"] == manuscript_dict["due_date"]
-        assert resp_jsobj["advance"] == manuscript_dict["advance"]
-        return resp_jsobj
-
     author_id, manuscript_dict = _setup()
 
     # Testing without series_id
     response = client.post(f"/authors/{author_id}/manuscripts", json=manuscript_dict)
-    resp_jsobj = _test(response, manuscript_dict)
+    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
     assert resp_jsobj["series_id"] is None
+    assert manuscript_obj.series_id is None
 
     _cleanup__empty_all_tables(db)
 
@@ -327,11 +361,9 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): 
     manuscript_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/manuscripts", json=manuscript_dict)
-    resp_jsobj = _test(response, manuscript_dict)
-    assert resp_jsobj["series_id"] == manuscript_dict["series_id"], (
-        resp_jsobj,
-        manuscript_dict,
-    )
+    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
+    assert manuscript_dict["series_id"] == resp_jsobj["series_id"]
+    assert manuscript_dict["series_id"] == manuscript_obj.series_id
 
     _cleanup__empty_all_tables(db)
 
@@ -345,39 +377,35 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  #
     app, client = staged_app_client
     genius = Genius(db)
 
-    author_obj = genius.gen_author_obj()
-    metadata_dict = genius.gen_author_metadata_dict()
+    def _setup(w_author_id=False):
+        author_obj = genius.gen_author_obj()
+        if w_author_id:
+            metadata_dict = genius.gen_author_metadata_dict(author_obj.author_id)
+        else:
+            metadata_dict = genius.gen_author_metadata_dict()
+        return author_obj, metadata_dict
 
+    author_obj, metadata_dict = _setup()
     response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
     )
+    _test_metadata_resp_oop(db, response, metadata_dict)
 
-    resp_jsobj = response.get_json()
-    assert response.status_code == 200
-    assert resp_jsobj["age"] == metadata_dict["age"]
-    assert resp_jsobj["author_id"] == author_obj.author_id
-    assert resp_jsobj["biography"] == metadata_dict["biography"]
-    assert resp_jsobj["photo_res_horiz"] == metadata_dict["photo_res_horiz"]
-    assert resp_jsobj["photo_res_vert"] == metadata_dict["photo_res_vert"]
-    assert resp_jsobj["photo_url"] == metadata_dict["photo_url"]
+    _cleanup__empty_all_tables(db)
 
-    other_metadata_dict = genius.gen_author_metadata_dict(author_obj.author_id)
-
-    other_response = client.post(
+    author_obj, metadata_dict = _setup(w_author_id=True)
+    response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
     )
+    assert response.status_code == 400
 
-    assert other_response.status_code == 400
+    _cleanup__empty_all_tables(db)
 
-    # Done this way to ensure it isn't accidentally equal to author_obj.author_id
-    bogus_author_id = random.choice(
-        range(author_obj.author_id + 1, author_obj.author_id + 10)
-    )
-
+    metadata_dict = genius.gen_author_metadata_dict()
+    bogus_author_id = random.randint(1, 10)
     failed_response = client.post(
         f"/authors/{bogus_author_id}/metadata", json=metadata_dict
     )
-
     assert failed_response.status_code == 404
 
 
@@ -405,8 +433,9 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    resp_jsobj = _test_book_resp(response, book_dict)
+    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
     assert resp_jsobj["series_id"] is None
+    assert book_obj.series_id is None
     _cleanup__empty_all_tables(db)
 
     # Testing with series id
@@ -414,26 +443,31 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    resp_jsobj = _test_book_resp(response, book_dict)
-    assert resp_jsobj["series_id"] == book_dict["series_id"]
+    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    assert book_dict["series_id"] == resp_jsobj["series_id"]
+    assert book_dict["series_id"] == book_obj.series_id
 
     _cleanup__empty_all_tables(db)
 
     # Testing with bogus author_id, first position
-    author_id, _, book_dict = _setup()
-    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    author_no1_id, author_no2_id, book_dict = _setup()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
+        bogus_author_id = random.randint(1, 10)
     response = client.post(
-        f"/authors/{author_id}/{bogus_author_id}/books", json=book_dict
+        f"/authors/{author_no1_id}/{bogus_author_id}/books", json=book_dict
     )
     assert response.status_code == 404
 
     _cleanup__empty_all_tables(db)
 
     # Testing with bogus author_id, second position
-    author_id, _, book_dict = _setup()
-    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    author_no1_id, author_no2_id, book_dict = _setup()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
+        bogus_author_id = random.randint(1, 10)
     response = client.post(
-        f"/authors/{bogus_author_id}/{author_id}/books", json=book_dict
+        f"/authors/{bogus_author_id}/{author_no2_id}/books", json=book_dict
     )
     assert response.status_code == 404
 
@@ -483,8 +517,10 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    resp_jsobj = _test_manuscript_resp(response, manuscript_dict)
+    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
     assert resp_jsobj["series_id"] is None
+    assert manuscript_obj.series_id is None
+
     _cleanup__empty_all_tables(db)
 
     # Testing with series id
@@ -498,20 +534,24 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     _cleanup__empty_all_tables(db)
 
     # Testing with bogus author_id, first position
-    author_id, _, manuscript_dict = _setup()
-    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
+        bogus_author_id = random.randint(1, 10)
     response = client.post(
-        f"/authors/{author_id}/{bogus_author_id}/manuscripts", json=manuscript_dict
+        f"/authors/{author_no1_id}/{bogus_author_id}/manuscripts", json=manuscript_dict
     )
     assert response.status_code == 404
 
     _cleanup__empty_all_tables(db)
 
     # Testing with bogus author_id, second position
-    author_id, _, manuscript_dict = _setup()
-    bogus_author_id = random.choice(range(author_id + 1, author_id + 10))
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
+        bogus_author_id = random.randint(1, 10)
     response = client.post(
-        f"/authors/{bogus_author_id}/{author_id}/manuscripts", json=manuscript_dict
+        f"/authors/{bogus_author_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
     assert response.status_code == 404
 
