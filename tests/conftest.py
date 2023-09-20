@@ -102,9 +102,6 @@ def staged_app_client():
         db.drop_all()
 
 
-__all__ = "Genius", "DbBasedTester"
-
-
 # called it Genius because Generator already has a definition in python.
 class Genius:
     lorem_ipsum = """\
@@ -266,8 +263,6 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
 
 class DbBasedTester:
-    __slots__ = ("db",)
-
     @classmethod
     def test_book_resp(cls, response, book_dict):
         assert response.status_code == 200, response.data
