@@ -235,7 +235,7 @@ Manuscript.series_id = db.Column(
 # will have a books attribute containing a list of Book objects whose book_ids
 # are associated in the authors_books table with the given author_id, and vice
 # versa for Book objects.
-Authors_Books = db.Table(
+AuthorsBooks = db.Table(
     "authors_books",
     db.Column(
         "author_id",
@@ -250,14 +250,14 @@ Authors_Books = db.Table(
 
 Author.books = db.relationship(
     "Book",
-    secondary=Authors_Books,
+    secondary=AuthorsBooks,
     lazy="subquery",
     viewonly=True,
     backref=db.backref("author_books", lazy=True),
 )
 Book.authors = db.relationship(
     "Author",
-    secondary=Authors_Books,
+    secondary=AuthorsBooks,
     lazy="subquery",
     viewonly=True,
     backref=db.backref("book_authors", lazy=True),
@@ -270,7 +270,7 @@ Book.authors = db.relationship(
 # a list of Manuscript objects whose manuscript_ids are associated in the
 # authors_manuscripts table with the given author_id, and vice versa for
 # Manuscript objects.
-Authors_Manuscripts = db.Table(
+AuthorsManuscripts = db.Table(
     "authors_manuscripts",
     db.Column(
         "author_id",
@@ -288,14 +288,14 @@ Authors_Manuscripts = db.Table(
 
 Manuscript.authors = db.relationship(
     "Author",
-    secondary=Authors_Manuscripts,
+    secondary=AuthorsManuscripts,
     lazy="subquery",
     viewonly=True,
     backref=db.backref("manuscript_authors", lazy=True),
 )
 Author.manuscripts = db.relationship(
     "Manuscript",
-    secondary=Authors_Manuscripts,
+    secondary=AuthorsManuscripts,
     lazy="subquery",
     viewonly=True,
     backref=db.backref("author_manuscripts", lazy=True),

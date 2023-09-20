@@ -17,8 +17,8 @@ from risuspubl.api.utility import (
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
-    Authors_Books,
-    Authors_Manuscripts,
+    AuthorsBooks,
+    AuthorsManuscripts,
     Book,
     Manuscript,
     db,
@@ -735,10 +735,10 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
         db.session.commit()
         # Associating the new book_id with both author_ids in the authors_books
         # table.
-        ab1_insert = Authors_Books.insert().values(
+        ab1_insert = AuthorsBooks.insert().values(
             author_id=author1_id, book_id=book_obj.book_id
         )
-        ab2_insert = Authors_Books.insert().values(
+        ab2_insert = AuthorsBooks.insert().values(
             author_id=author2_id, book_id=book_obj.book_id
         )
         db.session.execute(ab1_insert)
@@ -768,7 +768,9 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        _check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
+        _check_json_req_props(
+            Manuscript, request.json, {"manuscript_id"}, {"series_id"}
+        )
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(
@@ -780,10 +782,10 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
         db.session.commit()
         # Associating the new manuscript_id with both author_ids in the
         # authors_manuscripts table.
-        ab1_insert = Authors_Manuscripts.insert().values(
+        ab1_insert = AuthorsManuscripts.insert().values(
             author_id=author1_id, manuscript_id=manuscript_obj.manuscript_id
         )
-        ab2_insert = Authors_Manuscripts.insert().values(
+        ab2_insert = AuthorsManuscripts.insert().values(
             author_id=author2_id, manuscript_id=manuscript_obj.manuscript_id
         )
         db.session.execute(ab1_insert)
@@ -823,7 +825,7 @@ def create_author_book_endpoint(author_id: int):
         db.session.commit()
         # Associating the new book_id with both author_ids in the
         # authors_books table.
-        ab_insert = Authors_Books.insert().values(
+        ab_insert = AuthorsBooks.insert().values(
             author_id=author_id, book_id=book_obj.book_id
         )
         db.session.execute(ab_insert)
@@ -859,7 +861,7 @@ def create_author_manuscript_endpoint(author_id: int):
         db.session.commit()
         # Associating the new manuscript_id with the author_id in the
         # authors_manuscripts table.
-        ab_insert = Authors_Manuscripts.insert().values(
+        ab_insert = AuthorsManuscripts.insert().values(
             author_id=author_id, manuscript_id=manuscript_obj.manuscript_id
         )
         db.session.execute(ab_insert)
@@ -933,7 +935,7 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
             return abort(404)
         (book_obj,) = a1_book_objs
         # That row in authors_books needs to be deleted too.
-        ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
+        ab_del = AuthorsBooks.delete().where(AuthorsBooks.columns[1] == book_id)
         db.session.execute(ab_del)
         db.session.commit()
         db.session.delete(book_obj)
@@ -986,8 +988,8 @@ def delete_authors_manuscript_endpoint(
 
         (manuscript_obj,) = a1_manuscript_objs
         # That row in authors_manuscripts needs to be deleted too.
-        ab_del = Authors_Manuscripts.delete().where(
-            Authors_Manuscripts.columns[1] == manuscript_id
+        ab_del = AuthorsManuscripts.delete().where(
+            AuthorsManuscripts.columns[1] == manuscript_id
         )
         db.session.execute(ab_del)
         db.session.commit()
@@ -1010,10 +1012,10 @@ def delete_author_by_id_endpoint(author_id: int):
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
-        ab_del = Authors_Books.delete().where(Authors_Books.columns[0] == author_id)
+        ab_del = AuthorsBooks.delete().where(AuthorsBooks.columns[0] == author_id)
         db.session.execute(ab_del)
-        am_del = Authors_Manuscripts.delete().where(
-            Authors_Manuscripts.columns[0] == author_id
+        am_del = AuthorsManuscripts.delete().where(
+            AuthorsManuscripts.columns[0] == author_id
         )
         db.session.execute(am_del)
         db.session.commit()
@@ -1047,7 +1049,7 @@ def delete_author_book_endpoint(author_id: int, book_id: int):
             return abort(404)
         (book_obj,) = book_objs
         # That row in authors_books must be deleted as well.
-        ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == book_id)
+        ab_del = AuthorsBooks.delete().where(AuthorsBooks.columns[1] == book_id)
         db.session.execute(ab_del)
         db.session.commit()
         db.session.delete(book_obj)
@@ -1085,8 +1087,8 @@ def delete_author_manuscript_endpoint(author_id: int, manuscript_id: int):
             return abort(404)
         (manuscript_obj,) = manuscript_objs
         # That row in authors_manuscripts must be deleted as well.
-        ab_del = Authors_Manuscripts.delete().where(
-            Authors_Manuscripts.columns[1] == manuscript_id
+        ab_del = AuthorsManuscripts.delete().where(
+            AuthorsManuscripts.columns[1] == manuscript_id
         )
         db.session.execute(ab_del)
         db.session.commit()

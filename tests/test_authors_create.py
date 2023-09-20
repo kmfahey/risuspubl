@@ -6,7 +6,7 @@ import random
 import pprint
 import json
 import pytest
-from risuspubl.dbmodels import Author
+from risuspubl.dbmodels import Author, AuthorsBooks
 
 from conftest import Genius, DbBasedTester
 
@@ -26,6 +26,7 @@ def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
 
 
 def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
+    db = db_w_cleanup
     app, client = staged_app_client
 
     def _setup():
@@ -43,6 +44,15 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     resp_jsobj, book_obj = DbBasedTester.test_book_resp(response, book_dict)
     assert resp_jsobj["series_id"] is None
     assert book_obj.series_id is None
+
+    # HERE
+    # working on adding bridge table checks to existing authors create endpoints.
+    author_book_obj = (
+        db.session.query(AuthorsBooks)
+        .filter_by(author_id=author_id, book_id=book_obj.book_id)
+        .first()
+    )
+    assert author_book_obj is not None
 
     DbBasedTester.cleanup__empty_all_tables()
 

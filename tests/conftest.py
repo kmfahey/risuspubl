@@ -241,6 +241,13 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return author_obj
 
     @classmethod
+    def gen_book_obj(cls, editor_id=None, series_id=None):
+        book_obj = Book(**cls.gen_book_dict(editor_id, series_id))
+        db.session.add(book_obj)
+        db.session.commit()
+        return book_obj
+
+    @classmethod
     def gen_editor_obj(cls):
         editor_obj = Editor(**cls.gen_editor_dict())
         db.session.add(editor_obj)

@@ -16,7 +16,14 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# def test_delete_author_book_endpoint # 7/83
+def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client): # 7/83
+    app, client = staged_app_client
+
+    author_obj = Genius.gen_author_obj()
+
+    book_obj = Genius.gen_book_obj()
+
+
 
 # def test_delete_author_by_id_endpoint # 8/83
 

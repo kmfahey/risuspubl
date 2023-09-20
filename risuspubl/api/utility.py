@@ -9,8 +9,8 @@ from flask import Response, abort, jsonify
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
-    Authors_Books,
-    Authors_Manuscripts,
+    AuthorsBooks,
+    AuthorsManuscripts,
     Book,
     Client,
     Editor,
@@ -134,12 +134,12 @@ def delete_model_obj(id_val, model_subclass):
     # In the case of Book or Manuscript objects, there's also corresponding rows
     # in authors_books or authors_manuscripts that need to be deleted as well.
     if model_subclass is Book:
-        ab_del = Authors_Books.delete().where(Authors_Books.columns[1] == id_val)
+        ab_del = AuthorsBooks.delete().where(AuthorsBooks.columns[1] == id_val)
         db.session.execute(ab_del)
         db.session.commit()
     elif model_subclass is Manuscript:
-        am_del = Authors_Manuscripts.delete().where(
-            Authors_Manuscripts.columns[1] == id_val
+        am_del = AuthorsManuscripts.delete().where(
+            AuthorsManuscripts.columns[1] == id_val
         )
         db.session.execute(am_del)
         db.session.commit()

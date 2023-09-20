@@ -11,8 +11,8 @@ from datetime import date, timedelta
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
-    Authors_Books,
-    Authors_Manuscripts,
+    AuthorsBooks,
+    AuthorsManuscripts,
     Book,
     Client,
     Editor,
@@ -151,9 +151,9 @@ def main():
                 random.choice(model_ids["authors"]),
                 random.choice(model_ids["authors"]),
             )
-        # Create each new row in Authors_Books.
+        # Create each new row in AuthorsBooks.
         for author_id in author_ids:
-            ab_insert = Authors_Books.insert().values(
+            ab_insert = AuthorsBooks.insert().values(
                 author_id=author_id, book_id=book_obj.book_id
             )
             db.session.execute(ab_insert)
@@ -190,9 +190,9 @@ def main():
                 random.choice(model_ids["authors"]),
                 random.choice(model_ids["authors"]),
             )
-        # Create each new row in Authors_Manuscripts.
+        # Create each new row in AuthorsManuscripts.
         for author_id in author_ids:
-            am_insert = Authors_Manuscripts.insert().values(
+            am_insert = AuthorsManuscripts.insert().values(
                 author_id=author_id, manuscript_id=manuscript_obj.manuscript_id
             )
             db.session.execute(am_insert)

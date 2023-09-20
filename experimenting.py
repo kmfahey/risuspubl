@@ -8,8 +8,8 @@ from flask import abort
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
-    Authors_Books,
-    Authors_Manuscripts,
+    AuthorsBooks,
+    AuthorsManuscripts,
     Book,
     Client,
     Editor,
