@@ -73,13 +73,10 @@ def pytest_sessionstart(session):
 
 
 @pytest.fixture
-def fresh_tables_db():
+def db_w_cleanup():
     yield db
 
-    meta = db.metadata
-    for table in reversed(meta.sorted_tables):
-        db.session.execute(table.delete())
-    db.session.commit()
+    DbBasedTester.cleanup__empty_all_tables()
 
 
 @pytest.fixture(scope="session")
@@ -353,3 +350,4 @@ class DbBasedTester:
     def cleanup__empty_all_tables(cls):
         for table in reversed(db.metadata.sorted_tables):
             db.session.execute(table.delete())
+        db.session.commit()

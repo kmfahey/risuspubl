@@ -2,14 +2,11 @@
 
 import os
 import random
-import math
-from datetime import date
 
 import pprint
 import json
-import faker
 import pytest
-from risuspubl.dbmodels import Author, AuthorMetadata, Book, Editor, Manuscript, Series
+from risuspubl.dbmodels import Author
 
 from conftest import Genius, DbBasedTester
 
@@ -19,8 +16,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-def test_author_create_endpoint(fresh_tables_db, staged_app_client):  # 1/83
-    db = fresh_tables_db
+def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
     app, client = staged_app_client
 
     author_dict = Genius.gen_author_dict()
@@ -29,8 +25,7 @@ def test_author_create_endpoint(fresh_tables_db, staged_app_client):  # 1/83
     DbBasedTester.test_author_resp(response, author_dict)
 
 
-def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/83
-    db = fresh_tables_db
+def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     app, client = staged_app_client
 
     def _setup():
@@ -66,7 +61,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/8
 
     # Testing with bogus id
     bogus_author_id = random.randint(1, 10)
-    response = client.post("f/authors/{bogus_author_id}/", json=book_dict)
+    response = client.post(f"/authors/{bogus_author_id}/", json=book_dict)
     assert response.status_code == 404
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -80,8 +75,7 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/8
     assert response.status_code == 400
 
 
-def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 3/83
-    db = fresh_tables_db
+def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 3/83
     app, client = staged_app_client
 
     def _setup():
@@ -124,8 +118,7 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): 
     assert response.status_code == 404
 
 
-def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  # 4/83
-    db = fresh_tables_db
+def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/83
     app, client = staged_app_client
 
     def _setup(w_author_id=False):
@@ -160,8 +153,7 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  #
     assert failed_response.status_code == 404
 
 
-def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/83
-    db = fresh_tables_db
+def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     app, client = staged_app_client
 
     def _setup(w_series_id=False):
@@ -243,8 +235,7 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     assert response.status_code == 400, response.data
 
 
-def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 6/83
-    db = fresh_tables_db
+def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 6/83
     app, client = staged_app_client
 
     def _setup(w_series_id=False):
@@ -366,8 +357,8 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
 # def test_display_authors_manuscripts_endpoint # 23/83
 
 
-def test_index_endpoint(fresh_tables_db, staged_app_client):  # 24/83
-    db = fresh_tables_db
+def test_index_endpoint(db_w_cleanup, staged_app_client):  # 24/83
+    db = db_w_cleanup
     app, client = staged_app_client
 
     author_dicts = [Genius.gen_author_dict() for _ in range(10)]
