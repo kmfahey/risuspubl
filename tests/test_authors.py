@@ -11,284 +11,33 @@ import faker
 import pytest
 from risuspubl.dbmodels import Author, AuthorMetadata, Book, Editor, Manuscript, Series
 
+from conftest import Genius, DbBasedTester
+
 
 # Set environment variable for Flask's configuration
 os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# called it Genius because Generator already has a definition in python.
-class Genius:
-    lorem_ipsum = """\
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor \
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis \
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore \
-eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt \
-in culpa qui officia deserunt mollit anim id est laborum."""
-
-    faker_obj = faker.Faker()
-
-    book_titles = [
-        "Steel Alley",
-        "The Blessed Beast",
-        "Death of the Stuffed Viper",
-        "Death of the Filthy Beast",
-        "Crime of the Voiceless Mermaid",
-        "Clue of the Cold Puppet",
-        "Angel's Return",
-        "Death of the Fake Pygmy",
-        "Elysium Crying",
-        "Alpha Grieving",
-    ]
-
-    manuscript_titles = [
-        "The Dynasty of Legend",
-        "Case of the Giant Lynx",
-        "The Burden of the Exiled",
-        "The Widow in the Portrait",
-        "2132: Rigel",
-        "Copper Heart",
-        "The Brute in the West",
-        "Darling Dearest",
-        "Prophecy Returning",
-        "Case of the Stuffed Shih Tzu",
-    ]
-
-    series_titles = [
-        "The Owl in the Air",
-        "Sign of the Hollow Staircase",
-        "Fatal Demon",
-        "Crime of the Orange Tourists",
-        "Sign of the Absent Puppet",
-        "Khan's Vow",
-        "Made for Duty",
-        "The Scarlet Violin",
-        "Mister Silver Fox",
-        "Legacy Fading",
-    ]
-
-    hexdigit_cp = tuple(range(48, 58)) + tuple(range(97, 103))
-
-    def __init__(self, db):
-        self.db = db
-
-    @classmethod
-    def gen_author_dict(cls):
-        return dict(
-            first_name=cls.faker_obj.first_name(), last_name=cls.faker_obj.last_name()
-        )
-
-    @classmethod
-    def gen_author_metadata_dict(cls, author_id=None):
-        photo_res_horiz = random.randint(200, 1000)
-        photo_res_vert = math.floor(photo_res_horiz * 1.5)
-        retdict = dict(
-            age=random.randint(18, 75),
-            biography=cls.lorem_ipsum,
-            photo_url=f"https://risuspublishing.com/cms/img/{cls.gen_hexdigits(16)}.jpeg",
-            photo_res_horiz=photo_res_horiz,
-            photo_res_vert=photo_res_vert,
-        )
-        if author_id is not None:
-            retdict["author_id"] = author_id
-        return retdict
-
-    @classmethod
-    def gen_book_dict(cls, editor_id=None, series_id=None):
-        retdict = dict(
-            edition_number=random.randint(1, 5),
-            is_in_print=bool(random.randint(0, 1)),
-            publication_date=cls.faker_obj.date_this_century().isoformat(),
-            title=random.choice(cls.book_titles),
-        )
-        if editor_id is not None:
-            retdict["editor_id"] = editor_id
-        if series_id is not None:
-            retdict["series_id"] = series_id
-        return retdict
-
-    @classmethod
-    def gen_editor_dict(cls):
-        return dict(
-            first_name=cls.faker_obj.first_name(),
-            last_name=cls.faker_obj.last_name(),
-            salary=random.randint(65, 95) * 1000,
-        )
-
-    @classmethod
-    def gen_hexdigits(cls, number_of_chars):
-        return "".join(
-            chr(random.choice(cls.hexdigit_cp)) for _ in range(number_of_chars)
-        )
-
-    @classmethod
-    def gen_manuscript_dict(cls, editor_id=None, series_id=None):
-        retdict = dict(
-            advance=random.randint(10, 20) * 1000,
-            due_date=cls.faker_obj.date_between_dates(
-                date.today(), date(date.today().year + 2, date.today().month, 1)
-            ).isoformat(),
-            series_id=None,
-            working_title=random.choice(cls.manuscript_titles),
-        )
-        if editor_id is not None:
-            retdict["editor_id"] = editor_id
-        if series_id is not None:
-            retdict["series_id"] = series_id
-        return retdict
-
-    @classmethod
-    def gen_series_dict(cls):
-        return dict(
-            title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
-        )
-
-    def gen_author_metadata_obj(self, author_obj):
-        author_metadata_obj = AuthorMetadata(
-            **self.gen_author_metadata_dict(author_obj)
-        )
-        self.db.session.add(author_metadata_obj)
-        self.db.session.commit()
-        return author_metadata_obj
-
-    def gen_author_obj(self):
-        author_obj = Author(**self.gen_author_dict())
-        self.db.session.add(author_obj)
-        self.db.session.commit()
-        return author_obj
-
-    def gen_editor_obj(self):
-        editor_obj = Editor(**self.gen_editor_dict())
-        self.db.session.add(editor_obj)
-        self.db.session.commit()
-        return editor_obj
-
-    def gen_manuscript_obj(self, editor_id=None):
-        manuscript_obj = Manuscript(**self.gen_manuscript_dict(editor_id))
-        self.db.session.add(manuscript_obj)
-        self.db.session.commit()
-        return manuscript_obj
-
-    def gen_series_obj(self):
-        series_obj = Series(**self.gen_series_dict())
-        self.db.session.add(series_obj)
-        self.db.session.commit()
-        return series_obj
-
-
-def _test_book_resp(response, book_dict):
-    assert response.status_code == 200, response.data
-
-    resp_jsobj = response.get_json()
-    assert book_dict["edition_number"] == resp_jsobj["edition_number"]
-    assert book_dict["editor_id"] == resp_jsobj["editor_id"]
-    assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
-    assert book_dict["publication_date"] == resp_jsobj["publication_date"]
-    assert book_dict["title"] == resp_jsobj["title"]
-    return resp_jsobj
-
-
-def _test_book_resp_oop(db, response, book_dict):
-    assert response.status_code == 200, response.data
-
-    resp_jsobj = response.get_json()
-    assert book_dict["edition_number"] == resp_jsobj["edition_number"]
-    assert book_dict["editor_id"] == resp_jsobj["editor_id"]
-    assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
-    assert book_dict["publication_date"] == resp_jsobj["publication_date"]
-    assert book_dict["title"] == resp_jsobj["title"]
-
-    book_obj = db.session.query(Book).get(resp_jsobj["book_id"])
-    assert book_dict["edition_number"] == book_obj.edition_number
-    assert book_dict["editor_id"] == book_obj.editor_id
-    assert book_dict["is_in_print"] == book_obj.is_in_print
-    assert book_dict["publication_date"] == book_obj.publication_date.isoformat()
-    assert book_dict["title"] == book_obj.title
-
-    return resp_jsobj, book_obj
-
-
-def _test_manuscript_resp(response, manuscript_dict):
-    assert response.status_code == 200, response.data
-
-    resp_jsobj = response.get_json()
-    assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
-    assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
-    assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
-    assert manuscript_dict["advance"] == resp_jsobj["advance"]
-    return resp_jsobj
-
-
-def _test_manuscript_resp_oop(db, response, manuscript_dict):
-    assert response.status_code == 200, response.data
-
-    resp_jsobj = response.get_json()
-    assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
-    assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
-    assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
-    assert manuscript_dict["advance"] == resp_jsobj["advance"]
-
-    manuscript_obj = db.session.query(Manuscript).get(resp_jsobj["manuscript_id"])
-    assert manuscript_dict["editor_id"] == manuscript_obj.editor_id
-    assert manuscript_dict["working_title"] == manuscript_obj.working_title
-    assert manuscript_dict["due_date"] == manuscript_obj.due_date.isoformat()
-    assert manuscript_dict["advance"] == manuscript_obj.advance
-
-    return resp_jsobj, manuscript_obj
-
-
-def _test_metadata_resp_oop(db, response, metadata_dict):
-    assert response.status_code == 200, response.data
-
-    resp_jsobj = response.get_json()
-    assert metadata_dict["age"] == resp_jsobj["age"]
-    assert metadata_dict["biography"] == resp_jsobj["biography"]
-    assert metadata_dict["photo_res_horiz"] == resp_jsobj["photo_res_horiz"]
-    assert metadata_dict["photo_res_vert"] == resp_jsobj["photo_res_vert"]
-    assert metadata_dict["photo_url"] == resp_jsobj["photo_url"]
-
-    metadata_obj = db.session.query(AuthorMetadata).get(resp_jsobj["author_metadata_id"])
-    assert metadata_dict["age"] == metadata_obj.age
-    assert metadata_dict["biography"] == metadata_obj.biography
-    assert metadata_dict["photo_res_horiz"] == metadata_obj.photo_res_horiz
-    assert metadata_dict["photo_res_vert"] == metadata_obj.photo_res_vert
-    assert metadata_dict["photo_url"] == metadata_obj.photo_url
-
-    assert resp_jsobj["author_id"] == metadata_obj.author_id
-
-    return resp_jsobj, metadata_obj
-
-
-def _cleanup__empty_all_tables(db):
-    for table in reversed(db.metadata.sorted_tables):
-        db.session.execute(table.delete())
-
-
 def test_author_create_endpoint(fresh_tables_db, staged_app_client):  # 1/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
-    author_dict = genius.gen_author_dict()
+    author_dict = Genius.gen_author_dict()
     response = client.post("/authors", json=author_dict)
-    assert response.status_code == 200
-    resp_jsobj = response.get_json()
-    author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
-    assert author_obj.first_name == author_dict["first_name"]
-    assert author_obj.last_name == author_dict["last_name"]
+
+    DbBasedTester.test_author_resp(response, author_dict)
 
 
 def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
     def _setup():
-        author_obj = genius.gen_author_obj()
-        editor_obj = genius.gen_editor_obj()
+        author_obj = Genius.gen_author_obj()
+        editor_obj = Genius.gen_editor_obj()
 
-        book_dict = genius.gen_book_dict(editor_obj.editor_id)
+        book_dict = Genius.gen_book_dict(editor_obj.editor_id)
 
         return author_obj.author_id, book_dict
 
@@ -296,31 +45,31 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/8
 
     # Testing without series_id
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    resp_jsobj, book_obj = DbBasedTester.test_book_resp(response, book_dict)
     assert resp_jsobj["series_id"] is None
     assert book_obj.series_id is None
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with series_id
     author_id, book_dict = _setup()
 
-    series_obj = genius.gen_series_obj()
+    series_obj = Genius.gen_series_obj()
     book_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    resp_jsobj, book_obj = DbBasedTester.test_book_resp(response, book_dict)
     assert book_dict["series_id"] == resp_jsobj["series_id"]
     assert book_dict["series_id"] == book_obj.series_id
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus id
     bogus_author_id = random.randint(1, 10)
     response = client.post("f/authors/{bogus_author_id}/", json=book_dict)
     assert response.status_code == 404
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with including author_id in POSTed json
     author_id, book_dict = _setup()
@@ -334,13 +83,12 @@ def test_create_author_book_endpoint(fresh_tables_db, staged_app_client):  # 2/8
 def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 3/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
     def _setup():
-        author_obj = genius.gen_author_obj()
-        editor_obj = genius.gen_editor_obj()
+        author_obj = Genius.gen_author_obj()
+        editor_obj = Genius.gen_editor_obj()
 
-        manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id)
+        manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
 
         return author_obj.author_id, manuscript_dict
 
@@ -348,50 +96,53 @@ def test_create_author_manuscript_endpoint(fresh_tables_db, staged_app_client): 
 
     # Testing without series_id
     response = client.post(f"/authors/{author_id}/manuscripts", json=manuscript_dict)
-    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
+    resp_jsobj, manuscript_obj = DbBasedTester.test_manuscript_resp(
+        response, manuscript_dict
+    )
     assert resp_jsobj["series_id"] is None
     assert manuscript_obj.series_id is None
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with series_id
     author_id, manuscript_dict = _setup()
 
-    series_obj = genius.gen_series_obj()
+    series_obj = Genius.gen_series_obj()
     manuscript_dict["series_id"] = series_obj.series_id
 
     response = client.post(f"/authors/{author_id}/manuscripts", json=manuscript_dict)
-    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
+    resp_jsobj, manuscript_obj = DbBasedTester.test_manuscript_resp(
+        response, manuscript_dict
+    )
     assert manuscript_dict["series_id"] == resp_jsobj["series_id"]
     assert manuscript_dict["series_id"] == manuscript_obj.series_id
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     bogus_author_id = random.randint(1, 10)
-    response = client.post("f/authors/{bogus_author_id}/", json=manuscript_dict)
+    response = client.post(f"/authors/{bogus_author_id}/", json=manuscript_dict)
     assert response.status_code == 404
 
 
 def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  # 4/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
     def _setup(w_author_id=False):
-        author_obj = genius.gen_author_obj()
+        author_obj = Genius.gen_author_obj()
         if w_author_id:
-            metadata_dict = genius.gen_author_metadata_dict(author_obj.author_id)
+            metadata_dict = Genius.gen_author_metadata_dict(author_obj.author_id)
         else:
-            metadata_dict = genius.gen_author_metadata_dict()
+            metadata_dict = Genius.gen_author_metadata_dict()
         return author_obj, metadata_dict
 
     author_obj, metadata_dict = _setup()
     response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
     )
-    _test_metadata_resp_oop(db, response, metadata_dict)
+    DbBasedTester.test_metadata_resp(response, metadata_dict)
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     author_obj, metadata_dict = _setup(w_author_id=True)
     response = client.post(
@@ -399,9 +150,9 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  #
     )
     assert response.status_code == 400
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
-    metadata_dict = genius.gen_author_metadata_dict()
+    metadata_dict = Genius.gen_author_metadata_dict()
     bogus_author_id = random.randint(1, 10)
     failed_response = client.post(
         f"/authors/{bogus_author_id}/metadata", json=metadata_dict
@@ -412,18 +163,17 @@ def test_create_author_metadata_endpoint(fresh_tables_db, staged_app_client):  #
 def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
     def _setup(w_series_id=False):
-        author_obj_no1 = genius.gen_author_obj()
-        author_obj_no2 = genius.gen_author_obj()
-        editor_obj = genius.gen_editor_obj()
+        author_obj_no1 = Genius.gen_author_obj()
+        author_obj_no2 = Genius.gen_author_obj()
+        editor_obj = Genius.gen_editor_obj()
 
         if w_series_id:
-            series_obj = genius.gen_series_obj()
-            book_dict = genius.gen_book_dict(editor_obj.editor_id, series_obj.series_id)
+            series_obj = Genius.gen_series_obj()
+            book_dict = Genius.gen_book_dict(editor_obj.editor_id, series_obj.series_id)
         else:
-            book_dict = genius.gen_book_dict(editor_obj.editor_id)
+            book_dict = Genius.gen_book_dict(editor_obj.editor_id)
 
         return author_obj_no1.author_id, author_obj_no2.author_id, book_dict
 
@@ -433,21 +183,22 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    resp_jsobj, book_obj = DbBasedTester.test_book_resp(response, book_dict)
     assert resp_jsobj["series_id"] is None
     assert book_obj.series_id is None
-    _cleanup__empty_all_tables(db)
+
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with series id
     author_no1_id, author_no2_id, book_dict = _setup(w_series_id=True)
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    resp_jsobj, book_obj = _test_book_resp_oop(db, response, book_dict)
+    resp_jsobj, book_obj = DbBasedTester.test_book_resp(response, book_dict)
     assert book_dict["series_id"] == resp_jsobj["series_id"]
     assert book_dict["series_id"] == book_obj.series_id
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus author_id, first position
     author_no1_id, author_no2_id, book_dict = _setup()
@@ -459,7 +210,7 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     )
     assert response.status_code == 404
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus author_id, second position
     author_no1_id, author_no2_id, book_dict = _setup()
@@ -471,7 +222,7 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     )
     assert response.status_code == 404
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with unexpected property
     author_no1_id, author_no2_id, book_dict = _setup()
@@ -481,7 +232,7 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
     )
     assert response.status_code == 400, response.data
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with missing property
     author_no1_id, author_no2_id, book_dict = _setup()
@@ -495,20 +246,19 @@ def test_create_authors_book_endpoint(fresh_tables_db, staged_app_client):  # 5/
 def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):  # 6/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
     def _setup(w_series_id=False):
-        author_obj_no1 = genius.gen_author_obj()
-        author_obj_no2 = genius.gen_author_obj()
-        editor_obj = genius.gen_editor_obj()
+        author_obj_no1 = Genius.gen_author_obj()
+        author_obj_no2 = Genius.gen_author_obj()
+        editor_obj = Genius.gen_editor_obj()
 
         if w_series_id:
-            series_obj = genius.gen_series_obj()
-            manuscript_dict = genius.gen_manuscript_dict(
+            series_obj = Genius.gen_series_obj()
+            manuscript_dict = Genius.gen_manuscript_dict(
                 editor_obj.editor_id, series_obj.series_id
             )
         else:
-            manuscript_dict = genius.gen_manuscript_dict(editor_obj.editor_id)
+            manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
 
         return author_obj_no1.author_id, author_obj_no2.author_id, manuscript_dict
 
@@ -517,21 +267,26 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    resp_jsobj, manuscript_obj = _test_manuscript_resp_oop(db, response, manuscript_dict)
+    resp_jsobj, manuscript_obj = DbBasedTester.test_manuscript_resp(
+        response, manuscript_dict
+    )
     assert resp_jsobj["series_id"] is None
     assert manuscript_obj.series_id is None
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with series id
     author_no1_id, author_no2_id, manuscript_dict = _setup(w_series_id=True)
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    resp_jsobj = _test_manuscript_resp(response, manuscript_dict)
-    assert resp_jsobj["series_id"] == manuscript_dict["series_id"]
+    resp_jsobj, manuscript_obj = DbBasedTester.test_manuscript_resp(
+        response, manuscript_dict
+    )
+    assert manuscript_dict["series_id"] == resp_jsobj["series_id"]
+    assert manuscript_dict["series_id"] == manuscript_obj.series_id
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus author_id, first position
     author_no1_id, author_no2_id, manuscript_dict = _setup()
@@ -543,7 +298,7 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     )
     assert response.status_code == 404
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus author_id, second position
     author_no1_id, author_no2_id, manuscript_dict = _setup()
@@ -555,7 +310,7 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     )
     assert response.status_code == 404
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with unexpected property
     author_no1_id, author_no2_id, manuscript_dict = _setup()
@@ -565,7 +320,7 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
     )
     assert response.status_code == 400, response.data
 
-    _cleanup__empty_all_tables(db)
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with missing property
     author_no1_id, author_no2_id, manuscript_dict = _setup()
@@ -614,9 +369,8 @@ def test_create_authors_manuscript_endpoint(fresh_tables_db, staged_app_client):
 def test_index_endpoint(fresh_tables_db, staged_app_client):  # 24/83
     db = fresh_tables_db
     app, client = staged_app_client
-    genius = Genius(db)
 
-    author_dicts = [genius.gen_author_dict() for _ in range(10)]
+    author_dicts = [Genius.gen_author_dict() for _ in range(10)]
     for author_dict in author_dicts:
         db.session.add(Author(**author_dict))
     db.session.commit()
