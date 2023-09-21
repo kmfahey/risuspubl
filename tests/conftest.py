@@ -3,7 +3,7 @@
 import math
 import os
 import random
-from datetime import date
+from datetime import date, timedelta
 
 import faker
 import pytest
@@ -209,7 +209,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         retdict = dict(
             advance=random.randint(10, 20) * 1000,
             due_date=cls.faker_obj.date_between_dates(
-                date.today(), date(date.today().year + 2, date.today().month, 1)
+                date.today() + timedelta(days=1), date(date.today().year + 2, date.today().month, 1)
             ).isoformat(),
             series_id=None,
             working_title=random.choice(cls.manuscript_titles),
