@@ -16,6 +16,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
+# Testing POST /authors
 def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
     app, client = staged_app_client
 
@@ -25,10 +26,12 @@ def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
     DbBasedTester.test_author_resp(response, author_dict)
 
 
+# Testing POST /authors/<id>/books
 def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     db = db_w_cleanup
     app, client = staged_app_client
 
+    # Refactored test setup bc it's the same every time
     def _setup():
         author_obj = Genius.gen_author_obj()
         editor_obj = Genius.gen_editor_obj()
@@ -100,10 +103,12 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     assert authors_books_obj is None
 
 
+# Testing POST /authors/<id>/manuscripts
 def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 3/83
     db = db_w_cleanup
     app, client = staged_app_client
 
+    # Refactored test setup bc it's the same every time
     def _setup():
         author_obj = Genius.gen_author_obj()
         editor_obj = Genius.gen_editor_obj()
@@ -164,9 +169,11 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert authors_manuscripts_obj is None
 
 
+# Testing POST /authors/<id>/metadata
 def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/83
     app, client = staged_app_client
 
+    # Refactored test setup bc it's the same every time
     def _setup(w_author_id=False):
         author_obj = Genius.gen_author_obj()
         if w_author_id:
@@ -175,6 +182,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
             metadata_dict = Genius.gen_author_metadata_dict()
         return author_obj, metadata_dict
 
+    # Testing base case
     author_obj, metadata_dict = _setup()
     response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
@@ -183,6 +191,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
 
     DbBasedTester.cleanup__empty_all_tables()
 
+    # Testing for 400 if author_id is included in POSTed json
     author_obj, metadata_dict = _setup(w_author_id=True)
     response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
@@ -191,6 +200,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
 
     DbBasedTester.cleanup__empty_all_tables()
 
+    # Testing for 404 if the author_id is bogus
     metadata_dict = Genius.gen_author_metadata_dict()
     bogus_author_id = random.randint(1, 10)
     failed_response = client.post(
@@ -199,10 +209,12 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
     assert failed_response.status_code == 404
 
 
+# Testing POST /authors/<id>/<id>/books
 def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     db = db_w_cleanup
     app, client = staged_app_client
 
+    # Refactored test setup bc it's the same every time
     def _setup(w_series_id=False):
         author_obj_no1 = Genius.gen_author_obj()
         author_obj_no2 = Genius.gen_author_obj()
@@ -217,7 +229,6 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
         return author_obj_no1.author_id, author_obj_no2.author_id, book_dict
 
     # Testing without series id
-
     author_no1_id, author_no2_id, book_dict = _setup()
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
@@ -340,6 +351,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     assert response.status_code == 400, response.data
 
 
+# Testing POST /authors/<id>/<id>/manuscripts
 def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 6/83
     db = db_w_cleanup
     app, client = staged_app_client
@@ -510,4 +522,3 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     )
     assert author_no1_manuscript_obj is None
     assert author_no2_manuscript_obj is None
-
