@@ -298,78 +298,136 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
 class DbBasedTester:
     @classmethod
-    def test_book_resp(cls, response, book_dict):
+    def test_book_resp(cls, response, book_data):
         assert response.status_code == 200, response.data
 
         resp_jsobj = response.get_json()
-        assert book_dict["edition_number"] == resp_jsobj["edition_number"]
-        assert book_dict["editor_id"] == resp_jsobj["editor_id"]
-        assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
-        assert book_dict["publication_date"] == resp_jsobj["publication_date"]
-        assert book_dict["title"] == resp_jsobj["title"]
+        if isinstance(book_data, dict):
+            book_dict = book_data
 
-        book_obj = db.session.query(Book).get(resp_jsobj["book_id"])
-        assert book_dict["edition_number"] == book_obj.edition_number
-        assert book_dict["editor_id"] == book_obj.editor_id
-        assert book_dict["is_in_print"] == book_obj.is_in_print
-        assert book_dict["publication_date"] == book_obj.publication_date.isoformat()
-        assert book_dict["title"] == book_obj.title
+            assert book_dict["edition_number"] == resp_jsobj["edition_number"]
+            assert book_dict["editor_id"] == resp_jsobj["editor_id"]
+            assert book_dict["is_in_print"] == resp_jsobj["is_in_print"]
+            assert book_dict["publication_date"] == resp_jsobj["publication_date"]
+            assert book_dict["title"] == resp_jsobj["title"]
+
+            book_obj = db.session.query(Book).get(resp_jsobj["book_id"])
+            assert book_dict["edition_number"] == book_obj.edition_number
+            assert book_dict["editor_id"] == book_obj.editor_id
+            assert book_dict["is_in_print"] == book_obj.is_in_print
+            assert book_dict["publication_date"] == book_obj.publication_date.isoformat()
+            assert book_dict["title"] == book_obj.title
+
+        elif isinstance(book_data, Book):
+            book_obj = book_data
+
+            assert resp_jsobj["edition_number"] == book_obj.edition_number
+            assert resp_jsobj["editor_id"] == book_obj.editor_id
+            assert resp_jsobj["is_in_print"] == book_obj.is_in_print
+            assert resp_jsobj["publication_date"] == book_obj.publication_date.isoformat()
+            assert resp_jsobj["title"] == book_obj.title
+
+        else:
+            raise TypeError("second argument had unexpected type " + type(book_data).__name__)
+
+        assert resp_jsobj["book_id"] == book_obj.book_id
 
         return resp_jsobj, book_obj
 
     @classmethod
-    def test_manuscript_resp(cls, response, manuscript_dict):
+    def test_manuscript_resp(cls, response, manuscript_data):
         assert response.status_code == 200, response.data
 
         resp_jsobj = response.get_json()
-        assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
-        assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
-        assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
-        assert manuscript_dict["advance"] == resp_jsobj["advance"]
+        if isinstance(manuscript_data, dict):
+            manuscript_dict = manuscript_data
 
-        manuscript_obj = db.session.query(Manuscript).get(resp_jsobj["manuscript_id"])
-        assert manuscript_dict["editor_id"] == manuscript_obj.editor_id
-        assert manuscript_dict["working_title"] == manuscript_obj.working_title
-        assert manuscript_dict["due_date"] == manuscript_obj.due_date.isoformat()
-        assert manuscript_dict["advance"] == manuscript_obj.advance
+            assert manuscript_dict["editor_id"] == resp_jsobj["editor_id"]
+            assert manuscript_dict["working_title"] == resp_jsobj["working_title"]
+            assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
+            assert manuscript_dict["advance"] == resp_jsobj["advance"]
+
+            manuscript_obj = db.session.query(Manuscript).get(resp_jsobj["manuscript_id"])
+            assert manuscript_dict["editor_id"] == manuscript_obj.editor_id
+            assert manuscript_dict["working_title"] == manuscript_obj.working_title
+            assert manuscript_dict["due_date"] == manuscript_obj.due_date.isoformat()
+            assert manuscript_dict["advance"] == manuscript_obj.advance
+
+        elif isinstance(manuscript_data, Manuscript):
+            manuscript_obj = manuscript_data
+
+            assert resp_jsobj["editor_id"] == manuscript_obj.editor_id
+            assert resp_jsobj["working_title"] == manuscript_obj.working_title
+            assert resp_jsobj["due_date"] == manuscript_obj.due_date.isoformat()
+            assert resp_jsobj["advance"] == manuscript_obj.advance
+
+        else:
+            raise TypeError("second argument had unexpected type " + type(manuscript_data).__name__)
+
+        assert resp_jsobj["manuscript_id"] == manuscript_obj.manuscript_id
 
         return resp_jsobj, manuscript_obj
 
     @classmethod
-    def test_metadata_resp(cls, response, metadata_dict):
+    def test_metadata_resp(cls, response, metadata_data):
         assert response.status_code == 200, response.data
 
         resp_jsobj = response.get_json()
-        assert metadata_dict["age"] == resp_jsobj["age"]
-        assert metadata_dict["biography"] == resp_jsobj["biography"]
-        assert metadata_dict["photo_res_horiz"] == resp_jsobj["photo_res_horiz"]
-        assert metadata_dict["photo_res_vert"] == resp_jsobj["photo_res_vert"]
-        assert metadata_dict["photo_url"] == resp_jsobj["photo_url"]
+        if isinstance(metadata_data, dict):
+            metadata_dict = metadata_data
 
-        metadata_obj = db.session.query(AuthorMetadata).get(
-            resp_jsobj["author_metadata_id"]
-        )
-        assert metadata_dict["age"] == metadata_obj.age
-        assert metadata_dict["biography"] == metadata_obj.biography
-        assert metadata_dict["photo_res_horiz"] == metadata_obj.photo_res_horiz
-        assert metadata_dict["photo_res_vert"] == metadata_obj.photo_res_vert
-        assert metadata_dict["photo_url"] == metadata_obj.photo_url
+            assert metadata_dict["age"] == resp_jsobj["age"]
+            assert metadata_dict["biography"] == resp_jsobj["biography"]
+            assert metadata_dict["photo_res_horiz"] == resp_jsobj["photo_res_horiz"]
+            assert metadata_dict["photo_res_vert"] == resp_jsobj["photo_res_vert"]
+            assert metadata_dict["photo_url"] == resp_jsobj["photo_url"]
+
+            metadata_obj = db.session.query(AuthorMetadata).get(
+                resp_jsobj["author_metadata_id"]
+            )
+            assert metadata_dict["age"] == metadata_obj.age
+            assert metadata_dict["biography"] == metadata_obj.biography
+            assert metadata_dict["photo_res_horiz"] == metadata_obj.photo_res_horiz
+            assert metadata_dict["photo_res_vert"] == metadata_obj.photo_res_vert
+            assert metadata_dict["photo_url"] == metadata_obj.photo_url
+
+        elif isinstance(metadata_data, AuthorMetadata):
+            metadata_obj = metadata_data
+
+            assert resp_jsobj["age"] == metadata_obj.age
+            assert resp_jsobj["biography"] == metadata_obj.biography
+            assert resp_jsobj["photo_res_horiz"] == metadata_obj.photo_res_horiz
+            assert resp_jsobj["photo_res_vert"] == metadata_obj.photo_res_vert
+            assert resp_jsobj["photo_url"] == metadata_obj.photo_url
+
+        else:
+            raise TypeError("second argument had unexpected type " + type(metadata_data).__name__)
 
         assert resp_jsobj["author_id"] == metadata_obj.author_id
+        assert resp_jsobj["author_metadata_id"] == metadata_obj.author_metadata_id
 
         return resp_jsobj, metadata_obj
 
     @classmethod
-    def test_author_resp(cls, response, author_dict):
+    def test_author_resp(cls, response, author_data):
         assert response.status_code == 200, response.data
 
         resp_jsobj = response.get_json()
-        assert author_dict["first_name"] == resp_jsobj["first_name"]
-        assert author_dict["last_name"] == resp_jsobj["last_name"]
+        if isinstance(author_data, dict):
+            author_dict = author_data
 
-        author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
-        assert author_dict["first_name"] == author_obj.first_name
-        assert author_dict["last_name"] == author_obj.last_name
+            assert author_dict["first_name"] == resp_jsobj["first_name"]
+            assert author_dict["last_name"] == resp_jsobj["last_name"]
+
+            author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
+            assert author_dict["first_name"] == author_obj.first_name
+            assert author_dict["last_name"] == author_obj.last_name
+
+        elif isinstance(author_data, Author):
+            author_obj = author_data
+
+            assert resp_jsobj["first_name"] == author_obj.first_name
+            assert resp_jsobj["last_name"] == author_obj.last_name
 
         assert resp_jsobj["author_id"] == author_obj.author_id
 
