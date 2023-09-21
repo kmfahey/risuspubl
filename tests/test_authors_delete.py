@@ -6,7 +6,13 @@ import random
 import pprint
 import json
 import pytest
-from risuspubl.dbmodels import Author, Book, AuthorsBooks
+from risuspubl.dbmodels import (
+    Author,
+    AuthorsBooks,
+    AuthorsManuscripts,
+    Book,
+    Manuscript,
+)
 
 from conftest import Genius, DbBasedTester
 
@@ -54,7 +60,49 @@ def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):  # 7/83
     assert db.session.query(Author).get(author_obj.author_id) is not None
 
 
-# def test_delete_author_by_id_endpoint # 8/83
+def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 8/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    author_obj = Genius.gen_author_obj()
+    author_id = author_obj.author_id
+
+    book_obj = Genius.gen_book_obj()
+    book_id = book_obj.book_id
+
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+
+    authors_books_obj = Genius.gen_authors_books_obj(
+        author_obj.author_id, book_obj.book_id
+    )
+    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+        author_obj.author_id, manuscript_obj.manuscript_id
+    )
+
+    response = client.delete(f"/authors/{author_obj.author_id}")
+    assert response.status_code == 200
+    assert json.loads(response.data) is True
+    assert db.session.query(Author).get(author_id) is None
+    assert (
+        db.session.query(AuthorsBooks)
+        .filter_by(author_id=author_id, book_id=book_id)
+        .first()
+    ) is None
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_id, manuscript_id=manuscript_id)
+        .first()
+    ) is None
+    assert db.session.query(Book).get(book_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_author_id = random.randint(1, 10)
+    response = client.delete(f"/authors/{bogus_author_id}")
+    assert response.status_code == 404
+
 
 # def test_delete_author_manuscript_endpoint # 9/83
 
