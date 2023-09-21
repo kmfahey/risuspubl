@@ -8,6 +8,7 @@ import json
 import pytest
 from risuspubl.dbmodels import (
     Author,
+    AuthorMetadata,
     AuthorsBooks,
     AuthorsManuscripts,
     Book,
@@ -150,7 +151,45 @@ def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert db.session.query(Author).get(author_obj.author_id) is not None
 
 
-# def test_delete_author_metadata_endpoint # 10/83
+def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 10/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+#
+    author_obj = Genius.gen_author_obj()
+    author_id = author_obj.author_id
+    metadata_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    response = client.delete(f"/authors/{author_id}/metadata")
+    assert response.status_code == 200
+    assert json.loads(response.data) is True
+    assert (
+        db.session.query(AuthorMetadata)
+        .filter_by(author_id=author_id)
+        .first()
+    ) is None
+    assert db.session.query(Author).get(author_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    author_obj = Genius.gen_author_obj()
+    author_id = author_obj.author_id
+    response = client.delete(f"/authors/{author_id}/metadata")
+    assert response.status_code == 404
+    assert db.session.query(Author).get(author_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    author_obj = Genius.gen_author_obj()
+    author_id = author_obj.author_id
+    metadata_no1_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    metadata_no2_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    metadata_no1_id = metadata_no1_obj.author_metadata_id
+    metadata_no2_id = metadata_no2_obj.author_metadata_id
+    response = client.delete(f"/authors/{author_id}/metadata")
+    assert response.status_code == 500
+    assert db.session.query(Author).get(author_id) is not None
+    assert db.session.query(AuthorMetadata).get(metadata_no1_id) is not None
+    assert db.session.query(AuthorMetadata).get(metadata_no2_id) is not None
+
 
 # def test_delete_authors_book_endpoint # 11/83
 

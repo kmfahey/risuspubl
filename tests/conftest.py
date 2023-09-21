@@ -230,8 +230,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         )
 
     @classmethod
-    def gen_author_metadata_obj(cls, author_obj):
-        author_metadata_obj = AuthorMetadata(**cls.gen_author_metadata_dict(author_obj))
+    def gen_author_metadata_obj(cls, author_id):
+        author_metadata_obj = AuthorMetadata(**cls.gen_author_metadata_dict(author_id))
         db.session.add(author_metadata_obj)
         db.session.commit()
         return author_metadata_obj
