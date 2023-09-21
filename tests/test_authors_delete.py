@@ -208,6 +208,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
                              + f"/{author_no2_obj.author_id}/books/{book_id}")
     assert response.status_code == 200
     assert json.loads(response.data) is True
+    # Testing that both rows in the authors table are still there, and
+    # the books row is gone
     assert db.session.query(Author).get(author_no1_obj.author_id) is not None
     assert db.session.query(Author).get(author_no2_obj.author_id) is not None
     assert db.session.query(Book).get(book_id) is None
@@ -239,6 +241,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
 
     response = client.delete(f"/authors/{author_obj.author_id}/{bogus_author_id}/books/{book_id}")
     assert response.status_code == 404
+    # Testing that the authors table row and the books table row are
+    # both still present
     assert db.session.query(Author).get(author_obj.author_id) is not None
     assert db.session.query(Book).get(book_id) is not None
     # Confirming that the authors_books row *isn't* gone.
@@ -263,6 +267,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
 
     response = client.delete(f"/authors/{bogus_author_id}/{author_obj.author_id}/books/{book_id}")
     assert response.status_code == 404
+    # Testing that the authors table row and the books table row are
+    # both still present
     assert db.session.query(Author).get(author_obj.author_id) is not None
     assert db.session.query(Book).get(book_id) is not None
     # Confirming that the authors_books row *isn't* gone.
@@ -285,6 +291,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
 
     response = client.delete(f"/authors/{bogus_author_id}/{author_obj.author_id}/books/{book_id}")
     assert response.status_code == 404
+    # Testing that the authors table row and the books table row are
+    # both still present
     assert db.session.query(Author).get(author_obj.author_id) is not None
     assert db.session.query(Book).get(book_id) is not None
     # Confirming that the authors_books row *isn't* gone.
@@ -304,10 +312,62 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
     response = client.delete(f"/authors/{author_no1_obj.author_id}"
                              + f"/{author_no2_obj.author_id}/books/{bogus_book_id}")
     assert response.status_code == 404
+    # Testing that both authors table rows are both still present
     assert db.session.query(Author).get(author_no1_obj.author_id) is not None
     assert db.session.query(Author).get(author_no2_obj.author_id) is not None
 
+    # 6.
+    # Testing whether RPC fails when the authors_books row for the first
+    # authors row mentioned isn't present
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    book_obj = Genius.gen_book_obj()
+    book_id = book_obj.book_id
+    authors_no1_books_obj = Genius.gen_authors_books_obj(author_no1_obj.author_id, book_id)
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/books/{book_id}")
+    assert response.status_code == 404
+    # Testing that both authors table rows and the books table row are
+    # still present
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+    assert db.session.query(Book).get(book_id) is not None
+    # Confirming that the one authors_books row is still present.
+    assert (
+        db.session.query(AuthorsBooks)
+        .filter_by(author_id=author_no1_obj.author_id, book_id=book_id)
+        .first()
+        is not None
+    )
 
+    # 7.
+    # Testing whether RPC fails when the authors_books row for the
+    # *second* authors row mentioned isn't present
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    book_obj = Genius.gen_book_obj()
+    book_id = book_obj.book_id
+    authors_no2_books_obj = Genius.gen_authors_books_obj(author_no2_obj.author_id, book_id)
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/books/{book_id}")
+    assert response.status_code == 404
+    # Testing that both authors table rows and the books table row are
+    # still present
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+    assert db.session.query(Book).get(book_id) is not None
+    # Confirming that the one authors_books row is still present.
+    assert (
+        db.session.query(AuthorsBooks)
+        .filter_by(author_id=author_no2_obj.author_id, book_id=book_id)
+        .first()
+        is not None
+    )
+
+
+# This test function is literally a copy-paste of the preceding one with
+# :'<,'>s/book/manuscript/g|'<,'>s/Book/Manuscript/g
+# DRY isn't so much of a thing in testing but even so :/
 def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client): # 12/83
     db = db_w_cleanup
     app, client = staged_app_client
@@ -424,5 +484,50 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client): # 
     assert db.session.query(Author).get(author_no1_obj.author_id) is not None
     assert db.session.query(Author).get(author_no2_obj.author_id) is not None
 
+    # 6.
+    # Testing whether RPC fails when the authors_manuscripts row for the first
+    # authors row mentioned isn't present
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_no1_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_no1_obj.author_id, manuscript_id)
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 404
+    # Testing that both authors table rows and the manuscripts table row are
+    # still present
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+    # Confirming that the one authors_manuscripts row is still present.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_no1_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is not None
+    )
 
-
+    # 7.
+    # Testing whether RPC fails when the authors_manuscripts row for the
+    # *second* authors row mentioned isn't present
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_no2_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_no2_obj.author_id, manuscript_id)
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 404
+    # Testing that both authors table rows and the manuscripts table row are
+    # still present
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+    # Confirming that the one authors_manuscripts row is still present.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_no2_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is not None
+    )
