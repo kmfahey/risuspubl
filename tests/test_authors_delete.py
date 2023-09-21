@@ -308,5 +308,121 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client): # 11/83
     assert db.session.query(Author).get(author_no2_obj.author_id) is not None
 
 
+def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client): # 12/83
+    db = db_w_cleanup
+    app, client = staged_app_client
 
-# def test_delete_authors_manuscript_endpoint # 12/83
+    # 1.
+    # Testing base case where manuscript object is deleted, likewise both
+    # authors_manuscripts objects.
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_no1_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_no1_obj.author_id, manuscript_id)
+    authors_no2_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_no2_obj.author_id, manuscript_id)
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 200
+    assert json.loads(response.data) is True
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is None
+    # Confirming that the authors_manuscripts rows are gone.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_no1_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is None
+    )
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_no2_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is None
+    )
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # 2.
+    # Testing whether RPC fails when the first author_id is bogus.
+    author_obj = Genius.gen_author_obj()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_obj.author_id:
+        bogus_author_id = random.randint(1, 10)
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
+
+    response = client.delete(f"/authors/{author_obj.author_id}/{bogus_author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 404
+    assert db.session.query(Author).get(author_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+    # Confirming that the authors_manuscripts row *isn't* gone.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is not None
+    )
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # 3.
+    # Testing whether RPC fails when the *second* author_id is bogus.
+    author_obj = Genius.gen_author_obj()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_obj.author_id:
+        bogus_author_id = random.randint(1, 10)
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
+
+    response = client.delete(f"/authors/{bogus_author_id}/{author_obj.author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 404
+    assert db.session.query(Author).get(author_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+    # Confirming that the authors_manuscripts row *isn't* gone.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is not None
+    )
+
+    # 4.
+    # Testing whether RPC fails when the *second* author_id is bogus.
+    author_obj = Genius.gen_author_obj()
+    bogus_author_id = random.randint(1, 10)
+    while bogus_author_id == author_obj.author_id:
+        bogus_author_id = random.randint(1, 10)
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
+
+    response = client.delete(f"/authors/{bogus_author_id}/{author_obj.author_id}/manuscripts/{manuscript_id}")
+    assert response.status_code == 404
+    assert db.session.query(Author).get(author_obj.author_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+    # Confirming that the authors_manuscripts row *isn't* gone.
+    assert (
+        db.session.query(AuthorsManuscripts)
+        .filter_by(author_id=author_obj.author_id, manuscript_id=manuscript_id)
+        .first()
+        is not None
+    )
+
+    # 5.
+    # Testing whether RPC fails when the manuscript_id is bogus.
+    author_no1_obj = Genius.gen_author_obj()
+    author_no2_obj = Genius.gen_author_obj()
+    bogus_manuscript_id = random.randint(1, 10)
+
+    response = client.delete(f"/authors/{author_no1_obj.author_id}"
+                             + f"/{author_no2_obj.author_id}/manuscripts/{bogus_manuscript_id}")
+    assert response.status_code == 404
+    assert db.session.query(Author).get(author_no1_obj.author_id) is not None
+    assert db.session.query(Author).get(author_no2_obj.author_id) is not None
+
+
+
