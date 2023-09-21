@@ -46,12 +46,12 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     assert book_obj.series_id is None
 
     # Checking that authors_books bridge table row was created
-    author_book_obj = (
+    authors_books_obj = (
         db.session.query(AuthorsBooks)
         .filter_by(author_id=author_id, book_id=book_obj.book_id)
         .first()
     )
-    assert author_book_obj is not None
+    assert authors_books_obj is not None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -67,12 +67,12 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     assert book_dict["series_id"] == book_obj.series_id
 
     # Checking that authors_books bridge table row was created
-    author_book_obj = (
+    authors_books_obj = (
         db.session.query(AuthorsBooks)
         .filter_by(author_id=author_id, book_id=book_obj.book_id)
         .first()
     )
-    assert author_book_obj is not None
+    assert authors_books_obj is not None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -80,10 +80,10 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     bogus_author_id = random.randint(1, 10)
     response = client.post(f"/authors/{bogus_author_id}/", json=book_dict)
     assert response.status_code == 404
-    author_book_obj = (
+    authors_books_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=bogus_author_id).first()
     )
-    assert author_book_obj is None
+    assert authors_books_obj is None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -94,10 +94,10 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     assert response.status_code == 400
 
     # Checking that authors_books bridge table row *wasn't* created
-    author_book_obj = (
+    authors_books_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=author_id).first()
     )
-    assert author_book_obj is None
+    assert authors_books_obj is None
 
 
 def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 3/83
@@ -121,12 +121,12 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert manuscript_obj.series_id is None
 
     # Checking that authors_manuscripts bridge table row was created
-    author_manuscript_obj = (
+    authors_manuscripts_obj = (
         db.session.query(AuthorsManuscripts)
         .filter_by(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
         .first()
     )
-    assert author_manuscript_obj is not None
+    assert authors_manuscripts_obj is not None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -144,12 +144,12 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert manuscript_dict["series_id"] == manuscript_obj.series_id
 
     # Checking that authors_manuscripts bridge table row was created
-    author_manuscript_obj = (
+    authors_manuscripts_obj = (
         db.session.query(AuthorsManuscripts)
         .filter_by(author_id=author_id, manuscript_id=manuscript_obj.manuscript_id)
         .first()
     )
-    assert author_manuscript_obj is not None
+    assert authors_manuscripts_obj is not None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -158,10 +158,10 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert response.status_code == 404
 
     # Checking that authors_manuscripts bridge table row *wasn't* created
-    author_manuscript_obj = (
+    authors_manuscripts_obj = (
         db.session.query(AuthorsManuscripts).filter_by(author_id=author_id).first()
     )
-    assert author_manuscript_obj is None
+    assert authors_manuscripts_obj is None
 
 
 def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/83
@@ -281,11 +281,11 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     author_no1_book_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=author_no1_id).first()
     )
-    bogus_author_book_obj = (
+    bogus_authors_books_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=author_no1_id).first()
     )
     assert author_no1_book_obj is None
-    assert bogus_author_book_obj is None
+    assert bogus_authors_books_obj is None
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -300,13 +300,13 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     assert response.status_code == 404
 
     # Checking that authors_books bridge table rows were created
-    bogus_author_book_obj = (
+    bogus_authors_books_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=author_no1_id).first()
     )
     author_no2_book_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=author_no2_id).first()
     )
-    assert bogus_author_book_obj is None
+    assert bogus_authors_books_obj is None
     assert author_no2_book_obj is None
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -450,7 +450,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     assert response.status_code == 404
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
-    bogus_author_manuscript_obj = (
+    bogus_authors_manuscripts_obj = (
         db.session.query(AuthorsManuscripts)
         .filter_by(author_id=bogus_author_id)
         .first()
@@ -460,7 +460,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         .filter_by(author_id=author_no2_id)
         .first()
     )
-    assert bogus_author_manuscript_obj is None
+    assert bogus_authors_manuscripts_obj is None
     assert author_no2_manuscript_obj is None
 
     DbBasedTester.cleanup__empty_all_tables()

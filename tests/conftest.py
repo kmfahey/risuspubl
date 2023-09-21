@@ -12,6 +12,8 @@ import psycopg2
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
+    AuthorsBooks,
+    AuthorsManuscripts,
     Book,
     Editor,
     Manuscript,
@@ -209,7 +211,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         retdict = dict(
             advance=random.randint(10, 20) * 1000,
             due_date=cls.faker_obj.date_between_dates(
-                date.today() + timedelta(days=1), date(date.today().year + 2, date.today().month, 1)
+                date.today() + timedelta(days=1),
+                date(date.today().year + 2, date.today().month, 1),
             ).isoformat(),
             series_id=None,
             working_title=random.choice(cls.manuscript_titles),
@@ -239,6 +242,30 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         db.session.add(author_obj)
         db.session.commit()
         return author_obj
+
+    @classmethod
+    def gen_authors_books_obj(cls, author_id, book_id):
+        ab_insert = AuthorsBooks.insert().values(author_id=author_id, book_id=book_id)
+        db.session.execute(ab_insert)
+        db.session.commit()
+        return (
+            db.session.query(AuthorsBooks)
+            .filter_by(author_id=author_id, book_id=book_id)
+            .first()
+        )
+
+    @classmethod
+    def gen_authors_manuscripts_obj(cls, author_id, manuscript_id):
+        ab_insert = AuthorsManuscripts.insert().values(
+            author_id=author_id, manuscript_id=manuscript_id
+        )
+        db.session.execute(ab_insert)
+        db.session.commit()
+        return (
+            db.session.query(AuthorsManuscripts)
+            .filter_by(author_id=author_id, manuscript_id=manuscript_id)
+            .first()
+        )
 
     @classmethod
     def gen_book_obj(cls, editor_id=None, series_id=None):
