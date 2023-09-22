@@ -340,7 +340,9 @@ class DbBasedTester:
             assert book_dict["edition_number"] == book_obj.edition_number
             assert book_dict["editor_id"] == book_obj.editor_id
             assert book_dict["is_in_print"] == book_obj.is_in_print
-            assert book_dict["publication_date"] == book_obj.publication_date.isoformat()
+            assert (
+                book_dict["publication_date"] == book_obj.publication_date.isoformat()
+            )
             assert book_dict["title"] == book_obj.title
 
         elif isinstance(book_data, Book):
@@ -349,11 +351,15 @@ class DbBasedTester:
             assert resp_jsobj["edition_number"] == book_obj.edition_number
             assert resp_jsobj["editor_id"] == book_obj.editor_id
             assert resp_jsobj["is_in_print"] == book_obj.is_in_print
-            assert resp_jsobj["publication_date"] == book_obj.publication_date.isoformat()
+            assert (
+                resp_jsobj["publication_date"] == book_obj.publication_date.isoformat()
+            )
             assert resp_jsobj["title"] == book_obj.title
 
         else:
-            raise TypeError("second argument had unexpected type " + type(book_data).__name__)
+            raise TypeError(
+                "second argument had unexpected type " + type(book_data).__name__
+            )
 
         assert resp_jsobj["book_id"] == book_obj.book_id
 
@@ -372,7 +378,9 @@ class DbBasedTester:
             assert manuscript_dict["due_date"] == resp_jsobj["due_date"]
             assert manuscript_dict["advance"] == resp_jsobj["advance"]
 
-            manuscript_obj = db.session.query(Manuscript).get(resp_jsobj["manuscript_id"])
+            manuscript_obj = db.session.query(Manuscript).get(
+                resp_jsobj["manuscript_id"]
+            )
             assert manuscript_dict["editor_id"] == manuscript_obj.editor_id
             assert manuscript_dict["working_title"] == manuscript_obj.working_title
             assert manuscript_dict["due_date"] == manuscript_obj.due_date.isoformat()
@@ -387,7 +395,9 @@ class DbBasedTester:
             assert resp_jsobj["advance"] == manuscript_obj.advance
 
         else:
-            raise TypeError("second argument had unexpected type " + type(manuscript_data).__name__)
+            raise TypeError(
+                "second argument had unexpected type " + type(manuscript_data).__name__
+            )
 
         assert resp_jsobj["manuscript_id"] == manuscript_obj.manuscript_id
 
@@ -426,7 +436,9 @@ class DbBasedTester:
             assert resp_jsobj["photo_url"] == metadata_obj.photo_url
 
         else:
-            raise TypeError("second argument had unexpected type " + type(metadata_data).__name__)
+            raise TypeError(
+                "second argument had unexpected type " + type(metadata_data).__name__
+            )
 
         assert resp_jsobj["author_id"] == metadata_obj.author_id
         assert resp_jsobj["author_metadata_id"] == metadata_obj.author_metadata_id

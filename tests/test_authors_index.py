@@ -1,14 +1,13 @@
 #!/usr/bin/python3
 
 import os
-import random
-
 import pprint
 import json
+
 import pytest
 from risuspubl.dbmodels import Author
 
-from conftest import Genius, DbBasedTester
+from conftest import Genius
 
 
 # Set environment variable for Flask's configuration

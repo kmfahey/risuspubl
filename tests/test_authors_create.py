@@ -6,7 +6,7 @@ import random
 import pprint
 import json
 import pytest
-from risuspubl.dbmodels import Author, AuthorsBooks, AuthorsManuscripts
+from risuspubl.dbmodels import AuthorsBooks, AuthorsManuscripts
 
 from conftest import Genius, DbBasedTester
 
@@ -437,9 +437,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no1_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no1_id).first()
     )
     author_no2_manuscript_obj = (
         db.session.query(AuthorsManuscripts)
@@ -468,9 +466,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         .first()
     )
     author_no2_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no2_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no2_id).first()
     )
     assert bogus_authors_manuscripts_obj is None
     assert author_no2_manuscript_obj is None
@@ -487,14 +483,10 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no1_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no1_id).first()
     )
     author_no2_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no2_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no2_id).first()
     )
     assert author_no1_manuscript_obj is None
     assert author_no2_manuscript_obj is None
@@ -511,14 +503,10 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no1_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no1_id).first()
     )
     author_no2_manuscript_obj = (
-        db.session.query(AuthorsManuscripts)
-        .filter_by(author_id=author_no2_id)
-        .first()
+        db.session.query(AuthorsManuscripts).filter_by(author_id=author_no2_id).first()
     )
     assert author_no1_manuscript_obj is None
     assert author_no2_manuscript_obj is None

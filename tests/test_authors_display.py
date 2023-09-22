@@ -7,7 +7,6 @@ import pprint
 import json
 import pytest
 import operator
-from risuspubl.dbmodels import Author
 
 from conftest import Genius, DbBasedTester
 
@@ -41,7 +40,7 @@ def test_display_author_book_by_id_endpoint(db_w_cleanup, staged_app_client):  #
     assert response.status_code == 404
 
 
-## Testing the GET /authors/<id>/books endpoint
+# Testing the GET /authors/<id>/books endpoint
 def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):  # 14/83
     db = db_w_cleanup
     app, client = staged_app_client
@@ -83,7 +82,7 @@ def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):  # 14/8
 
 
 #  Testing the GET /authors/<id> endpoint
-def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client): # 15/83
+def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 15/83
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -100,19 +99,103 @@ def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client): # 15/83
 
 
 # Testing the GET /authors/<id>/manuscripts/<id> endpoint
-# def test_display_author_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client): # 16/83
-#   db = db_w_cleanup
-#   app, client = staged_app_client
+def test_display_author_manuscript_by_id_endpoint(
+    db_w_cleanup, staged_app_client
+):  # 16/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    # Testing base case
+    author_obj = Genius.gen_author_obj()
+    manuscript_obj = Genius.gen_manuscript_obj()
+    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+        author_obj.author_id, manuscript_obj.manuscript_id
+    )
+
+    response = client.get(
+        f"/authors/{author_obj.author_id}/manuscripts/{manuscript_obj.manuscript_id}"
+    )
+    assert response.status_code == 200
+    DbBasedTester.test_manuscript_resp(response, manuscript_obj)
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_author_id = random.randint(1, 10)
+    bogus_manuscript_id = random.randint(1, 10)
+    response = client.get(
+        f"/authors/{bogus_author_id}/manuscripts/{bogus_manuscript_id}"
+    )
+    assert response.status_code == 404
+
 
 # Testing the GET /authors/<id>/manuscripts endpoint
-# def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client): # 17/83
-#   db = db_w_cleanup
-#   app, client = staged_app_client
+def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client):  # 17/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    author_obj = Genius.gen_author_obj()
+    manuscript_objs_l = [Genius.gen_manuscript_obj() for _ in range(3)]
+    authors_manuscripts_objs_l = [
+        Genius.gen_authors_manuscripts_obj(
+            author_obj.author_id, manuscript_obj.manuscript_id
+        )
+        for manuscript_obj in manuscript_objs_l
+    ]
+
+    response = client.get(f"/authors/{author_obj.author_id}/manuscripts")
+    assert response.status_code == 200
+    manuscript_jsobj_l = json.loads(response.data)
+    manuscript_jsobj_obj_matches = dict()
+    for manuscript_obj in manuscript_objs_l:
+        manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
+            [manuscript_obj],
+            list(
+                filter(
+                    lambda jsobj: jsobj["manuscript_id"]
+                    == manuscript_obj.manuscript_id,
+                    manuscript_jsobj_l,
+                )
+            ),
+        )
+
+    for _, (manuscript_obj, manuscript_jsobj) in manuscript_jsobj_obj_matches.items():
+        assert manuscript_jsobj["editor_id"] == manuscript_obj.editor_id
+        assert manuscript_jsobj["working_title"] == manuscript_obj.working_title
+        assert manuscript_jsobj["due_date"] == manuscript_obj.due_date.isoformat()
+        assert manuscript_jsobj["advance"] == manuscript_obj.advance
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_author_id = random.randint(1, 10)
+    response = client.get(f"/authors/{bogus_author_id}/manuscripts")
+    assert response.status_code == 404
+
 
 # Testing the GET /authors/<id>/metadata endpoint
-# def test_display_author_metadata_endpoint(db_w_cleanup, staged_app_client): # 18/83
-#   db = db_w_cleanup
-#   app, client = staged_app_client
+def test_display_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 18/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    author_obj = Genius.gen_author_obj()
+    metadata_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+
+    response = client.get(f"/authors/{author_obj.author_id}/metadata")
+    DbBasedTester.test_metadata_resp(response, metadata_obj)
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_author_id = random.randint(1, 10)
+    response = client.get(f"/authors/{bogus_author_id}/metadata")
+    assert response.status_code == 404
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    author_obj = Genius.gen_author_obj()
+    metadata_no1_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    metadata_no2_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    response = client.get(f"/authors/{author_obj.author_id}/metadata")
+    assert response.status_code == 500
+
 
 # Testing the GET /authors/<id>/<id>/books/<id> endpoint
 # def test_display_authors_book_by_id_endpoint(db_w_cleanup, staged_app_client): # 19/83
