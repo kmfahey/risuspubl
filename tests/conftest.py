@@ -298,6 +298,31 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
 class DbBasedTester:
     @classmethod
+    def test_author_resp(cls, response, author_data):
+        assert response.status_code == 200, response.data
+
+        resp_jsobj = response.get_json()
+        if isinstance(author_data, dict):
+            author_dict = author_data
+
+            assert author_dict["first_name"] == resp_jsobj["first_name"]
+            assert author_dict["last_name"] == resp_jsobj["last_name"]
+
+            author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
+            assert author_dict["first_name"] == author_obj.first_name
+            assert author_dict["last_name"] == author_obj.last_name
+
+        elif isinstance(author_data, Author):
+            author_obj = author_data
+
+            assert resp_jsobj["first_name"] == author_obj.first_name
+            assert resp_jsobj["last_name"] == author_obj.last_name
+
+        assert resp_jsobj["author_id"] == author_obj.author_id
+
+        return resp_jsobj, author_obj
+
+    @classmethod
     def test_book_resp(cls, response, book_data):
         assert response.status_code == 200, response.data
 
@@ -407,31 +432,6 @@ class DbBasedTester:
         assert resp_jsobj["author_metadata_id"] == metadata_obj.author_metadata_id
 
         return resp_jsobj, metadata_obj
-
-    @classmethod
-    def test_author_resp(cls, response, author_data):
-        assert response.status_code == 200, response.data
-
-        resp_jsobj = response.get_json()
-        if isinstance(author_data, dict):
-            author_dict = author_data
-
-            assert author_dict["first_name"] == resp_jsobj["first_name"]
-            assert author_dict["last_name"] == resp_jsobj["last_name"]
-
-            author_obj = db.session.query(Author).get(resp_jsobj["author_id"])
-            assert author_dict["first_name"] == author_obj.first_name
-            assert author_dict["last_name"] == author_obj.last_name
-
-        elif isinstance(author_data, Author):
-            author_obj = author_data
-
-            assert resp_jsobj["first_name"] == author_obj.first_name
-            assert resp_jsobj["last_name"] == author_obj.last_name
-
-        assert resp_jsobj["author_id"] == author_obj.author_id
-
-        return resp_jsobj, author_obj
 
     @classmethod
     def cleanup__empty_all_tables(cls):
