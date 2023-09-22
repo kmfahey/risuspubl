@@ -596,10 +596,10 @@ def display_table_row_by_id_function(model_class):
 
     def _internal_display_table_row_by_id(model_id):
         try:
-            model_class_obj = self.model_class.query.get_or_404(model_id)
+            model_class_obj = model_class.query.get_or_404(model_id)
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
-            return self.handle_exception(exception)
+            return handle_exception(exception)
 
     return _internal_display_table_row_by_id
 

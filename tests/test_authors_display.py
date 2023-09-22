@@ -82,10 +82,22 @@ def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):  # 14/8
     assert response.status_code == 404
 
 
-# Testing the GET /authors/<id> endpoint
-# def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client): # 15/83
-#   db = db_w_cleanup
-#   app, client = staged_app_client
+#  Testing the GET /authors/<id> endpoint
+def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client): # 15/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    author_obj = Genius.gen_author_obj()
+
+    response = client.get(f"/authors/{author_obj.author_id}")
+    DbBasedTester.test_author_resp(response, author_obj)
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_author_id = random.randint(1, 10)
+    response = client.get(f"/authors/{bogus_author_id}")
+    assert response.status_code == 404
+
 
 # Testing the GET /authors/<id>/manuscripts/<id> endpoint
 # def test_display_author_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client): # 16/83
