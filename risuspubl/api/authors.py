@@ -186,7 +186,9 @@ def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_i
 # and display_authors_manuscript_by_id() to generate a list of Book objects
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
-def _authors_shared_manuscript_ids_endpoint(author1_id: int, author2_id: int) -> set:
+def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> set:
+    if author1_id == author2_id:
+        raise ValueError("author1_id and author2_id were identical")
     author1_obj = Author.query.get_or_404(author1_id)
     author2_obj = Author.query.get_or_404(author2_id)
     # The manuscripts attribute on an Author object comprises the Manuscript
@@ -230,6 +232,8 @@ def display_authors_manuscripts_endpoint(author1_id: int, author2_id: int):
     :return:        a flask.Response object
     """
     try:
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id were identical")
         # This utility function looks up which manuscript_ids are associated
         # with both author_ids in authors_manuscripts and returns Manuscript()
         # objects for those manuscript_ids.
@@ -754,7 +758,6 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
         return handle_exception(exception)
 
 
-# HERE
 @blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["POST"])
 def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     """
