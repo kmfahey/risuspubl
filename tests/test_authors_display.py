@@ -9,7 +9,7 @@ import pytest
 import operator
 import itertools
 
-from conftest import Genius, DbBasedTester
+from conftest import Genius, DbBasedTester, randint_excluding
 from risuspubl.dbmodels import Author
 
 
@@ -224,9 +224,7 @@ def test_display_authors_book_by_id_endpoint(db_w_cleanup, staged_app_client):  
 
     # Testing for 404 error when the 1st author_id is bogus
     author_no2_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no2_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no2_obj.author_id)
     book_obj = Genius.gen_book_obj()
     authors_no2_books_obj = Genius.gen_authors_books_obj(
         author_no2_obj.author_id, book_obj.book_id
@@ -241,9 +239,7 @@ def test_display_authors_book_by_id_endpoint(db_w_cleanup, staged_app_client):  
 
     # Testing for 404 error when the 2nd author_id is bogus
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
     book_obj = Genius.gen_book_obj()
     authors_no1_books_obj = Genius.gen_authors_books_obj(
         author_no1_obj.author_id, book_obj.book_id
@@ -325,8 +321,7 @@ def test_display_authors_books_endpoint(db_w_cleanup, staged_app_client):  # 20/
 
     # Testing for a 404 error when the 1st author_id is bogus
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
         bogus_author_id = random.randint(1, 10)
     book_objs_l = [Genius.gen_book_obj() for _ in range(3)]
     authors_no1_books_objs_l = [
@@ -342,8 +337,7 @@ def test_display_authors_books_endpoint(db_w_cleanup, staged_app_client):  # 20/
 
     # Testing for a 404 error when the 2nd author_id is bogus
     author_no2_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no2_obj.author_id:
+    bogus_author_id = randint_excluding(1, 10, author_no2_obj.author_id)
         bogus_author_id = random.randint(1, 10)
     book_objs_l = [Genius.gen_book_obj() for _ in range(3)]
     authors_no2_books_objs_l = [
@@ -394,9 +388,7 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):  # 21
 
     # Testing for 404 error when 1st author_id is bogus
     author_no2_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no2_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no2_obj.author_id)
     response = client.get(f"/authors/{bogus_author_id}/{author_no2_obj.author_id}")
     assert response.status_code == 404, response.data
 
@@ -404,18 +396,14 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):  # 21
 
     # Testing for 404 error when 2nd author_id is bogus
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
     response = client.get(f"/authors/{author_no1_obj.author_id}/{bogus_author_id}")
     assert response.status_code == 404, response.data
 
     DbBasedTester.cleanup__empty_all_tables()
 
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
     response = client.get(f"/authors/{author_no1_obj.author_id}/{bogus_author_id}")
     assert response.status_code == 404, response.data
 
@@ -447,9 +435,7 @@ def test_display_authors_manuscript_by_id_endpoint(
 
     # Testing for 404 error when the 1st author_id is bogus
     author_no2_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no2_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no2_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     authors_no2_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
         author_no2_obj.author_id, manuscript_obj.manuscript_id
@@ -464,9 +450,7 @@ def test_display_authors_manuscript_by_id_endpoint(
 
     # Testing for 404 error when the 2nd author_id is bogus
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     authors_no1_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
         author_no1_obj.author_id, manuscript_obj.manuscript_id
@@ -552,9 +536,7 @@ def test_display_authors_manuscripts_endpoint(db_w_cleanup, staged_app_client): 
 
     # Testing for a 404 error when the 1st author_id is bogus
     author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
     manuscript_objs_l = [Genius.gen_manuscript_obj() for _ in range(3)]
     authors_no1_manuscripts_objs_l = [
         Genius.gen_authors_manuscripts_obj(
@@ -571,9 +553,7 @@ def test_display_authors_manuscripts_endpoint(db_w_cleanup, staged_app_client): 
 
     # Testing for a 404 error when the 2nd author_id is bogus
     author_no2_obj = Genius.gen_author_obj()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no2_obj.author_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no2_obj.author_id)
     manuscript_objs_l = [Genius.gen_manuscript_obj() for _ in range(3)]
     authors_no2_manuscripts_objs_l = [
         Genius.gen_authors_manuscripts_obj(

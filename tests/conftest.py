@@ -29,9 +29,9 @@ os.environ[
 ] = "testing"  # This should be set before creating the app instance.
 
 
-def randint_excepting(lb, ub, exclint):
+def randint_excluding(lb, ub, *exclints):
     intval = random.randint(lb, ub)
-    while intval == exclint:
+    while any(intval == exclint for exclint in exclints):
         intval = random.randint(lb, ub)
     return intval
 

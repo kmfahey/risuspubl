@@ -8,7 +8,7 @@ import json
 import pytest
 from risuspubl.dbmodels import AuthorsBooks, AuthorsManuscripts
 
-from conftest import Genius, DbBasedTester
+from conftest import Genius, DbBasedTester, randint_excluding
 
 
 # Set environment variable for Flask's configuration
@@ -280,9 +280,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
 
     # Testing with bogus author_id, first position
     author_no1_id, author_no2_id, book_dict = _setup()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_id, author_no2_id)
     response = client.post(
         f"/authors/{author_no1_id}/{bogus_author_id}/books", json=book_dict
     )
@@ -302,9 +300,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
 
     # Testing with bogus author_id, second position
     author_no1_id, author_no2_id, book_dict = _setup()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_id, author_no2_id)
     response = client.post(
         f"/authors/{bogus_author_id}/{author_no2_id}/books", json=book_dict
     )
@@ -427,9 +423,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # Testing with bogus author_id, first position
     author_no1_id, author_no2_id, manuscript_dict = _setup()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_id, author_no2_id)
     response = client.post(
         f"/authors/{author_no1_id}/{bogus_author_id}/manuscripts", json=manuscript_dict
     )
@@ -451,9 +445,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # Testing with bogus author_id, second position
     author_no1_id, author_no2_id, manuscript_dict = _setup()
-    bogus_author_id = random.randint(1, 10)
-    while bogus_author_id == author_no1_id or bogus_author_id == author_no2_id:
-        bogus_author_id = random.randint(1, 10)
+    bogus_author_id = randint_excluding(1, 10, author_no1_id, author_no2_id)
     response = client.post(
         f"/authors/{bogus_author_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
