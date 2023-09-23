@@ -629,12 +629,12 @@ def display_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
 
     def _internal_display_table_row_by_id_and_foreign_key(outer_id, inner_id):
         try:
-            self.outer_class.query.get_or_404(outer_id)
+            outer_class.query.get_or_404(outer_id)
             # An inner_class object for every row in the inner_class table with
             # the given outer_id.
             inner_class_objs = list(
-                self.inner_class.query.where(
-                    getattr(self.inner_class, self.outer_id_column) == outer_id
+                inner_class.query.where(
+                    getattr(inner_class, self.outer_id_column) == outer_id
                 )
             )
             # Iterating across the list looking for the self.inner_class object
@@ -645,7 +645,7 @@ def display_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
                     return jsonify(inner_class_obj.serialize())
             return abort(404)
         except Exception as exception:
-            return self.handle_exception(exception)
+            return handle_exception(exception)
 
     return _internal_display_table_row_by_id_and_foreign_key
 
@@ -674,14 +674,14 @@ def update_table_row_by_id_function(model_class):
             # dict argument.
             model_class_obj = update_model_obj(
                 model_id,
-                self.model_class,
-                generate_create_update_argd(self.model_class, request_json),
+                model_class,
+                generate_create_update_argd(model_class, request_json),
             )
             db.session.add(model_class_obj)
             db.session.commit()
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
-            return self.handle_exception(exception)
+            return handle_exception(exception)
 
     return _internal_update_table_row_by_id
 
@@ -713,14 +713,14 @@ def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
         try:
             # Verifying that a row in the outer table with a primary key equal
             # to outer_id exists, else it's a 404.
-            self.outer_class.query.get_or_404(outer_id)
+            outer_class.query.get_or_404(outer_id)
 
             # Verifying that a row exists in the inner table with a foreign key
             # from the outer table, else it's a 404.
             if not any(
                 getattr(inner_class_obj, self.inner_id_column) == inner_id
-                for inner_class_obj in self.inner_class.query.where(
-                    getattr(self.inner_class, self.outer_id_column) == outer_id
+                for inner_class_obj in inner_class.query.where(
+                    getattr(inner_class, self.outer_id_column) == outer_id
                 )
             ):
                 return abort(404)
@@ -729,15 +729,15 @@ def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
             # update it against request.json.
             inner_class_obj = update_model_obj(
                 inner_id,
-                self.inner_class,
+                inner_class,
                 generate_create_update_argd(
-                    self.inner_class, request_json, **{self.outer_id_column: outer_id}
+                    inner_class, request_json, **{self.outer_id_column: outer_id}
                 ),
             )
             db.session.add(inner_class_obj)
             db.session.commit()
             return jsonify(inner_class_obj.serialize())
         except Exception as exception:
-            return self.handle_exception(exception)
+            return handle_exception(exception)
 
     return _internal_update_table_row_by_id_and_foreign_key
