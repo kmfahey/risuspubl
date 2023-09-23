@@ -171,7 +171,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         )
 
     @classmethod
-    def gen_author_metadata_dict(cls, author_id=None):
+    def gen_metadata_dict(cls, author_id=None):
         photo_res_horiz = random.randint(200, 1000)
         photo_res_vert = math.floor(photo_res_horiz * 1.5)
         retdict = dict(
@@ -237,8 +237,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         )
 
     @classmethod
-    def gen_author_metadata_obj(cls, author_id):
-        author_metadata_obj = AuthorMetadata(**cls.gen_author_metadata_dict(author_id))
+    def gen_metadata_obj(cls, author_id):
+        author_metadata_obj = AuthorMetadata(**cls.gen_metadata_dict(author_id))
         db.session.add(author_metadata_obj)
         db.session.commit()
         return author_metadata_obj

@@ -137,7 +137,9 @@ def display_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int)
     :return:        A flask.Response object.
     """
     try:
-        return display_manuscript_by_manuscript_id_and_series_id(series_id, manuscript_id)
+        return display_manuscript_by_manuscript_id_and_series_id(
+            series_id, manuscript_id
+        )
     except Exception as exception:
         return handle_exception(exception)
 

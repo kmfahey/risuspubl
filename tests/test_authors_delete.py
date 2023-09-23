@@ -31,7 +31,7 @@ def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):  # 7/83
     author_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_books_obj = Genius.gen_authors_books_obj(author_obj.author_id, book_id)
+    Genius.gen_authors_books_obj(author_obj.author_id, book_id)
 
     response = client.delete(f"/authors/{author_obj.author_id}/books/{book_id}")
     assert response.status_code == 200
@@ -76,13 +76,12 @@ def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 8/83
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
 
-    authors_books_obj = Genius.gen_authors_books_obj(
+    Genius.gen_authors_books_obj(
         author_obj.author_id, book_obj.book_id
     )
-    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_obj.manuscript_id
     )
-
     response = client.delete(f"/authors/{author_obj.author_id}")
     assert response.status_code == 200
     assert json.loads(response.data) is True
@@ -115,7 +114,7 @@ def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     author_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_id
     )
 
@@ -161,7 +160,7 @@ def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 10
     #
     author_obj = Genius.gen_author_obj()
     author_id = author_obj.author_id
-    metadata_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    Genius.gen_metadata_obj(author_obj.author_id)
     response = client.delete(f"/authors/{author_id}/metadata")
     assert response.status_code == 200
     assert json.loads(response.data) is True
@@ -182,8 +181,8 @@ def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 10
 
     author_obj = Genius.gen_author_obj()
     author_id = author_obj.author_id
-    metadata_no1_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
-    metadata_no2_obj = Genius.gen_author_metadata_obj(author_obj.author_id)
+    metadata_no1_obj = Genius.gen_metadata_obj(author_obj.author_id)
+    metadata_no2_obj = Genius.gen_metadata_obj(author_obj.author_id)
     metadata_no1_id = metadata_no1_obj.author_metadata_id
     metadata_no2_id = metadata_no2_obj.author_metadata_id
     response = client.delete(f"/authors/{author_id}/metadata")
@@ -205,10 +204,10 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_no1_books_obj = Genius.gen_authors_books_obj(
+    Genius.gen_authors_books_obj(
         author_no1_obj.author_id, book_id
     )
-    authors_no2_books_obj = Genius.gen_authors_books_obj(
+    Genius.gen_authors_books_obj(
         author_no2_obj.author_id, book_id
     )
     response = client.delete(
@@ -244,8 +243,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_books_obj = Genius.gen_authors_books_obj(author_obj.author_id, book_id)
-
+    Genius.gen_authors_books_obj(author_obj.author_id, book_id)
     response = client.delete(
         f"/authors/{author_obj.author_id}/{bogus_author_id}/books/{book_id}"
     )
@@ -270,7 +268,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_books_obj = Genius.gen_authors_books_obj(author_obj.author_id, book_id)
+    Genius.gen_authors_books_obj(author_obj.author_id, book_id)
 
     response = client.delete(
         f"/authors/{bogus_author_id}/{author_obj.author_id}/books/{book_id}"
@@ -294,8 +292,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_books_obj = Genius.gen_authors_books_obj(author_obj.author_id, book_id)
-
+    Genius.gen_authors_books_obj(author_obj.author_id, book_id)
     response = client.delete(
         f"/authors/{bogus_author_id}/{author_obj.author_id}/books/{book_id}"
     )
@@ -334,7 +331,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_no1_books_obj = Genius.gen_authors_books_obj(
+    Genius.gen_authors_books_obj(
         author_no1_obj.author_id, book_id
     )
     response = client.delete(
@@ -362,7 +359,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    authors_no2_books_obj = Genius.gen_authors_books_obj(
+    Genius.gen_authors_books_obj(
         author_no2_obj.author_id, book_id
     )
     response = client.delete(
@@ -400,10 +397,10 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_no1_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_no1_obj.author_id, manuscript_id
     )
-    authors_no2_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_no2_obj.author_id, manuscript_id
     )
     response = client.delete(
@@ -437,7 +434,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_id
     )
 
@@ -463,7 +460,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_id
     )
 
@@ -487,7 +484,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_id
     )
 
@@ -526,7 +523,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_no1_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_no1_obj.author_id, manuscript_id
     )
     response = client.delete(
@@ -554,7 +551,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    authors_no2_manuscripts_obj = Genius.gen_authors_manuscripts_obj(
+    Genius.gen_authors_manuscripts_obj(
         author_no2_obj.author_id, manuscript_id
     )
     response = client.delete(

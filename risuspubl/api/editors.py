@@ -144,7 +144,9 @@ def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int)
     :return:          A flask.Response object.
     """
     try:
-        return display_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id)
+        return display_manuscript_by_manuscript_id_and_editor_id(
+            editor_id, manuscript_id
+        )
     except Exception as exception:
         return handle_exception(exception)
 
@@ -261,6 +263,8 @@ def delete_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        return delete_manuscript_by_manuscript_id_and_editor_id(editor_id, manuscript_id)
+        return delete_manuscript_by_manuscript_id_and_editor_id(
+            editor_id, manuscript_id
+        )
     except Exception as exception:
         return handle_exception(exception)

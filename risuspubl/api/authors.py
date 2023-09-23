@@ -468,29 +468,31 @@ def update_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
-        result = tuple(
-            db.session.execute(
-                "SELECT author_metadata_id FROM authors_metadata WHERE "
-                f"author_id = {author_id};"
-            )
+        _check_json_req_props(
+            AuthorMetadata, request.json, {"author_metadata_id"}, chk_missing=False
         )
-        if len(result) == 0:
-            return abort(404)
-        elif len(result) > 1:
-            return Response(
-                f"internal error: author_id {author_id} matches more than one row in "
-                "authors_metadata table",
-                status=500,
-            )
-        ((author_metadata_id,),) = result
-        author_metadata_obj = update_model_obj(
-            author_metadata_id,
-            AuthorMetadata,
-            generate_create_update_argd(AuthorMetadata, request.json),
+        author_metadata_objs = (
+            db.session.query(AuthorMetadata).filter_by(author_id=author_id).all()
         )
-        db.session.add(author_metadata_obj)
-        db.session.commit()
-        return jsonify(author_metadata_obj.serialize())
+        match len(author_metadata_objs):
+            case 0:
+                return abort(404)
+            case 1:
+                author_metadata_id = author_metadata_objs[0].author_metadata_id
+                author_metadata_obj = update_model_obj(
+                    author_metadata_id,
+                    AuthorMetadata,
+                    generate_create_update_argd(AuthorMetadata, request.json),
+                )
+                db.session.add(author_metadata_obj)
+                db.session.commit()
+                return jsonify(author_metadata_obj.serialize())
+            case _:
+                return Response(
+                    f"internal error: author_id {author_id} matches more than "
+                    + "one row in authors_metadata table",
+                    status=500,
+                )
     except Exception as exception:
         return handle_exception(exception)
 
@@ -513,6 +515,9 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
     :return:     a flask.Response object
     """
     try:
+        _check_json_req_props(
+            Book, request.json, {"book_id"}, {"series_id"}, chk_missing=False
+        )
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_book_objs = list(
@@ -557,6 +562,13 @@ def update_authors_manuscript_endpoint(
     :return:        a flask.Response object
     """
     try:
+        _check_json_req_props(
+            Manuscript,
+            request.json,
+            {"manuscript_id"},
+            {"series_id"},
+            chk_missing=False,
+        )
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         a1_manuscript_objs = list(
@@ -619,7 +631,9 @@ def update_author_book_endpoint(author_id: int, book_id: int):
     :return:    a flask.Response object
     """
     try:
-        _check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
+        _check_json_req_props(
+            Book, request.json, {"book_id"}, {"series_id"}, chk_missing=False
+        )
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
         # Verifying that this author_id is associated with this book_id in
@@ -655,6 +669,9 @@ def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     :return:        a flask.Response object
     """
     try:
+        _check_json_req_props(
+            Manuscript, request.json, {"manuscript_id"}, chk_missing=False
+        )
         author_obj = Author.query.get_or_404(author_id)
         manuscript_objs = list(
             filter(

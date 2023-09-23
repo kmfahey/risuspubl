@@ -177,9 +177,9 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
     def _setup(w_author_id=False):
         author_obj = Genius.gen_author_obj()
         if w_author_id:
-            metadata_dict = Genius.gen_author_metadata_dict(author_obj.author_id)
+            metadata_dict = Genius.gen_metadata_dict(author_obj.author_id)
         else:
-            metadata_dict = Genius.gen_author_metadata_dict()
+            metadata_dict = Genius.gen_metadata_dict()
         return author_obj, metadata_dict
 
     # Testing base case
@@ -201,7 +201,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
     DbBasedTester.cleanup__empty_all_tables()
 
     # Testing for 404 if the author_id is bogus
-    metadata_dict = Genius.gen_author_metadata_dict()
+    metadata_dict = Genius.gen_metadata_dict()
     bogus_author_id = random.randint(1, 10)
     failed_response = client.post(
         f"/authors/{bogus_author_id}/metadata", json=metadata_dict
