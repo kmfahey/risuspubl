@@ -776,7 +776,9 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        _check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
+        _check_json_req_props(
+            Manuscript, request.json, {"manuscript_id"}, {"series_id"}
+        )
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(

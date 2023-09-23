@@ -18,14 +18,18 @@ postgres_db = "template1"
 
 DB_USER = decouple.config("DB_USER")
 DB_PASSWORD = decouple.config("DB_PASSWORD")
-DB_HOST = decouple.config('DB_HOST')
-DB_PORT = decouple.config('DB_PORT')
+DB_HOST = decouple.config("DB_HOST")
+DB_PORT = decouple.config("DB_PORT")
 DB_NAME = decouple.config("DB_NAME")
 TESTING_DB_NAME = decouple.config("TESTING_DB_NAME")
 
 # Connect to PostgreSQL with the default user, usually 'postgres'
 conn = psycopg2.connect(
-    user=postgres_user, password=postgres_password, host=DB_HOST, port=DB_PORT, dbname=postgres_db
+    user=postgres_user,
+    password=postgres_password,
+    host=DB_HOST,
+    port=DB_PORT,
+    dbname=postgres_db,
 )
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 cursor = conn.cursor()
@@ -47,7 +51,9 @@ END $$;
 
 # Create the databases.
 cursor.execute(sql.SQL("CREATE DATABASE {db};").format(db=sql.Identifier(DB_NAME)))
-cursor.execute(sql.SQL("CREATE DATABASE {db};").format(db=sql.Identifier(TESTING_DB_NAME)))
+cursor.execute(
+    sql.SQL("CREATE DATABASE {db};").format(db=sql.Identifier(TESTING_DB_NAME))
+)
 
 # Grant all privileges to the user
 cursor.execute(
