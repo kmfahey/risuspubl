@@ -298,7 +298,10 @@ def display_author_by_id_endpoint(author_id: int):
                 display.
     :return:    a flask.Response object
     """
-    return display_author_by_id(author_id)
+    try:
+        return display_author_by_id(author_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:author_id>/books", methods=["GET"])
@@ -595,7 +598,10 @@ def update_author_by_id_endpoint(author_id: int):
     :author_id: The author_id of the row in the authors table to update.
     :return:    a flask.Response object
     """
-    return update_author_by_id(author_id, request.json)
+    try:
+        return update_author_by_id(author_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
@@ -717,7 +723,10 @@ def author_create_endpoint():
 
     :return:    a flask.Response object
     """
-    return create_author(request.json)
+    try:
+        return create_author(request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["POST"])

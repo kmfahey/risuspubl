@@ -30,7 +30,10 @@ def index_endpoint():
 
     :return:    A flask.Response object.
     """
-    return display_books()
+    try:
+        return display_books()
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:book_id>", methods=["GET"])
@@ -43,7 +46,10 @@ def display_book_by_id_endpoint(book_id: int):
               display.
     :return:  A flask.Response object.
     """
-    return display_book_by_id(book_id)
+    try:
+        return display_book_by_id(book_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 # A Create endpoint is deliberately not implemented, because without
@@ -64,7 +70,10 @@ def update_book_by_id_endpoint(book_id: int):
     :book_id: The book_id of the row in the books table to update.
     :return:  A flask.Response object.
     """
-    return update_book_by_id(book_id, request.json)
+    try:
+        return update_book_by_id(book_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:book_id>", methods=["DELETE"])
@@ -76,4 +85,7 @@ def delete_book_by_id_endpoint(book_id: int):
     :book_id: The book_id of the row in the books table to delete.
     :return:  A flask.Response object.
     """
-    return delete_book_by_id(book_id)
+    try:
+        return delete_book_by_id(book_id)
+    except Exception as exception:
+        return handle_exception(exception)

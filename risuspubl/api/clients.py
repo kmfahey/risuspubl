@@ -32,7 +32,10 @@ def index_endpoint():
 
     :return: A flask.Response object.
     """
-    return display_clients()
+    try:
+        return display_clients()
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["GET"])
@@ -45,7 +48,10 @@ def display_client_by_id_endpoint(client_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return display_client_by_id(client_id)
+    try:
+        return display_client_by_id(client_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("", methods=["POST"])
@@ -56,7 +62,10 @@ def create_client_endpoint():
 
     :return:    A flask.Response object.
     """
-    return create_client(request.json)
+    try:
+        return create_client(request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["PATCH", "PUT"])
@@ -68,7 +77,10 @@ def update_client_by_id_endpoint(client_id: int):
     :client_id: The client_id of the row in the clients table to update.
     :return:    A flask.Response object.
     """
-    return update_client_by_id(client_id, request.json)
+    try:
+        return update_client_by_id(client_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["DELETE"])
@@ -80,4 +92,7 @@ def delete_client_by_id_endpoint(client_id: int):
     :client_id: The client_id of the row in the clients table to delete.
     :return:    A flask.Response object.
     """
-    return delete_client_by_id(client_id)
+    try:
+        return delete_client_by_id(client_id)
+    except Exception as exception:
+        return handle_exception(exception)

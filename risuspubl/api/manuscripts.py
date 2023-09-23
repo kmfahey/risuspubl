@@ -30,7 +30,10 @@ def index_endpoint():
 
     :return:    A flask.Response object.
     """
-    return display_manuscripts()
+    try:
+        return display_manuscripts()
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["GET"])
@@ -43,7 +46,10 @@ def display_manuscript_by_id_endpoint(manuscript_id: int):
                     load and display.
     :return:        A flask.Response object.
     """
-    return display_manuscript_by_id(manuscript_id)
+    try:
+        return display_manuscript_by_id(manuscript_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 # A Create endpoint is deliberately not implemented, because without a way
@@ -66,7 +72,10 @@ def update_manuscript_by_id_endpoint(manuscript_id: int):
                     update.
     :return:        A flask.Response object.
     """
-    return update_manuscript_by_Id(manuscript_id, request.json)
+    try:
+        return update_manuscript_by_Id(manuscript_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["DELETE"])
@@ -79,4 +88,7 @@ def delete_manuscript_by_id_endpoint(manuscript_id: int):
                     delete.
     :return:        A flask.Response object.
     """
-    return delete_manuscript_by_id(manuscript_id)
+    try:
+        return delete_manuscript_by_id(manuscript_id)
+    except Exception as exception:
+        return handle_exception(exception)

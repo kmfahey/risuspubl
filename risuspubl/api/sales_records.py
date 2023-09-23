@@ -23,7 +23,10 @@ def display_sales_record_endpoint(sales_record_id: int):
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
-    return display_sales_record_by_id(sales_record_id)
+    try:
+        return display_sales_record_by_id(sales_record_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/years/<int:year>", methods=["GET"])

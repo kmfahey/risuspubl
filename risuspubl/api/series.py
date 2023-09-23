@@ -51,7 +51,10 @@ def index_endpoint():
 
     :return: A flask.Response object.
     """
-    return display_series()
+    try:
+        return display_series()
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>", methods=["GET"])
@@ -64,7 +67,10 @@ def display_series_by_id_endpoint(series_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return display_series_by_id(series_id)
+    try:
+        return display_series_by_id(series_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>/books", methods=["GET"])
@@ -77,7 +83,10 @@ def display_series_books_endpoint(series_id: int):
                 series_books table of rows from the books table to display.
     :return:    A flask.Response object.
     """
-    return display_books_by_series_id(series_id)
+    try:
+        return display_books_by_series_id(series_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>/books/<int:book_id>", methods=["GET"])
@@ -91,7 +100,10 @@ def display_series_book_by_id_endpoint(series_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to load and display.
     :return:    A flask.Response object.
     """
-    return display_book_by_book_id_and_series_id(series_id, book_id)
+    try:
+        return display_book_by_book_id_and_series_id(series_id, book_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>/manuscripts", methods=["GET"])
@@ -105,7 +117,10 @@ def display_series_manuscripts_endpoint(series_id: int):
                 display.
     :return:    A flask.Response object.
     """
-    return display_manuscripts_by_series_id(series_id)
+    try:
+        return display_manuscripts_by_series_id(series_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
@@ -121,7 +136,10 @@ def display_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int)
                     load and display.
     :return:        A flask.Response object.
     """
-    return display_manuscript_by_manuscript_id_and_series_id(series_id, manuscript_id)
+    try:
+        return display_manuscript_by_manuscript_id_and_series_id(series_id, manuscript_id)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("", methods=["POST"])
@@ -132,7 +150,10 @@ def create_series_endpoint():
 
     :return:    A flask.Response object.
     """
-    return create_series(request.json)
+    try:
+        return create_series(request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>", methods=["PATCH", "PUT"])
@@ -144,7 +165,10 @@ def update_series_by_id_endpoint(series_id: int):
     :series_id: The series_id of the row in the series table to update.
     :return:    A flask.Response object.
     """
-    return update_series_by_id(series_id, request.json)
+    try:
+        return update_series_by_id(series_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
@@ -158,7 +182,10 @@ def update_series_book_by_id_endpoint(series_id: int, book_id: int):
     :book_id:   The book_id of the row in the books table to update.
     :return:    A flask.Response object.
     """
-    return update_book_by_book_id_and_series_id(series_id, book_id, request.json)
+    try:
+        return update_book_by_book_id_and_series_id(series_id, book_id, request.json)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route(
@@ -174,9 +201,12 @@ def update_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     :manuscript_id:   The manuscript_id of the row in the manuscripts table to update.
     :return:    A flask.Response object.
     """
-    return update_manuscript_by_manuscript_id_and_series_idr(
-        series_id, manuscript_id, request.json
-    )
+    try:
+        return update_manuscript_by_manuscript_id_and_series_idr(
+            series_id, manuscript_id, request.json
+        )
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/<int:series_id>", methods=["DELETE"])
@@ -188,4 +218,7 @@ def delete_series_by_id_endpoint(series_id: int):
     :series_id: The series_id of the row in the series table to delete.
     :return:    A flask.Response object.
     """
-    return delete_series_by_id(series_id)
+    try:
+        return delete_series_by_id(series_id)
+    except Exception as exception:
+        return handle_exception(exception)
