@@ -37,7 +37,12 @@ update_author_by_id = update_table_row_by_id_function(Author)
 
 
 def _check_json_req_props(
-    sqlal_model_cls, request_json, excl_cols, optional_cols=set()
+    sqlal_model_cls,
+    request_json,
+    excl_cols=set(),
+    optional_cols=set(),
+    chk_missing=True,
+    chk_unexp=True,
 ):
     def _prop_expr(keys_list):
         match len(keys_list):
@@ -55,18 +60,17 @@ def _check_json_req_props(
     request_json_prop = set(request_json.keys())
     columns = set(map(lambda c: c.name, sqlal_model_cls.__table__.columns))
     expected_prop = columns - excl_cols
-    # raise ValueError(dict(columns=columns, expected_prop=expected_prop, request_json_prop=request_json_prop))
     if expected_prop == request_json_prop:
         return True
     errors = list()
     missing_prop = expected_prop - request_json_prop - optional_cols
     unexpected_prop = request_json_prop - expected_prop - optional_cols
 
-    if len(missing_prop):
+    if chk_missing and len(missing_prop):
         errors.append(
             "Request missing expected " + _prop_expr(sorted(missing_prop)) + "."
         )
-    if len(unexpected_prop):
+    if chk_unexp and len(unexpected_prop):
         errors.append(
             "Request included unexpected " + _prop_expr(sorted(unexpected_prop)) + "."
         )
@@ -595,6 +599,7 @@ def update_author_by_id_endpoint(author_id: int):
 
 
 @blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
+# HERE
 def update_author_book_endpoint(author_id: int, book_id: int):
     """
     Implements a PATCH /authors/{author_id}/books/{book_id} endpoint. The row
@@ -608,6 +613,7 @@ def update_author_book_endpoint(author_id: int, book_id: int):
     :return:    a flask.Response object
     """
     try:
+        _check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
         author_obj = Author.query.get_or_404(author_id)
         book_objs = list(filter(lambda bobj: bobj.book_id == book_id, author_obj.books))
         # Verifying that this author_id is associated with this book_id in

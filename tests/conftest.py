@@ -29,6 +29,13 @@ os.environ[
 ] = "testing"  # This should be set before creating the app instance.
 
 
+def randint_excepting(lb, ub, exclint):
+    intval = random.randint(lb, ub)
+    while intval == exclint:
+        intval = random.randint(lb, ub)
+    return intval
+
+
 def pytest_sessionstart(session):
     # PostgreSQL server details
     HOST = "localhost"
