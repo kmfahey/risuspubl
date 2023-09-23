@@ -135,6 +135,8 @@ def display_authors_books_endpoint(author1_id: int, author2_id: int):
     :return:     a flask.Response object
     """
     try:
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id were identical")
         # A utility function is used to fetch a list of Book objects whose
         # book_id is associated with both author_ids in authors_books.
         shared_books = _authors_shared_book_ids(author1_id, author2_id)
@@ -163,6 +165,8 @@ def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_i
     :return:     a flask.Response object
     """
     try:
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id were identical")
         # A utility function is used to fetch a list of Book objects whose
         # book_id is associated with both author_ids in authors_books.
         shared_books = _authors_shared_book_ids(author1_id, author2_id)
@@ -393,8 +397,9 @@ def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int)
 @blueprint.route("/<int:author1_id>/<int:author2_id>", methods=["GET"])
 def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/{author_id}/<id> endpoint. The rows in the authors
-    table with those two author_ids are loaded and outputed in a JSON list.
+    Implements a GET /authors/{author_id}/{author_id} endpoint. The rows in
+    the authors table with those two author_ids are loaded and outputed in a
+    JSON list.
 
     :author1_id: One of the two author_ids of rows in the authors table to
                  load and display.
@@ -416,7 +421,7 @@ def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
 # This private utility function is used by display_authors_books() and
 # display_authors_book_by_id() to generate a list of Book objects with book_ids
 # that are associated with both author_ids in the authors_books table.
-def _authors_shared_book_ids_endpoint(author1_id: int, author2_id: int) -> set:
+def _authors_shared_book_ids(author1_id: int, author2_id: int) -> set:
     author1_obj = Author.query.get_or_404(author1_id)
     author2_obj = Author.query.get_or_404(author2_id)
     # The books attribute on an Author object comprises the Book
@@ -768,9 +773,7 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        _check_json_req_props(
-            Manuscript, request.json, {"manuscript_id"}, {"series_id"}
-        )
+        _check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(
