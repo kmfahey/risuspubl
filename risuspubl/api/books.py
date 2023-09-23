@@ -3,9 +3,11 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
+    check_json_req_props,
     delete_table_row_by_id_function,
     display_table_row_by_id_function,
     display_table_rows_function,
+    handle_exception,
     update_table_row_by_id_function,
 )
 from risuspubl.dbmodels import Book
@@ -71,6 +73,7 @@ def update_book_by_id_endpoint(book_id: int):
     :return:  A flask.Response object.
     """
     try:
+        check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
         return update_book_by_id(book_id, request.json)
     except Exception as exception:
         return handle_exception(exception)

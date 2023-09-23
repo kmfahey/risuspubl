@@ -7,6 +7,7 @@ from flask import Blueprint, Response, abort, jsonify, request
 from risuspubl.api.utility import (
     create_model_obj,
     create_table_row_function,
+    check_json_req_props,
     display_table_row_by_id_function,
     display_table_rows_function,
     generate_create_update_argd,
@@ -34,54 +35,6 @@ create_author = create_table_row_function(Author)
 display_author_by_id = display_table_row_by_id_function(Author)
 display_authors = display_table_rows_function(Author)
 update_author_by_id = update_table_row_by_id_function(Author)
-
-
-def _check_json_req_props(
-    sqlal_model_cls,
-    request_json,
-    excl_cols=set(),
-    optional_cols=set(),
-    chk_missing=True,
-    chk_unexp=True,
-):
-    def _prop_expr(keys_list):
-        match len(keys_list):
-            case 1:
-                return f"property '{keys_list[0]}'"
-            case 2:
-                return f"properties '{keys_list[0]}' and '{keys_list[1]}'"
-            case _:
-                return (
-                    "properties '"
-                    + "', '".join(keys_list[:-1])
-                    + f"', and '{keys_list[-1]}'"
-                )
-
-    request_json_prop = set(request_json.keys())
-    columns = set(map(lambda c: c.name, sqlal_model_cls.__table__.columns))
-    expected_prop = columns - excl_cols
-    if expected_prop == request_json_prop:
-        return True
-    errors = list()
-    missing_prop = expected_prop - request_json_prop - optional_cols
-    unexpected_prop = request_json_prop - expected_prop - optional_cols
-
-    if chk_missing and len(missing_prop):
-        errors.append(
-            "Request missing expected " + _prop_expr(sorted(missing_prop)) + "."
-        )
-    if chk_unexp and len(unexpected_prop):
-        errors.append(
-            "Request included unexpected " + _prop_expr(sorted(unexpected_prop)) + "."
-        )
-
-    match len(errors):
-        case 0:
-            return True
-        case 1:
-            raise ValueError(errors[0])
-        case 2:
-            raise ValueError(f"{errors[0]} {errors[1]}")
 
 
 @blueprint.route("/<int:author_id>/metadata", methods=["GET"])
@@ -468,7 +421,7 @@ def update_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
-        _check_json_req_props(
+        check_json_req_props(
             AuthorMetadata, request.json, {"author_metadata_id"}, chk_missing=False
         )
         author_metadata_objs = (
@@ -515,7 +468,7 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
     :return:     a flask.Response object
     """
     try:
-        _check_json_req_props(
+        check_json_req_props(
             Book, request.json, {"book_id"}, {"series_id"}, chk_missing=False
         )
         author1_obj = Author.query.get_or_404(author1_id)
@@ -562,7 +515,7 @@ def update_authors_manuscript_endpoint(
     :return:        a flask.Response object
     """
     try:
-        _check_json_req_props(
+        check_json_req_props(
             Manuscript,
             request.json,
             {"manuscript_id"},
@@ -631,7 +584,7 @@ def update_author_book_endpoint(author_id: int, book_id: int):
     :return:    a flask.Response object
     """
     try:
-        _check_json_req_props(
+        check_json_req_props(
             Book, request.json, {"book_id"}, {"series_id"}, chk_missing=False
         )
         author_obj = Author.query.get_or_404(author_id)
@@ -669,7 +622,7 @@ def update_author_manuscript_endpoint(author_id: int, manuscript_id: int):
     :return:        a flask.Response object
     """
     try:
-        _check_json_req_props(
+        check_json_req_props(
             Manuscript, request.json, {"manuscript_id"}, chk_missing=False
         )
         author_obj = Author.query.get_or_404(author_id)
@@ -710,7 +663,7 @@ def create_author_metadata_endpoint(author_id: int):
     """
     try:
         Author.query.get_or_404(author_id)
-        _check_json_req_props(
+        check_json_req_props(
             AuthorMetadata, request.json, {"author_id", "author_metadata_id"}
         )
         results = tuple(
@@ -764,7 +717,7 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        _check_json_req_props(Book, request.json, {"book_id"}, {"series_id"})
+        check_json_req_props(Book, request.json, {"book_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
         book_obj = create_model_obj(
@@ -808,9 +761,7 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
-        _check_json_req_props(
-            Manuscript, request.json, {"manuscript_id"}, {"series_id"}
-        )
+        check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
         manuscript_obj = create_model_obj(
@@ -853,7 +804,7 @@ def create_author_book_endpoint(author_id: int):
         Author.query.get_or_404(author_id)
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
-        _check_json_req_props(
+        check_json_req_props(
             Book, request.json, {"author_id", "book_id"}, {"series_id"}
         )
         book_obj = create_model_obj(

@@ -23,9 +23,7 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
         author_obj = Genius.gen_author_obj()
         editor_obj = Genius.gen_editor_obj()
         book_obj = Genius.gen_book_obj(editor_obj.editor_id)
-        Genius.gen_authors_books_obj(
-            author_obj.author_id, book_obj.book_id
-        )
+        Genius.gen_authors_books_obj(author_obj.author_id, book_obj.book_id)
         return author_obj, editor_obj, book_obj
 
     # Testing base case
@@ -235,12 +233,8 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         author_no2_obj = Genius.gen_author_obj()
         editor_obj = Genius.gen_editor_obj()
         book_obj = Genius.gen_book_obj(editor_obj.editor_id)
-        Genius.gen_authors_books_obj(
-            author_no1_obj.author_id, book_obj.book_id
-        )
-        Genius.gen_authors_books_obj(
-            author_no2_obj.author_id, book_obj.book_id
-        )
+        Genius.gen_authors_books_obj(author_no1_obj.author_id, book_obj.book_id)
+        Genius.gen_authors_books_obj(author_no2_obj.author_id, book_obj.book_id)
         return author_no1_obj, author_no2_obj, editor_obj, book_obj
 
     # Testing base case
@@ -322,7 +316,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
 
 
 # Testing the PATCH /authors/<id>/<id>/manuscripts/<id> endpoint
-def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client): # 30/83
+def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 30/83
     app, client = staged_app_client
 
     def _setup():

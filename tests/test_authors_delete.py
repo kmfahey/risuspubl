@@ -76,9 +76,7 @@ def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 8/83
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
 
-    Genius.gen_authors_books_obj(
-        author_obj.author_id, book_obj.book_id
-    )
+    Genius.gen_authors_books_obj(author_obj.author_id, book_obj.book_id)
     Genius.gen_authors_manuscripts_obj(
         author_obj.author_id, manuscript_obj.manuscript_id
     )
@@ -114,9 +112,7 @@ def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     author_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
 
     response = client.delete(
         f"/authors/{author_obj.author_id}/manuscripts/{manuscript_id}"
@@ -204,12 +200,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    Genius.gen_authors_books_obj(
-        author_no1_obj.author_id, book_id
-    )
-    Genius.gen_authors_books_obj(
-        author_no2_obj.author_id, book_id
-    )
+    Genius.gen_authors_books_obj(author_no1_obj.author_id, book_id)
+    Genius.gen_authors_books_obj(author_no2_obj.author_id, book_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/books/{book_id}"
@@ -331,9 +323,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    Genius.gen_authors_books_obj(
-        author_no1_obj.author_id, book_id
-    )
+    Genius.gen_authors_books_obj(author_no1_obj.author_id, book_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/books/{book_id}"
@@ -359,9 +349,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     author_no2_obj = Genius.gen_author_obj()
     book_obj = Genius.gen_book_obj()
     book_id = book_obj.book_id
-    Genius.gen_authors_books_obj(
-        author_no2_obj.author_id, book_id
-    )
+    Genius.gen_authors_books_obj(author_no2_obj.author_id, book_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/books/{book_id}"
@@ -397,12 +385,8 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_no1_obj.author_id, manuscript_id
-    )
-    Genius.gen_authors_manuscripts_obj(
-        author_no2_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_no1_obj.author_id, manuscript_id)
+    Genius.gen_authors_manuscripts_obj(author_no2_obj.author_id, manuscript_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}"
@@ -434,9 +418,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
 
     response = client.delete(
         f"/authors/{author_obj.author_id}/{bogus_author_id}/manuscripts/{manuscript_id}"
@@ -460,9 +442,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
 
     response = client.delete(
         f"/authors/{bogus_author_id}/{author_obj.author_id}/manuscripts/{manuscript_id}"
@@ -484,9 +464,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
 
     response = client.delete(
         f"/authors/{bogus_author_id}/{author_obj.author_id}/manuscripts/{manuscript_id}"
@@ -523,9 +501,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_no1_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_no1_obj.author_id, manuscript_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}"
@@ -551,9 +527,7 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     author_no2_obj = Genius.gen_author_obj()
     manuscript_obj = Genius.gen_manuscript_obj()
     manuscript_id = manuscript_obj.manuscript_id
-    Genius.gen_authors_manuscripts_obj(
-        author_no2_obj.author_id, manuscript_id
-    )
+    Genius.gen_authors_manuscripts_obj(author_no2_obj.author_id, manuscript_id)
     response = client.delete(
         f"/authors/{author_no1_obj.author_id}"
         + f"/{author_no2_obj.author_id}/manuscripts/{manuscript_id}"

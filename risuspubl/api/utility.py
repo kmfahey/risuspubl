@@ -741,3 +741,51 @@ def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
             return handle_exception(exception)
 
     return _internal_update_table_row_by_id_and_foreign_key
+
+
+def check_json_req_props(
+    sqlal_model_cls,
+    request_json,
+    excl_cols=set(),
+    optional_cols=set(),
+    chk_missing=True,
+    chk_unexp=True,
+):
+    def _prop_expr(keys_list):
+        match len(keys_list):
+            case 1:
+                return f"property '{keys_list[0]}'"
+            case 2:
+                return f"properties '{keys_list[0]}' and '{keys_list[1]}'"
+            case _:
+                return (
+                    "properties '"
+                    + "', '".join(keys_list[:-1])
+                    + f"', and '{keys_list[-1]}'"
+                )
+
+    request_json_prop = set(request_json.keys())
+    columns = set(map(lambda c: c.name, sqlal_model_cls.__table__.columns))
+    expected_prop = columns - excl_cols
+    if expected_prop == request_json_prop:
+        return True
+    errors = list()
+    missing_prop = expected_prop - request_json_prop - optional_cols
+    unexpected_prop = request_json_prop - expected_prop - optional_cols
+
+    if chk_missing and len(missing_prop):
+        errors.append(
+            "Request missing expected " + _prop_expr(sorted(missing_prop)) + "."
+        )
+    if chk_unexp and len(unexpected_prop):
+        errors.append(
+            "Request included unexpected " + _prop_expr(sorted(unexpected_prop)) + "."
+        )
+
+    match len(errors):
+        case 0:
+            return True
+        case 1:
+            raise ValueError(errors[0])
+        case 2:
+            raise ValueError(f"{errors[0]} {errors[1]}")
