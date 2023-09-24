@@ -15,8 +15,10 @@ from risuspubl.dbmodels import (
     AuthorsBooks,
     AuthorsManuscripts,
     Book,
+    Client,
     Editor,
     Manuscript,
+    Salesperson,
     Series,
     db,
 )
@@ -162,28 +164,45 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         "Legacy Fading",
     ]
 
+    business_names = [
+        "Spinka & Sons Co.",
+        "Rippin LLC",
+        "Dickinson, Hodkiewicz & Trantow Co.",
+        "Bartoletti, Stoltenberg & Herzog Co.",
+        "Greenholt, Hane & Emard Co.",
+        "Ziemann & McClure Co.",
+        "Heaney Inc",
+        "Durgan Group",
+        "O'Connell & Fisher Co.",
+        "Keeling & Sons Co.",
+    ]
+
+    street_addresses = [
+        "62 Delaware St.",
+        "239 Paris Hill St.",
+        "344 Studebaker Ave.",
+        "205 Sunnyslope Street",
+        "964 San Juan Dr.",
+        "806 Ivy Ave.",
+        "76 Lookout Lane",
+        "17 Cemetery Road",
+        "8987 S. North Court",
+        "114C Southampton Ave.",
+    ]
+
     hexdigit_cp = tuple(range(48, 58)) + tuple(range(97, 103))
+
+    @classmethod
+    def gen_hexdigits(cls, number_of_chars):
+        return "".join(
+            chr(random.choice(cls.hexdigit_cp)) for _ in range(number_of_chars)
+        )
 
     @classmethod
     def gen_author_dict(cls):
         return dict(
             first_name=cls.faker_obj.first_name(), last_name=cls.faker_obj.last_name()
         )
-
-    @classmethod
-    def gen_metadata_dict(cls, author_id=None):
-        photo_res_horiz = random.randint(200, 1000)
-        photo_res_vert = math.floor(photo_res_horiz * 1.5)
-        retdict = dict(
-            age=random.randint(18, 75),
-            biography=cls.lorem_ipsum,
-            photo_url=f"https://risuspublishing.com/cms/img/{cls.gen_hexdigits(16)}.jpeg",
-            photo_res_horiz=photo_res_horiz,
-            photo_res_vert=photo_res_vert,
-        )
-        if author_id is not None:
-            retdict["author_id"] = author_id
-        return retdict
 
     @classmethod
     def gen_book_dict(cls, editor_id=None, series_id=None):
@@ -200,17 +219,27 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return retdict
 
     @classmethod
+    def gen_client_dict(cls, salesperson_id=None):
+        retdict = dict(
+            email_address=cls.faker_obj.email(),
+            phone_number=str(random.randint(10000000000, 19999999999)),
+            business_name=random.choice(cls.business_names),
+            street_address=random.choice(cls.street_addresses),
+            city=cls.faker_obj.city(),
+            state=cls.faker_obj.state_abbr(),
+            zipcode=str(random.randint(100000000, 999999999)),
+            country="USA",
+        )
+        if salesperson_id is not None:
+            retdict["salesperson_id"] = salesperson_id
+        return retdict
+
+    @classmethod
     def gen_editor_dict(cls):
         return dict(
             first_name=cls.faker_obj.first_name(),
             last_name=cls.faker_obj.last_name(),
             salary=random.randint(65, 95) * 1000,
-        )
-
-    @classmethod
-    def gen_hexdigits(cls, number_of_chars):
-        return "".join(
-            chr(random.choice(cls.hexdigit_cp)) for _ in range(number_of_chars)
         )
 
     @classmethod
@@ -231,17 +260,31 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return retdict
 
     @classmethod
+    def gen_metadata_dict(cls, author_id=None):
+        photo_res_horiz = random.randint(200, 1000)
+        photo_res_vert = math.floor(photo_res_horiz * 1.5)
+        retdict = dict(
+            age=random.randint(18, 75),
+            biography=cls.lorem_ipsum,
+            photo_url=f"https://risuspublishing.com/cms/img/{cls.gen_hexdigits(16)}.jpeg",
+            photo_res_horiz=photo_res_horiz,
+            photo_res_vert=photo_res_vert,
+        )
+        if author_id is not None:
+            retdict["author_id"] = author_id
+        return retdict
+
+    @classmethod
+    def gen_salesperson_dict(cls):
+        retdict = cls.gen_author_dict()
+        retdict["salary"] = random.randint(60, 85) * 1000
+        return retdict
+
+    @classmethod
     def gen_series_dict(cls):
         return dict(
             title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
         )
-
-    @classmethod
-    def gen_metadata_obj(cls, author_id):
-        author_metadata_obj = AuthorMetadata(**cls.gen_metadata_dict(author_id))
-        db.session.add(author_metadata_obj)
-        db.session.commit()
-        return author_metadata_obj
 
     @classmethod
     def gen_author_obj(cls):
@@ -282,6 +325,13 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return book_obj
 
     @classmethod
+    def gen_client_obj(cls, salesperson_id=None):
+        client_obj = Client(**cls.gen_client_dict(salesperson_id))
+        db.session.add(client_obj)
+        db.session.commit()
+        return client_obj
+
+    @classmethod
     def gen_editor_obj(cls):
         editor_obj = Editor(**cls.gen_editor_dict())
         db.session.add(editor_obj)
@@ -294,6 +344,20 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         db.session.add(manuscript_obj)
         db.session.commit()
         return manuscript_obj
+
+    @classmethod
+    def gen_metadata_obj(cls, author_id):
+        author_metadata_obj = AuthorMetadata(**cls.gen_metadata_dict(author_id))
+        db.session.add(author_metadata_obj)
+        db.session.commit()
+        return author_metadata_obj
+
+    @classmethod
+    def gen_salesperson_obj(cls):
+        salesperson_obj = Salesperson(**cls.gen_salesperson_dict())
+        db.session.add(salesperson_obj)
+        db.session.commit()
+        return salesperson_obj
 
     @classmethod
     def gen_series_obj(cls):
@@ -371,6 +435,55 @@ class DbBasedTester:
         assert resp_jsobj["book_id"] == book_obj.book_id
 
         return resp_jsobj, book_obj
+
+    @classmethod
+    def test_client_resp(cls, response, client_data):
+        assert response.status_code == 200, response.data
+
+        resp_jsobj = response.get_json()
+        if isinstance(client_data, dict):
+            client_dict = client_data
+
+            client_dict["email_address"] == resp_jsobj["email_address"]
+            client_dict["phone_number"] == resp_jsobj["phone_number"]
+            client_dict["business_name"] == resp_jsobj["business_name"]
+            client_dict["street_address"] == resp_jsobj["street_address"]
+            client_dict["city"] == resp_jsobj["city"]
+            client_dict["state"] == resp_jsobj["state"]
+            client_dict["zipcode"] == resp_jsobj["zipcode"]
+            client_dict["country"] == resp_jsobj["country"]
+
+            client_obj = db.session.query(Client).get(resp_jsobj["client_id"])
+
+            client_dict["email_address"] == client_obj.email_address
+            client_dict["phone_number"] == client_obj.phone_number
+            client_dict["business_name"] == client_obj.business_name
+            client_dict["street_address"] == client_obj.street_address
+            client_dict["city"] == client_obj.city
+            client_dict["state"] == client_obj.state
+            client_dict["zipcode"] == client_obj.zipcode
+            client_dict["country"] == client_obj.country
+
+        elif isinstance(client_data, Client):
+            client_obj = client_data
+
+            resp_jsobj["email_address"] == client_obj.email_address
+            resp_jsobj["phone_number"] == client_obj.phone_number
+            resp_jsobj["business_name"] == client_obj.business_name
+            resp_jsobj["street_address"] == client_obj.street_address
+            resp_jsobj["city"] == client_obj.city
+            resp_jsobj["state"] == client_obj.state
+            resp_jsobj["zipcode"] == client_obj.zipcode
+            resp_jsobj["country"] == client_obj.country
+
+        else:
+            raise TypeError(
+                "second argument had unexpected type " + type(client_data).__name__
+            )
+
+        assert resp_jsobj["client_id"] == client_obj.client_id
+
+        return resp_jsobj, client_obj
 
     @classmethod
     def test_manuscript_resp(cls, response, manuscript_data):
@@ -451,6 +564,42 @@ class DbBasedTester:
         assert resp_jsobj["author_metadata_id"] == metadata_obj.author_metadata_id
 
         return resp_jsobj, metadata_obj
+
+    @classmethod
+    def test_salesperson_resp(cls, response, salesperson_data):
+        assert response.status_code == 200, response.data
+
+        resp_jsobj = response.get_json()
+        if isinstance(salesperson_data, dict):
+            salesperson_dict = salesperson_data
+
+            assert salesperson_dict["first_name"] == resp_jsobj["first_name"]
+            assert salesperson_dict["last_name"] == resp_jsobj["last_name"]
+            assert salesperson_dict["salary"] == resp_jsobj["salary"]
+
+            salesperson_obj = db.session.query(Salesperson).get(
+                resp_jsobj["salesperson_id"]
+            )
+
+            assert salesperson_dict["first_name"] == salesperson_obj.first_name
+            assert salesperson_dict["last_name"] == salesperson_obj.last_name
+            assert salesperson_dict["salary"] == salesperson_obj.salary
+
+        elif isinstance(salesperson_data, Manuscript):
+            salesperson_obj = salesperson_data
+
+            assert salesperson_dict["first_name"] == salesperson_obj.first_name
+            assert salesperson_dict["last_name"] == salesperson_obj.last_name
+            assert salesperson_dict["salary"] == salesperson_obj.salary
+
+        else:
+            raise TypeError(
+                "second argument had unexpected type " + type(salesperson_data).__name__
+            )
+
+        assert resp_jsobj["salesperson_id"] == salesperson_obj.salesperson_id
+
+        return resp_jsobj, salesperson_obj
 
     @classmethod
     def cleanup__empty_all_tables(cls):
