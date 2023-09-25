@@ -27,7 +27,9 @@ display_book_by_book_id_and_series_id = (
         Series, "series_id", Book, "book_id"
     )
 )
-display_books_by_series_id = display_table_rows_by_foreign_id_function(Series, "series_id", Book)
+display_books_by_series_id = display_table_rows_by_foreign_id_function(
+    Series, "series_id", Book
+)
 display_manuscript_by_manuscript_id_and_series_id = (
     display_table_row_by_id_and_foreign_key_function(
         Series, "series_id", Manuscript, "manuscript_id"

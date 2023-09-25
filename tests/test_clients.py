@@ -8,12 +8,10 @@ import json
 import pytest
 
 from risuspubl.dbmodels import (
-    Book,
     Client,
     Salesperson,
-    Manuscript,
 )
-from conftest import Genius, DbBasedTester, randint_excluding
+from conftest import Genius, DbBasedTester
 
 
 # Set environment variable for Flask's configuration
@@ -38,7 +36,7 @@ def test_client_create_endpoint(db_w_cleanup, staged_app_client):  # 35/83
     assert response.status_code == 400, response.data
 
 
-## Testing DELETE /clients/<id>
+# Testing DELETE /clients/<id>
 def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
     db = db_w_cleanup
     app, client = staged_app_client
@@ -58,7 +56,7 @@ def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
 
     # Testing for 404 error when called with a bogus client_id
     bogus_client_id = random.randint(1, 10)
-    response = client.delete(f"/clients/{client_id}")
+    response = client.delete(f"/clients/{bogus_client_id}")
     assert response.status_code == 404, response.data
 
 
@@ -81,7 +79,6 @@ def test_display_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 37/8
 
 #  Testing the GET /clients endpoint
 def test_index_endpoint(db_w_cleanup, staged_app_client):  # 38/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -104,7 +101,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 38/83
         )
 
 
-## Testing the PATCH /books/<id> endpoint
+# Testing the PATCH /books/<id> endpoint
 def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 39/83
     app, client = staged_app_client
 

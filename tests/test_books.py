@@ -9,13 +9,10 @@ import pytest
 
 from risuspubl.dbmodels import (
     Author,
-    AuthorMetadata,
     AuthorsBooks,
-    AuthorsManuscripts,
     Book,
-    Manuscript,
 )
-from conftest import Genius, DbBasedTester, randint_excluding
+from conftest import Genius, DbBasedTester
 
 
 # Set environment variable for Flask's configuration
@@ -50,7 +47,7 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
 
     # Testing for 404 error when called with a bogus book_id
     bogus_book_id = random.randint(1, 10)
-    response = client.delete(f"/books/{book_id}")
+    response = client.delete(f"/books/{bogus_book_id}")
     assert response.status_code == 404, response.data
 
 
@@ -58,7 +55,6 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
 def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 32/83
     app, client = staged_app_client
 
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     response = client.get(f"/books/{book_obj.book_id}")
@@ -74,7 +70,6 @@ def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 32/83
 
 #  Testing the GET /books endpoint
 def test_index_endpoint(db_w_cleanup, staged_app_client):  # 33/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     author_obj = Genius.gen_author_obj()
@@ -97,7 +92,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 33/83
         )
 
 
-## Testing the PATCH /books/<id> endpoint
+# Testing the PATCH /books/<id> endpoint
 def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     app, client = staged_app_client
 
@@ -130,7 +125,6 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     DbBasedTester.cleanup__empty_all_tables()
 
     # test for unexpected params and missing params
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     author_dict = Genius.gen_author_dict()

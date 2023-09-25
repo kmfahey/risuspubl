@@ -38,7 +38,9 @@ display_book_by_book_id_and_editor_id = (
         Editor, "editor_id", Book, "book_id"
     )
 )
-display_books_by_editor_id = display_table_rows_by_foreign_id_function(Editor, "editor_id", Book)
+display_books_by_editor_id = display_table_rows_by_foreign_id_function(
+    Editor, "editor_id", Book
+)
 display_editor_by_id = display_table_row_by_id_function(Editor)
 display_editors = display_table_rows_function(Editor)
 display_manuscript_by_manuscript_id_and_editor_id = (

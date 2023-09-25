@@ -169,7 +169,7 @@ def test_display_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):  #
 
 
 # Testing GET /editors/<id>/books endpoint
-def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client): # 45/83
+def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client):  # 45/83
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -204,7 +204,7 @@ def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client): # 45/83
 
 
 # Testing GET /editors/<id> endpoint
-def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client): # 46/83
+def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client):  # 46/83
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
