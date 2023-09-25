@@ -445,7 +445,7 @@ def test_update_editor_manuscript_by_id_endpoint(
     bogus_editor_id = randint_excluding(1, 10, editor_obj.editor_id)
     assert editor_obj is not None
     response = client.patch(
-        f"/editors/{bogus_editor_id}" + f"/manuscripts/{manuscript_obj.manuscript_id}",
+        f"/editors/{bogus_editor_id}/manuscripts/{manuscript_obj.manuscript_id}",
         json=manuscript_dict,
     )
     assert response.status_code == 404, response.data
@@ -457,7 +457,7 @@ def test_update_editor_manuscript_by_id_endpoint(
     manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
     bogus_manuscript_id = randint_excluding(1, 10, manuscript_obj.manuscript_id)
     response = client.patch(
-        f"/editors/{editor_obj.editor_id}" + f"/manuscripts/{bogus_manuscript_id}",
+        f"/editors/{editor_obj.editor_id}/manuscripts/{bogus_manuscript_id}",
         json=manuscript_dict,
     )
     assert response.status_code == 404, response.data

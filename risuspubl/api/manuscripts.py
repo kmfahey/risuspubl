@@ -6,6 +6,7 @@ from risuspubl.api.utility import (
     delete_table_row_by_id_function,
     display_table_row_by_id_function,
     display_table_rows_function,
+    handle_exception,
     update_table_row_by_id_function,
 )
 from risuspubl.dbmodels import Manuscript
