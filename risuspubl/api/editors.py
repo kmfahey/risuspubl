@@ -1,6 +1,6 @@
-#!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
+#!/usr/bin/python3
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 
 from risuspubl.api.utility import (
     check_json_req_props,
@@ -15,7 +15,7 @@ from risuspubl.api.utility import (
     update_table_row_by_id_and_foreign_key_function,
     update_table_row_by_id_function,
 )
-from risuspubl.dbmodels import Book, Editor, Manuscript
+from risuspubl.dbmodels import Book, Editor, Manuscript, db
 
 
 blueprint = Blueprint("editors", __name__, url_prefix="/editors")
@@ -25,23 +25,29 @@ blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 # filling in the blank(s) with the provided class objects.
 create_editor = create_table_row_function(Editor)
 delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key_function(
-    Editor, Book
+    Editor, "editor_id", Book, "book_id"
 )
 delete_editor_by_id = delete_table_row_by_id_function(Editor)
 delete_manuscript_by_manuscript_id_and_editor_id = (
-    delete_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+    delete_table_row_by_id_and_foreign_key_function(
+        Editor, "editor_id", Manuscript, "manuscript_id"
+    )
 )
 display_book_by_book_id_and_editor_id = (
-    display_table_row_by_id_and_foreign_key_function(Editor, Book)
+    display_table_row_by_id_and_foreign_key_function(
+        Editor, "editor_id", Book, "book_id"
+    )
 )
-display_books_by_editor_id = display_table_rows_by_foreign_id_function(Editor, Book)
+display_books_by_editor_id = display_table_rows_by_foreign_id_function(Editor, "editor_id", Book)
 display_editor_by_id = display_table_row_by_id_function(Editor)
 display_editors = display_table_rows_function(Editor)
 display_manuscript_by_manuscript_id_and_editor_id = (
-    display_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+    display_table_row_by_id_and_foreign_key_function(
+        Editor, "editor_id", Manuscript, "manuscript_id"
+    )
 )
 display_manuscripts_by_editor_id = display_table_rows_by_foreign_id_function(
-    Editor, Manuscript
+    Editor, "editor_id", Manuscript
 )
 update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(
     Editor, Book
@@ -225,14 +231,26 @@ def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
 @blueprint.route("/<int:editor_id>", methods=["DELETE"])
 def delete_editor_by_id_endpoint(editor_id: int):
     """
-    Implements a DELETE /editors/{editor_id} endpoint. The row in the editors
-    table with that editor_id is deleted.
+    Implements a DELETE /editors/{editor_id} endpoint. The row in the
+    editors table with that editor_id is deleted. All rows in the books
+    and manuscripts tables that have editor_id set equal to that value
+    have it reset to null.
 
     :editor_id: The editor_id of the row in the editors table to delete.
     :return:    A flask.Response object.
     """
     try:
-        return delete_editor_by_id(editor_id)
+        editor_obj = Editor.query.get_or_404(editor_id)
+        book_objs = Book.query.filter(Book.editor_id == editor_id)
+        for book_obj in book_objs:
+            book_obj.editor_id = None
+        manuscript_objs = Manuscript.query.filter(Manuscript.editor_id == editor_id)
+        for manuscript_obj in manuscript_objs:
+            manuscript_obj.editor_id = None
+        db.session.commit()
+        db.session.delete(editor_obj)
+        db.session.commit()
+        return jsonify(True)
     except Exception as exception:
         return handle_exception(exception)
 

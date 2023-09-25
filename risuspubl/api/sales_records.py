@@ -1,4 +1,4 @@
-#!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
+#!/usr/bin/python3
 
 from flask import Blueprint, jsonify
 

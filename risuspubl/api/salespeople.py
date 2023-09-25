@@ -1,4 +1,4 @@
-#!/home/kmfahey/Workspace/NuCampFolder/Python/1-SQL/week3/venv/bin/python3
+#!/usr/bin/python3
 
 from flask import Blueprint, jsonify, request
 
@@ -26,14 +26,18 @@ blueprint = Blueprint("salespeople", __name__, url_prefix="/salespeople")
 # filling in the blank(s) with the provided class objects.
 create_salesperson = create_table_row_function(Salesperson)
 delete_client_by_client_id_and_salesperson_id = (
-    delete_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+    delete_table_row_by_id_and_foreign_key_function(
+        Salesperson, "salesperson_id", Client, "client_id"
+    )
 )
 delete_salesperson_by_id = delete_table_row_by_id_function(Salesperson)
 display_client_by_client_id_and_salesperson_id = (
-    display_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+    display_table_row_by_id_and_foreign_key_function(
+        Salesperson, "salesperson_id", Client, "client_id"
+    )
 )
 display_clients_by_salesperson_id = display_table_rows_by_foreign_id_function(
-    Salesperson, Client
+    Salesperson, "salesperson_id", Client
 )
 display_salespeople = display_table_rows_function(Salesperson)
 display_salesperson_by_id = display_table_row_by_id_function(Salesperson)

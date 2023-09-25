@@ -1,4 +1,4 @@
-#!/home/kmfahey/Workspace/NuCampFolder/Python/2-SQL/week3/venv/bin/python3
+#!/usr/bin/python3
 
 from flask import Blueprint, request
 
@@ -23,14 +23,18 @@ blueprint = Blueprint("series", __name__, url_prefix="/series")
 create_series = create_table_row_function(Series)
 delete_series_by_id = delete_table_row_by_id_function(Series)
 display_book_by_book_id_and_series_id = (
-    display_table_row_by_id_and_foreign_key_function(Series, Book)
+    display_table_row_by_id_and_foreign_key_function(
+        Series, "series_id", Book, "book_id"
+    )
 )
-display_books_by_series_id = display_table_rows_by_foreign_id_function(Series, Book)
+display_books_by_series_id = display_table_rows_by_foreign_id_function(Series, "series_id", Book)
 display_manuscript_by_manuscript_id_and_series_id = (
-    display_table_row_by_id_and_foreign_key_function(Series, Manuscript)
+    display_table_row_by_id_and_foreign_key_function(
+        Series, "series_id", Manuscript, "manuscript_id"
+    )
 )
 display_manuscripts_by_series_id = display_table_rows_by_foreign_id_function(
-    Series, Manuscript
+    Series, "series_id", Manuscript
 )
 display_series_by_id = display_table_row_by_id_function(Series)
 display_series = display_table_rows_function(Series)

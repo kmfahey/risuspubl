@@ -469,7 +469,9 @@ def delete_table_row_by_id_function(model_class):
     return _internal_delete_table_row_by_id
 
 
-def delete_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
+def delete_table_row_by_id_and_foreign_key_function(
+    outer_class, outer_id_column, inner_class, inner_id_column
+):
     """
     Returns a function that executes DELETE
     /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
@@ -487,7 +489,6 @@ def delete_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
                   will be deleted
     :return:      A flask.Response object.
     """
-    __slots__ = "outer_class", "outer_id_column", "inner_class", "inner_id_column"
 
     def _internal_delete_table_row_by_id_and_foreign_key(outer_id, inner_id):
         try:
@@ -516,7 +517,9 @@ def delete_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
     return _internal_delete_table_row_by_id_and_foreign_key
 
 
-def display_table_rows_by_foreign_id_function(outer_class, inner_class):
+def display_table_rows_by_foreign_id_function(
+    outer_class, outer_id_column, inner_class
+):
     """
     Returns a function that executes an endpoint function for GET
     /{outer_table}/{outer_id}/{inner_table}, using the supplied
@@ -608,7 +611,9 @@ def display_table_row_by_id_function(model_class):
     return _internal_display_table_row_by_id
 
 
-def display_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
+def display_table_row_by_id_and_foreign_key_function(
+    outer_class, outer_id_column, inner_class, inner_id_column
+):
     """
     Returns an endpoint function that executes GET
     /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
@@ -634,14 +639,14 @@ def display_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
             # the given outer_id.
             inner_class_objs = list(
                 inner_class.query.where(
-                    getattr(inner_class, self.outer_id_column) == outer_id
+                    getattr(inner_class, outer_id_column) == outer_id
                 )
             )
-            # Iterating across the list looking for the self.inner_class object
+            # Iterating across the list looking for the inner_class object
             # with the given inner_class_id. If it's found, it's serialized and
             # returned. Otherwise, a 404 error is raised.
             for inner_class_obj in inner_class_objs:
-                if getattr(inner_class_obj, self.inner_id_column) == inner_id:
+                if getattr(inner_class_obj, inner_id_column) == inner_id:
                     return jsonify(inner_class_obj.serialize())
             return abort(404)
         except Exception as exception:
