@@ -4,6 +4,7 @@ import os
 import random
 import pprint
 import json
+import operator
 
 import pytest
 
@@ -23,7 +24,7 @@ os.environ["FLASK_ENV"] = "testing"
 
 
 # Testing POST /editors
-def test_create_editor_endpoint(db_w_cleanup, staged_app_client): # 40/83
+def test_create_editor_endpoint(db_w_cleanup, staged_app_client):  # 40/83
     app, client = staged_app_client
 
     editor_dict = Genius.gen_editor_dict()
@@ -34,206 +35,188 @@ def test_create_editor_endpoint(db_w_cleanup, staged_app_client): # 40/83
 
     author_dict = Genius.gen_author_dict()
     response = client.post("/editors", json=author_dict)
-    assert response.status_code == 399, response.data
+    assert response.status_code == 400, response.data
 
 
 # Testing DELETE /editors/<id>/books/<id> endpoint
-# def test_delete_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client): # 41/83
-#    db = db_w_cleanup
-#    app, client = staged_app_client
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    book_obj = Genius.gen_book_obj()
-#    book_id = book_obj.book_id
-#    Genius.gen_editors_books_obj(editor_obj.editor_id, book_id)
-#
-#    response = client.delete(f"/editors/{editor_obj.editor_id}/books/{book_id}")
-#    assert response.status_code == 200
-#    assert json.loads(response.data) is True
-#    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
-#    assert db.session.query(Book).get(book_id) is None
-#    assert (
-#        db.session.query(EditorsBooks)
-#        .filter_by(editor_id=editor_obj.editor_id, book_id=book_id)
-#        .first()
-#        is None
-#    )
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    book_obj = Genius.gen_book_obj()
-#    bogus_editor_id = random.randint(1, 10)
-#    response = client.delete(f"/editors/{bogus_editor_id}/books/{book_obj.book_id}")
-#    assert response.status_code == 404
-#    assert db.session.query(Book).get(book_obj.book_id) is not None
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    bogus_book_id = random.randint(1, 10)
-#    response = client.delete(f"/editors/{editor_obj.editor_id}/books/{bogus_book_id}")
-#    assert response.status_code == 404
-#    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
+def test_delete_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 41/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    # Testing base case
+    editor_obj = Genius.gen_editor_obj()
+    book_obj = Genius.gen_book_obj(editor_id=editor_obj.editor_id)
+    book_id = book_obj.book_id
+    response = client.delete(f"/editors/{editor_obj.editor_id}/books/{book_id}")
+    assert response.status_code == 200, response.data
+    assert json.loads(response.data) is True
+    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
+    assert db.session.query(Book).get(book_id) is None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 404 error with bogus editor_id
+    book_obj = Genius.gen_book_obj()
+    bogus_editor_id = random.randint(1, 10)
+    response = client.delete(f"/editors/{bogus_editor_id}/books/{book_obj.book_id}")
+    assert response.status_code == 404
+    assert db.session.query(Book).get(book_obj.book_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 404 error with bogus book_id
+    editor_obj = Genius.gen_editor_obj()
+    bogus_book_id = random.randint(1, 10)
+    response = client.delete(f"/editors/{editor_obj.editor_id}/books/{bogus_book_id}")
+    assert response.status_code == 404
+    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
 
 
 # Testing DELETE /editors/<id> endpoint
-# def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client): # 42/83
-#    db = db_w_cleanup
-#    app, client = staged_app_client
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    editor_id = editor_obj.editor_id
-#
-#    book_obj = Genius.gen_book_obj()
-#    book_id = book_obj.book_id
-#
-#    manuscript_obj = Genius.gen_manuscript_obj()
-#    manuscript_id = manuscript_obj.manuscript_id
-#
-#    Genius.gen_editors_books_obj(editor_obj.editor_id, book_obj.book_id)
-#    Genius.gen_editors_manuscripts_obj(
-#        editor_obj.editor_id, manuscript_obj.manuscript_id
-#    )
-#    response = client.delete(f"/editors/{editor_obj.editor_id}")
-#    assert response.status_code == 200
-#    assert json.loads(response.data) is True
-#    assert db.session.query(Editor).get(editor_id) is None
-#    assert (
-#        db.session.query(EditorsBooks)
-#        .filter_by(editor_id=editor_id, book_id=book_id)
-#        .first()
-#    ) is None
-#    assert (
-#        db.session.query(EditorsManuscripts)
-#        .filter_by(editor_id=editor_id, manuscript_id=manuscript_id)
-#        .first()
-#    ) is None
-#    assert db.session.query(Book).get(book_id) is not None
-#    assert db.session.query(Manuscript).get(manuscript_id) is not None
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    bogus_editor_id = random.randint(1, 10)
-#    response = client.delete(f"/editors/{bogus_editor_id}")
-#    assert response.status_code == 404
+def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client):  # 42/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    editor_obj = Genius.gen_editor_obj()
+    editor_id = editor_obj.editor_id
+
+    book_obj = Genius.gen_book_obj(editor_id)
+    book_id = book_obj.book_id
+
+    manuscript_obj = Genius.gen_manuscript_obj(editor_id)
+    manuscript_id = manuscript_obj.manuscript_id
+
+    response = client.delete(f"/editors/{editor_obj.editor_id}")
+    assert response.status_code == 200
+    assert json.loads(response.data) is True
+    assert db.session.query(Editor).get(editor_id) is None
+    assert db.session.query(Book).get(book_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_editor_id = random.randint(1, 10)
+    response = client.delete(f"/editors/{bogus_editor_id}")
+    assert response.status_code == 404
 
 
 # Testing DELETE /editors/<id>/manuscripts/<id> endpoint
-# def test_delete_editor_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client): # 43/83
-#    db = db_w_cleanup
-#    app, client = staged_app_client
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    manuscript_obj = Genius.gen_manuscript_obj()
-#    manuscript_id = manuscript_obj.manuscript_id
-#    Genius.gen_editors_manuscripts_obj(editor_obj.editor_id, manuscript_id)
-#
-#    response = client.delete(
-#        f"/editors/{editor_obj.editor_id}/manuscripts/{manuscript_id}"
-#    )
-#    assert response.status_code == 200
-#    assert json.loads(response.data) is True
-#    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
-#    assert db.session.query(Manuscript).get(manuscript_id) is None
-#    assert (
-#        db.session.query(EditorsManuscripts)
-#        .filter_by(editor_id=editor_obj.editor_id, manuscript_id=manuscript_id)
-#        .first()
-#        is None
-#    )
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    manuscript_obj = Genius.gen_manuscript_obj()
-#    bogus_editor_id = random.randint(1, 10)
-#    response = client.delete(
-#        f"/editors/{bogus_editor_id}/manuscripts/{manuscript_obj.manuscript_id}"
-#    )
-#    assert response.status_code == 404
-#    assert db.session.query(Manuscript).get(manuscript_obj.manuscript_id) is not None
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    bogus_manuscript_id = random.randint(1, 10)
-#    response = client.delete(
-#        f"/editors/{editor_obj.editor_id}/manuscripts/{bogus_manuscript_id}"
-#    )
-#    assert response.status_code == 404
-#    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
+def test_delete_editor_manuscript_by_id_endpoint(
+    db_w_cleanup, staged_app_client
+):  # 43/83
+    db = db_w_cleanup
+    app, client = staged_app_client
+
+    # Testing base case
+    editor_obj = Genius.gen_editor_obj()
+    manuscript_obj = Genius.gen_manuscript_obj(editor_id=editor_obj.editor_id)
+    manuscript_id = manuscript_obj.manuscript_id
+    response = client.delete(
+        f"/editors/{editor_obj.editor_id}/manuscripts/{manuscript_id}"
+    )
+    assert response.status_code == 200, response.data
+    assert json.loads(response.data) is True
+    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
+    assert db.session.query(Manuscript).get(manuscript_id) is None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 404 error with bogus editor_id
+    manuscript_obj = Genius.gen_manuscript_obj()
+    bogus_editor_id = random.randint(1, 10)
+    response = client.delete(
+        f"/editors/{bogus_editor_id}/manuscripts/{manuscript_obj.manuscript_id}"
+    )
+    assert response.status_code == 404
+    assert db.session.query(Manuscript).get(manuscript_obj.manuscript_id) is not None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 404 error with bogus manuscript_id
+    editor_obj = Genius.gen_editor_obj()
+    bogus_manuscript_id = random.randint(1, 10)
+    response = client.delete(
+        f"/editors/{editor_obj.editor_id}/manuscripts/{bogus_manuscript_id}"
+    )
+    assert response.status_code == 404
+    assert db.session.query(Editor).get(editor_obj.editor_id) is not None
 
 
 # Testing GET /editors/<id>/books/<id> endpoint
-# def test_display_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client): # 44/83
-#    app, client = staged_app_client
-#
-#    # Testing base case
-#    editor_obj = Genius.gen_editor_obj()
-#    book_obj = Genius.gen_book_obj()
-#    Genius.gen_editors_books_obj(editor_obj.editor_id, book_obj.book_id)
-#    response = client.get(f"/editors/{editor_obj.editor_id}/books/{book_obj.book_id}")
-#    assert response.status_code == 200, response.data
-#    DbBasedTester.test_book_resp(response, book_obj)
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    bogus_editor_id = random.randint(1, 10)
-#    bogus_book_id = random.randint(1, 10)
-#    response = client.get(f"/editors/{bogus_editor_id}/books/{bogus_book_id}")
-#    assert response.status_code == 404, response.data
+def test_display_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 44/83
+    app, client = staged_app_client
+
+    # Testing base case
+    editor_obj = Genius.gen_editor_obj()
+    book_obj = Genius.gen_book_obj(editor_obj.editor_id)
+    response = client.get(f"/editors/{editor_obj.editor_id}/books/{book_obj.book_id}")
+    assert response.status_code == 200, response.data
+    DbBasedTester.test_book_resp(response, book_obj)
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    editor_obj = Genius.gen_editor_obj()
+    bogus_book_id = random.randint(1, 10)
+    response = client.get(f"/editors/{editor_obj.editor_id}/books/{bogus_book_id}")
+    assert response.status_code == 404, response.data
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_editor_id = random.randint(1, 10)
+    book_obj = Genius.gen_book_obj()
+    response = client.get(f"/editors/{bogus_editor_id}/books/{book_obj.book_id}")
+    assert response.status_code == 404, response.data
 
 
 # Testing GET /editors/<id>/books endpoint
-# def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client): # 45/83
-#    app, client = staged_app_client
-#
-#    editor_obj = Genius.gen_editor_obj()
-#    book_objs_l = [Genius.gen_book_obj() for _ in range(3)]
-#    for book_obj in book_objs_l:
-#        Genius.gen_editors_books_obj(editor_obj.editor_id, book_obj.book_id)
-#    response = client.get(f"/editors/{editor_obj.editor_id}/books")
-#    assert response.status_code == 200, response.data
-#    book_jsobj_l = json.loads(response.data)
-#    book_jsobj_obj_matches = dict()
-#    for book_obj in book_objs_l:
-#        book_jsobj_obj_matches[book_obj.book_id] = operator.concat(
-#            [book_obj],
-#            list(
-#                filter(
-#                    lambda jsobj: jsobj["book_id"] == book_obj.book_id,
-#                    book_jsobj_l,
-#                )
-#            ),
-#        )
-#
-#    for _, (book_obj, book_jsobj) in book_jsobj_obj_matches.items():
-#        assert book_jsobj["edition_number"] == book_obj.edition_number
-#        assert book_jsobj["editor_id"] == book_obj.editor_id
-#        assert book_jsobj["is_in_print"] == book_obj.is_in_print
-#        assert book_jsobj["publication_date"] == book_obj.publication_date.isoformat()
-#        assert book_jsobj["title"] == book_obj.title
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    bogus_editor_id = random.randint(1, 10)
-#    response = client.get(f"/editors/{bogus_editor_id}/books")
-#    assert response.status_code == 404, response.data
+def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client): # 45/83
+    app, client = staged_app_client
+
+    editor_obj = Genius.gen_editor_obj()
+    book_objs_l = [Genius.gen_book_obj(editor_obj.editor_id) for _ in range(3)]
+    response = client.get(f"/editors/{editor_obj.editor_id}/books")
+    assert response.status_code == 200, response.data
+    book_jsobj_l = json.loads(response.data)
+    book_jsobj_obj_matches = dict()
+    for book_obj in book_objs_l:
+        book_jsobj_obj_matches[book_obj.book_id] = operator.concat(
+            [book_obj],
+            list(
+                filter(
+                    lambda jsobj: jsobj["book_id"] == book_obj.book_id,
+                    book_jsobj_l,
+                )
+            ),
+        )
+
+    for book_obj, book_jsobj in book_jsobj_obj_matches.values():
+        assert book_jsobj["edition_number"] == book_obj.edition_number
+        assert book_jsobj["editor_id"] == book_obj.editor_id
+        assert book_jsobj["is_in_print"] == book_obj.is_in_print
+        assert book_jsobj["publication_date"] == book_obj.publication_date.isoformat()
+        assert book_jsobj["title"] == book_obj.title
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_editor_id = random.randint(1, 10)
+    response = client.get(f"/editors/{bogus_editor_id}/books")
+    assert response.status_code == 404, response.data
 
 
 # Testing GET /editors/<id> endpoint
-# def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client): # 46/83
-#    app, client = staged_app_client
-#
-#    editor_obj = Genius.gen_editor_obj()
-#
-#    response = client.get(f"/editors/{editor_obj.editor_id}")
-#    DbBasedTester.test_editor_resp(response, editor_obj)
-#
-#    DbBasedTester.cleanup__empty_all_tables()
-#
-#    bogus_editor_id = random.randint(1, 10)
-#    response = client.get(f"/editors/{bogus_editor_id}")
-#    assert response.status_code == 404, response.data
+def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client): # 46/83
+    app, client = staged_app_client
+
+    editor_obj = Genius.gen_editor_obj()
+
+    response = client.get(f"/editors/{editor_obj.editor_id}")
+    DbBasedTester.test_editor_resp(response, editor_obj)
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    bogus_editor_id = random.randint(1, 10)
+    response = client.get(f"/editors/{bogus_editor_id}")
+    assert response.status_code == 404, response.data
 
 
 # Testing GET /editors/<id>/manuscripts/<id> endpoint

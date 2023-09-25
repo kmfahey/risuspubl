@@ -175,7 +175,9 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
 
     # Testing for 404 error if bogus author_id is used
     bogus_author_id = random.randint(1, 10)
-    response = client.post(f"/authors/{bogus_author_id}/manuscripts", json=manuscript_dict)
+    response = client.post(
+        f"/authors/{bogus_author_id}/manuscripts", json=manuscript_dict
+    )
     assert response.status_code == 404
 
     # Checking that authors_manuscripts bridge table row *wasn't* created
@@ -187,7 +189,9 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     # Testing for 400 error with unexpected or missing parameters
     author_obj = Genius.gen_author_obj()
     author_dict = Genius.gen_author_dict()
-    response = client.post(f"/authors/{author_obj.author_id}/manuscripts", json=author_dict)
+    response = client.post(
+        f"/authors/{author_obj.author_id}/manuscripts", json=author_dict
+    )
     assert response.status_code == 400, response.data
 
 
