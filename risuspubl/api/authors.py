@@ -662,6 +662,9 @@ def create_author_metadata_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
+        check_json_req_props(
+            AuthorMetadata, request.json, {"author_metadata_id", "author_id"}
+        )
         Author.query.get_or_404(author_id)
         check_json_req_props(
             AuthorMetadata, request.json, {"author_id", "author_metadata_id"}
@@ -694,6 +697,7 @@ def author_create_endpoint():
     :return:    a flask.Response object
     """
     try:
+        check_json_req_props(Author, request.json, {"author_id"})
         return create_author(request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -840,6 +844,7 @@ def create_author_manuscript_endpoint(author_id: int):
     :return:    a flask.Response object
     """
     try:
+        check_json_req_props(Manuscript, request.json, {"manuscript_id"})
         Author.query.get_or_404(author_id)
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.

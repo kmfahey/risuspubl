@@ -3,15 +3,17 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
+    check_json_req_props,
     create_table_row_function,
-    delete_table_row_by_id_function,
     delete_table_row_by_id_and_foreign_key_function,
-    display_table_row_by_id_function,
+    delete_table_row_by_id_function,
     display_table_row_by_id_and_foreign_key_function,
-    display_table_rows_function,
+    display_table_row_by_id_function,
     display_table_rows_by_foreign_id_function,
-    update_table_row_by_id_function,
+    display_table_rows_function,
+    handle_exception,
     update_table_row_by_id_and_foreign_key_function,
+    update_table_row_by_id_function,
 )
 from risuspubl.dbmodels import Book, Editor, Manuscript
 
@@ -160,6 +162,7 @@ def create_editor_endpoint():
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Editor, request.json, {"editor_id"})
         return create_editor(request.json)
     except Exception as exception:
         return handle_exception(exception)

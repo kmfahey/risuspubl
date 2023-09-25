@@ -25,6 +25,13 @@ def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
 
     DbBasedTester.test_author_resp(response, author_dict)
 
+    DbBasedTester.cleanup__empty_all_tables()
+
+    author_dict = Genius.gen_author_dict()
+    author_dict.update(Genius.gen_book_dict())
+    response = client.post("/authors", json=author_dict)
+    assert response.status_code == 400, response.data
+
 
 # Testing POST /authors/<id>/books
 def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
@@ -102,6 +109,14 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     )
     assert authors_books_obj is None
 
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error with unexpected or missing parameters
+    author_obj = Genius.gen_author_obj()
+    author_dict = Genius.gen_author_dict()
+    response = client.post(f"/authors/{author_obj.author_id}/books", json=author_dict)
+    assert response.status_code == 400, response.data
+
 
 # Testing POST /authors/<id>/manuscripts
 def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 3/83
@@ -158,8 +173,9 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
 
     DbBasedTester.cleanup__empty_all_tables()
 
+    # Testing for 404 error if bogus author_id is used
     bogus_author_id = random.randint(1, 10)
-    response = client.post(f"/authors/{bogus_author_id}/", json=manuscript_dict)
+    response = client.post(f"/authors/{bogus_author_id}/manuscripts", json=manuscript_dict)
     assert response.status_code == 404
 
     # Checking that authors_manuscripts bridge table row *wasn't* created
@@ -167,6 +183,12 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
         db.session.query(AuthorsManuscripts).filter_by(author_id=author_id).first()
     )
     assert authors_manuscripts_obj is None
+
+    # Testing for 400 error with unexpected or missing parameters
+    author_obj = Genius.gen_author_obj()
+    author_dict = Genius.gen_author_dict()
+    response = client.post(f"/authors/{author_obj.author_id}/manuscripts", json=author_dict)
+    assert response.status_code == 400, response.data
 
 
 # Testing POST /authors/<id>/metadata
@@ -207,6 +229,14 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
         f"/authors/{bogus_author_id}/metadata", json=metadata_dict
     )
     assert failed_response.status_code == 404
+
+    # Testing for 400 error if missing or unexpected parameters are sent
+    author_obj = Genius.gen_author_obj()
+    author_dict = Genius.gen_author_dict()
+    failed_response = client.post(
+        f"/authors/{author_obj.author_id}/metadata", json=author_dict
+    )
+    assert failed_response.status_code == 400, failed_response.data
 
 
 # Testing POST /authors/<id>/<id>/books

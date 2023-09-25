@@ -3,8 +3,8 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
-    check_json_req_props,
     create_table_row_function,
+    check_json_req_props,
     delete_table_row_by_id_function,
     display_table_row_by_id_function,
     display_table_rows_function,
@@ -65,6 +65,7 @@ def create_client_endpoint():
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Client, request.json, {"client_id"})
         return create_client(request.json)
     except Exception as exception:
         return handle_exception(exception)

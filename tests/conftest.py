@@ -486,6 +486,34 @@ class DbBasedTester:
         return resp_jsobj, client_obj
 
     @classmethod
+    def test_editor_resp(cls, response, editor_data):
+        assert response.status_code == 200, response.data
+
+        resp_jsobj = response.get_json()
+        if isinstance(editor_data, dict):
+            editor_dict = editor_data
+
+            assert editor_dict["first_name"] == resp_jsobj["first_name"]
+            assert editor_dict["last_name"] == resp_jsobj["last_name"]
+            assert editor_dict["salary"] == resp_jsobj["salary"]
+
+            editor_obj = db.session.query(Editor).get(resp_jsobj["editor_id"])
+            assert editor_dict["first_name"] == editor_obj.first_name
+            assert editor_dict["last_name"] == editor_obj.last_name
+            assert editor_dict["salary"] == editor_obj.salary
+
+        elif isinstance(editor_data, Editor):
+            editor_obj = editor_data
+
+            assert resp_jsobj["first_name"] == editor_obj.first_name
+            assert resp_jsobj["last_name"] == editor_obj.last_name
+            assert resp_jsobj["salary"] == editor_obj.salary
+
+        assert resp_jsobj["editor_id"] == editor_obj.editor_id
+
+        return resp_jsobj, editor_obj
+
+    @classmethod
     def test_manuscript_resp(cls, response, manuscript_data):
         assert response.status_code == 200, response.data
 

@@ -30,6 +30,13 @@ def test_client_create_endpoint(db_w_cleanup, staged_app_client):  # 35/83
     response = client.post("/clients", json=client_dict)
     DbBasedTester.test_client_resp(response, client_dict)
 
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error when sending missing or unexpected params
+    book_dict = Genius.gen_book_dict()
+    response = client.post("/clients", json=book_dict)
+    assert response.status_code == 400, response.data
+
 
 ## Testing DELETE /clients/<id>
 def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
