@@ -22,7 +22,6 @@ os.environ["FLASK_ENV"] = "testing"
 
 # Testing POST /salespeople/<id>/clients endpoint
 def test_create_salesperson_client_endpoint(db_w_cleanup, staged_app_client):  # 57/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     # Refactored test setup bc it's the same every time
@@ -58,7 +57,6 @@ def test_create_salesperson_client_endpoint(db_w_cleanup, staged_app_client):  #
 
 # Testing POST /salespeople endpoint
 def test_create_salesperson_endpoint(db_w_cleanup, staged_app_client):  # 58/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     salesperson_dict = Genius.gen_salesperson_dict()
@@ -137,7 +135,6 @@ def test_delete_salesperson_client_by_id_endpoint(
 
 # Testing GET /salespeople/<id> endpoint
 def test_display_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 61/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -156,7 +153,6 @@ def test_display_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  #
 def test_display_salesperson_client_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):  # 62/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     # Testing base case
@@ -181,7 +177,6 @@ def test_display_salesperson_client_by_id_endpoint(
 
 # Testing GET /salespeople/<id>/clients endpoint
 def test_display_salesperson_clients_endpoint(db_w_cleanup, staged_app_client):  # 63/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -242,13 +237,14 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 64/83
 
 # Testing PATCH /salespeople/<id> endpoint
 def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 65/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     # Testing base case
     salesperson_obj = Genius.gen_salesperson_obj()
     salesperson_dict = Genius.gen_salesperson_dict()
-    response = client.patch(f"/salespeople/{salesperson_obj.salesperson_id}", json=salesperson_dict)
+    response = client.patch(
+        f"/salespeople/{salesperson_obj.salesperson_id}", json=salesperson_dict
+    )
     DbBasedTester.test_salesperson_resp(response, salesperson_dict)
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -263,7 +259,9 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     # Testing for 404 error if salesperson_id is bogus
     bogus_salesperson_id = random.randint(1, 10)
     salesperson_dict = Genius.gen_salesperson_dict()
-    response = client.patch(f"/salespeople/{bogus_salesperson_id}", json=salesperson_dict)
+    response = client.patch(
+        f"/salespeople/{bogus_salesperson_id}", json=salesperson_dict
+    )
     assert response.status_code == 404, response.data
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -271,16 +269,16 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     # test for unexpected params and missing params
     salesperson_obj = Genius.gen_salesperson_obj()
     client_dict = Genius.gen_client_dict()
-    response = client.patch(f"/salespeople/{salesperson_obj.salesperson_id}", json=client_dict)
+    response = client.patch(
+        f"/salespeople/{salesperson_obj.salesperson_id}", json=client_dict
+    )
     assert response.status_code == 400, response.data
-
 
 
 # Testing PATCH /salespeople/<id>/clients/<id> endpoint
 def test_update_salesperson_client_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):  # 66/83
-    db = db_w_cleanup
     app, client = staged_app_client
 
     def _setup():

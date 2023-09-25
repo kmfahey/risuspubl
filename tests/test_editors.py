@@ -10,10 +10,8 @@ import pytest
 
 from risuspubl.dbmodels import (
     Book,
-    Client,
     Editor,
     Manuscript,
-    Salesperson,
 )
 from conftest import Genius, DbBasedTester, randint_excluding
 

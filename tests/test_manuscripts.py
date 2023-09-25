@@ -78,7 +78,9 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 55/83
     for _ in range(3):
         manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
         manuscript_objs_l.append(manuscript_obj)
-        Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_obj.manuscript_id)
+        Genius.gen_authors_manuscripts_obj(
+            author_obj.author_id, manuscript_obj.manuscript_id
+        )
     response = client.get("/manuscripts")
     assert response.status_code == 200
     for manuscript_jsobj in response.get_json():
@@ -100,13 +102,14 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     editor_obj = Genius.gen_editor_obj()
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
     manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
-    response = client.patch(f"/manuscripts/{manuscript_obj.manuscript_id}", json=manuscript_dict)
+    response = client.patch(
+        f"/manuscripts/{manuscript_obj.manuscript_id}", json=manuscript_dict
+    )
     DbBasedTester.test_manuscript_resp(response, manuscript_dict)
 
     DbBasedTester.cleanup__empty_all_tables()
 
     # Testing for 400 error if PATCHed json is empty
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
     manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
@@ -127,5 +130,7 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     editor_obj = Genius.gen_editor_obj()
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
     author_dict = Genius.gen_author_dict()
-    response = client.patch(f"/manuscripts/{manuscript_obj.manuscript_id}", json=author_dict)
+    response = client.patch(
+        f"/manuscripts/{manuscript_obj.manuscript_id}", json=author_dict
+    )
     assert response.status_code == 400, response.data

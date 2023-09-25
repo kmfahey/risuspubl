@@ -107,7 +107,6 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     DbBasedTester.cleanup__empty_all_tables()
 
     # Testing for 400 error if PATCHed json is empty
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     book_dict = Genius.gen_book_dict(editor_obj.editor_id)
