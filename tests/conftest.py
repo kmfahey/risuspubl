@@ -613,12 +613,12 @@ class DbBasedTester:
             assert salesperson_dict["last_name"] == salesperson_obj.last_name
             assert salesperson_dict["salary"] == salesperson_obj.salary
 
-        elif isinstance(salesperson_data, Manuscript):
+        elif isinstance(salesperson_data, Salesperson):
             salesperson_obj = salesperson_data
 
-            assert salesperson_dict["first_name"] == salesperson_obj.first_name
-            assert salesperson_dict["last_name"] == salesperson_obj.last_name
-            assert salesperson_dict["salary"] == salesperson_obj.salary
+            assert resp_jsobj["first_name"] == salesperson_obj.first_name
+            assert resp_jsobj["last_name"] == salesperson_obj.last_name
+            assert resp_jsobj["salary"] == salesperson_obj.salary
 
         else:
             raise TypeError(

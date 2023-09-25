@@ -3,18 +3,19 @@
 from flask import Blueprint, jsonify, request
 
 from risuspubl.api.utility import (
+    check_json_req_props,
     create_model_obj,
     create_table_row_function,
-    delete_table_row_by_id_function,
     delete_table_row_by_id_and_foreign_key_function,
-    display_table_row_by_id_function,
+    delete_table_row_by_id_function,
     display_table_row_by_id_and_foreign_key_function,
-    display_table_rows_function,
+    display_table_row_by_id_function,
     display_table_rows_by_foreign_id_function,
+    display_table_rows_function,
     generate_create_update_argd,
     handle_exception,
-    update_table_row_by_id_function,
     update_table_row_by_id_and_foreign_key_function,
+    update_table_row_by_id_function,
 )
 from risuspubl.dbmodels import Client, Salesperson, db
 
@@ -123,6 +124,7 @@ def create_salesperson_endpoint():
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Salesperson, request.json, {"salesperson_id"})
         return create_salesperson(request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -140,6 +142,7 @@ def create_salesperson_client_endpoint(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
+        check_json_req_props(Client, request.json, {"client_id"})
         Salesperson.query.get_or_404(salesperson_id)
         # Using create_model_obj() to process request.json into a Client()
         # argument dict and instance a Client() object.
@@ -189,6 +192,12 @@ def update_salesperson_client_by_id_endpoint(salesperson_id: int, client_id: int
     :return:         A flask.Response object.
     """
     try:
+        if not len(request.json):
+            raise ValueError(
+                "update action executed with no parameters indicating "
+                + "fields to update"
+            )
+        check_json_req_props(Client, request.json, {"client_id"}, chk_missing=False)
         return update_client_by_client_id_and_salesperson_id(
             salesperson_id, client_id, request.json
         )
@@ -206,7 +215,14 @@ def delete_salesperson_by_id_endpoint(salesperson_id: int):
     :return:         A flask.Response object.
     """
     try:
-        return delete_salesperson_by_id(salesperson_id)
+        salesperson_obj = Salesperson.query.get_or_404(salesperson_id)
+        client_objs = Client.query.filter(Client.salesperson_id == salesperson_id)
+        for client_obj in client_objs:
+            client_obj.salesperson_id = None
+        db.session.commit()
+        db.session.delete(salesperson_obj)
+        db.session.commit()
+        return jsonify(True)
     except Exception as exception:
         return handle_exception(exception)
 
