@@ -52,11 +52,13 @@ display_manuscripts_by_editor_id = display_table_rows_by_foreign_id_function(
     Editor, "editor_id", Manuscript
 )
 update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(
-    Editor, Book
+    Editor, "editor_id", Book, "book_id"
 )
 update_editor_by_id = update_table_row_by_id_function(Editor)
 update_manuscript_by_manuscript_id_and_editor_id = (
-    update_table_row_by_id_and_foreign_key_function(Editor, Manuscript)
+    update_table_row_by_id_and_foreign_key_function(
+        Editor, "editor_id", Manuscript, "manuscript_id"
+    )
 )
 
 
@@ -203,6 +205,12 @@ def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
+        if not len(request.json):
+            raise ValueError(
+                "update action executed with no parameters indicating "
+                + "fields to update"
+            )
+        check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
         return update_book_by_book_id_and_editor_id(editor_id, book_id, request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -223,6 +231,14 @@ def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
+        if not len(request.json):
+            raise ValueError(
+                "update action executed with no parameters indicating "
+                + "fields to update"
+            )
+        check_json_req_props(
+            Manuscript, request.json, {"manuscript_id"}, chk_missing=False
+        )
         return update_manuscript_by_manuscript_id_and_editor_id(
             editor_id, manuscript_id, request.json
         )

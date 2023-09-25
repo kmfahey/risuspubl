@@ -41,10 +41,12 @@ display_manuscripts_by_series_id = display_table_rows_by_foreign_id_function(
 display_series_by_id = display_table_row_by_id_function(Series)
 display_series = display_table_rows_function(Series)
 update_book_by_book_id_and_series_id = update_table_row_by_id_and_foreign_key_function(
-    Series, Book
+    Series, "series_id", Book, "book_id"
 )
 update_manuscript_by_manuscript_id_and_series_idr = (
-    update_table_row_by_id_and_foreign_key_function(Series, Manuscript)
+    update_table_row_by_id_and_foreign_key_function(
+        Series, "series_id", Manuscript, "manuscript_id"
+    )
 )
 update_series_by_id = update_table_row_by_id_function(Series)
 

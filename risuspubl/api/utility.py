@@ -2,6 +2,7 @@
 
 import abc
 import math
+import traceback
 from datetime import date, timedelta
 
 from flask import Response, abort, jsonify
@@ -384,7 +385,7 @@ def generate_create_update_argd(model_class, request_json, **argd):
     # the JSON contains a different value than the one included from the URL
     # argument, it can override.)
     if len(argd):
-        ((id_column_name, id_column_value),) = create_or_update_argd.items()
+        ((id_column_name, id_column_value),) = argd.items()
         if create_or_update_argd.get(id_column_name) is None:
             create_or_update_argd[id_column_name] = id_column_value
     return create_or_update_argd
@@ -412,12 +413,7 @@ def handle_exception(exception):
 
     # If the exception has a message, it's extracted and built into a helpful
     # text for the error;
-    if len(exception.args):
-        return Response(
-            f"{exception.__class__.__name__}: {exception.args[0]}", status=status
-        )
-    else:
-        return abort(status)
+    return Response("".join(traceback.format_exception(exception)), status)
 
 
 def create_table_row_function(model_class):
@@ -691,7 +687,9 @@ def update_table_row_by_id_function(model_class):
     return _internal_update_table_row_by_id
 
 
-def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
+def update_table_row_by_id_and_foreign_key_function(
+    outer_class, outer_id_column, inner_class, inner_id_column
+):
     """
     Returns an endpoint function that executes PATCH
     /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
@@ -723,9 +721,9 @@ def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
             # Verifying that a row exists in the inner table with a foreign key
             # from the outer table, else it's a 404.
             if not any(
-                getattr(inner_class_obj, self.inner_id_column) == inner_id
+                getattr(inner_class_obj, inner_id_column) == inner_id
                 for inner_class_obj in inner_class.query.where(
-                    getattr(inner_class, self.outer_id_column) == outer_id
+                    getattr(inner_class, outer_id_column) == outer_id
                 )
             ):
                 return abort(404)
@@ -736,7 +734,7 @@ def update_table_row_by_id_and_foreign_key_function(outer_class, inner_class):
                 inner_id,
                 inner_class,
                 generate_create_update_argd(
-                    inner_class, request_json, **{self.outer_id_column: outer_id}
+                    inner_class, request_json, **{outer_id_column: outer_id}
                 ),
             )
             db.session.add(inner_class_obj)

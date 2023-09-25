@@ -42,7 +42,9 @@ display_clients_by_salesperson_id = display_table_rows_by_foreign_id_function(
 display_salespeople = display_table_rows_function(Salesperson)
 display_salesperson_by_id = display_table_row_by_id_function(Salesperson)
 update_client_by_client_id_and_salesperson_id = (
-    update_table_row_by_id_and_foreign_key_function(Salesperson, Client)
+    update_table_row_by_id_and_foreign_key_function(
+        Salesperson, "salesperson_id", Client, "client_id"
+    )
 )
 update_salesperson_by_id = update_table_row_by_id_function(Salesperson)
 
