@@ -498,37 +498,37 @@ class DbBasedTester:
         if isinstance(client_data, dict):
             client_dict = client_data
 
-            client_dict["email_address"] == resp_jsobj["email_address"]
-            client_dict["phone_number"] == resp_jsobj["phone_number"]
-            client_dict["business_name"] == resp_jsobj["business_name"]
-            client_dict["street_address"] == resp_jsobj["street_address"]
-            client_dict["city"] == resp_jsobj["city"]
-            client_dict["state"] == resp_jsobj["state"]
-            client_dict["zipcode"] == resp_jsobj["zipcode"]
-            client_dict["country"] == resp_jsobj["country"]
+            assert client_dict["email_address"] == resp_jsobj["email_address"]
+            assert client_dict["phone_number"] == resp_jsobj["phone_number"]
+            assert client_dict["business_name"] == resp_jsobj["business_name"]
+            assert client_dict["street_address"] == resp_jsobj["street_address"]
+            assert client_dict["city"] == resp_jsobj["city"]
+            assert client_dict["state"] == resp_jsobj["state"]
+            assert client_dict["zipcode"] == resp_jsobj["zipcode"]
+            assert client_dict["country"] == resp_jsobj["country"]
 
             client_obj = db.session.query(Client).get(resp_jsobj["client_id"])
 
-            client_dict["email_address"] == client_obj.email_address
-            client_dict["phone_number"] == client_obj.phone_number
-            client_dict["business_name"] == client_obj.business_name
-            client_dict["street_address"] == client_obj.street_address
-            client_dict["city"] == client_obj.city
-            client_dict["state"] == client_obj.state
-            client_dict["zipcode"] == client_obj.zipcode
-            client_dict["country"] == client_obj.country
+            assert client_dict["email_address"] == client_obj.email_address
+            assert client_dict["phone_number"] == client_obj.phone_number
+            assert client_dict["business_name"] == client_obj.business_name
+            assert client_dict["street_address"] == client_obj.street_address
+            assert client_dict["city"] == client_obj.city
+            assert client_dict["state"] == client_obj.state
+            assert client_dict["zipcode"] == client_obj.zipcode
+            assert client_dict["country"] == client_obj.country
 
         elif isinstance(client_data, Client):
             client_obj = client_data
 
-            resp_jsobj["email_address"] == client_obj.email_address
-            resp_jsobj["phone_number"] == client_obj.phone_number
-            resp_jsobj["business_name"] == client_obj.business_name
-            resp_jsobj["street_address"] == client_obj.street_address
-            resp_jsobj["city"] == client_obj.city
-            resp_jsobj["state"] == client_obj.state
-            resp_jsobj["zipcode"] == client_obj.zipcode
-            resp_jsobj["country"] == client_obj.country
+            assert resp_jsobj["email_address"] == client_obj.email_address
+            assert resp_jsobj["phone_number"] == client_obj.phone_number
+            assert resp_jsobj["business_name"] == client_obj.business_name
+            assert resp_jsobj["street_address"] == client_obj.street_address
+            assert resp_jsobj["city"] == client_obj.city
+            assert resp_jsobj["state"] == client_obj.state
+            assert resp_jsobj["zipcode"] == client_obj.zipcode
+            assert resp_jsobj["country"] == client_obj.country
 
         else:
             raise TypeError(
