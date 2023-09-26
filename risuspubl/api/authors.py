@@ -375,6 +375,8 @@ def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         # The two author_objs are serialized and returned as a 2-element json
         # list.
         retval = [author1_obj.serialize(), author2_obj.serialize()]
@@ -474,6 +476,8 @@ def update_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
         )
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         a1_book_objs = list(
             filter(lambda bobj: bobj.book_id == book_id, author1_obj.books)
         )
@@ -525,6 +529,8 @@ def update_authors_manuscript_endpoint(
         )
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         a1_manuscript_objs = list(
             filter(
                 lambda bobj: bobj.manuscript_id == manuscript_id,
@@ -722,6 +728,8 @@ def create_authors_book_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         check_json_req_props(Book, request.json, {"book_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Book()
         # argument dict and instance a Book() object.
@@ -766,6 +774,8 @@ def create_authors_manuscript_endpoint(author1_id: int, author2_id: int):
     try:
         Author.query.get_or_404(author1_id)
         Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         check_json_req_props(Manuscript, request.json, {"manuscript_id"}, {"series_id"})
         # Using create_model_obj() to process request.json into a Manuscript()
         # argument dict and instance a Manuscript() object.
@@ -920,6 +930,8 @@ def delete_authors_book_endpoint(author1_id: int, author2_id: int, book_id: int)
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         a1_book_objs = list(
             filter(lambda bobj: bobj.book_id == book_id, author1_obj.books)
         )
@@ -966,6 +978,8 @@ def delete_authors_manuscript_endpoint(
     try:
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
+        if author1_id == author2_id:
+            raise ValueError("author1_id and author2_id are equal")
         a1_manuscript_objs = list(
             filter(
                 lambda bobj: bobj.manuscript_id == manuscript_id,

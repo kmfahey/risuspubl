@@ -188,7 +188,11 @@ def test_display_salesperson_clients_endpoint(db_w_cleanup, staged_app_client): 
     for client_obj in client_objs_l:
         client_jsobj_obj_matches[client_obj.client_id] = operator.concat(
             [client_obj],
-            [jsobj for jsobj in client_jsobj_l if jsobj["client_id"] == client_obj.client_id],
+            [
+                jsobj
+                for jsobj in client_jsobj_l
+                if jsobj["client_id"] == client_obj.client_id
+            ],
         )
 
     for client_obj, client_jsobj in client_jsobj_obj_matches.values():

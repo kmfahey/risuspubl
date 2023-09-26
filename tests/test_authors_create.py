@@ -377,6 +377,15 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     )
     assert response.status_code == 400, response.data.decode("utf8")
 
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error when author ids are equal
+    author_no1_id, author_no2_id, book_dict = _setup()
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no1_id}/books", json=book_dict
+    )
+    assert response.status_code == 400, response.data.decode("utf8")
+
 
 # Testing POST /authors/<id>/<id>/manuscripts
 def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 6/83
@@ -533,3 +542,12 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     )
     assert author_no1_manuscript_obj is None
     assert author_no2_manuscript_obj is None
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error when author ids are equal
+    author_no1_id, author_no2_id, manuscript_dict = _setup()
+    response = client.post(
+        f"/authors/{author_no1_id}/{author_no1_id}/manuscripts", json=manuscript_dict
+    )
+    assert response.status_code == 400, response.data.decode("utf8")

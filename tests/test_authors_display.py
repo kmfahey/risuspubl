@@ -126,7 +126,11 @@ def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id],
+            [
+                jsobj
+                for jsobj in manuscript_jsobj_l
+                if jsobj["manuscript_id"] == manuscript_obj.manuscript_id
+            ],
         )
 
     for _, (manuscript_obj, manuscript_jsobj) in manuscript_jsobj_obj_matches.items():
@@ -340,10 +344,11 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):  # 21
 
     DbBasedTester.cleanup__empty_all_tables()
 
-    author_no1_obj = Genius.gen_author_obj()
-    bogus_author_id = randint_excluding(1, 10, author_no1_obj.author_id)
-    response = client.get(f"/authors/{author_no1_obj.author_id}/{bogus_author_id}")
-    assert response.status_code == 404, response.data.decode("utf8")
+    author_obj = Genius.gen_author_obj()
+    response = client.get(
+        f"/authors/{author_obj.author_id}/{author_obj.author_id}"
+    )
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the GET /authors/<id>/<id>/manuscripts/<id> endpoint
@@ -448,7 +453,11 @@ def test_display_authors_manuscripts_endpoint(db_w_cleanup, staged_app_client): 
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id],
+            [
+                jsobj
+                for jsobj in manuscript_jsobj_l
+                if jsobj["manuscript_id"] == manuscript_obj.manuscript_id
+            ],
         )
 
     for _, (manuscript_obj, manuscript_jsobj) in manuscript_jsobj_obj_matches.items():

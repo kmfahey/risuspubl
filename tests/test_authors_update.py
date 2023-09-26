@@ -309,6 +309,18 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
     )
     assert response.status_code == 400, response.data.decode("utf8")
 
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error when both author_ids are equal
+    author_obj, _, editor_obj, book_obj = _setup()
+    book_dict = Genius.gen_book_dict(editor_obj.editor_id)
+    response = client.patch(
+        f"/authors/{author_obj.author_id}/{author_obj.author_id}"
+        + f"/books/{book_obj.book_id}",
+        json=book_dict,
+    )
+    assert response.status_code == 400, response.data.decode("utf8")
+
 
 # Testing the PATCH /authors/<id>/<id>/manuscripts/<id> endpoint
 def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 30/83
@@ -402,3 +414,16 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         json=author_dict,
     )
     assert response.status_code == 400, response.data.decode("utf8")
+
+    DbBasedTester.cleanup__empty_all_tables()
+
+    # Testing for 400 error when both author_ids are equal
+    author_obj, _, editor_obj, manuscript_obj = _setup()
+    manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
+    response = client.patch(
+        f"/authors/{author_obj.author_id}/{author_obj.author_id}"
+        + f"/manuscripts/{manuscript_obj.manuscript_id}",
+        json=manuscript_dict,
+    )
+    assert response.status_code == 400, response.data.decode("utf8")
+

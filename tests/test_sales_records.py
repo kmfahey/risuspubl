@@ -143,7 +143,10 @@ def test_display_sales_records_by_year_and_month_and_book_id_endpoint(
     if year <= book_obj.publication_date.year <= Genius.todays_date.year:
         book_obj.publication_date = book_obj.publication_date.replace(year=year - 1)
     db.session.commit()
-    [Genius.gen_sales_record_obj(book_obj.book_id, year, month) for month in range(1, 12)]
+    [
+        Genius.gen_sales_record_obj(book_obj.book_id, year, month)
+        for month in range(1, 12)
+    ]
     response = client.get(
         f"/sales_records/years/{year}/months/12/books/{book_obj.book_id}"
     )
@@ -159,7 +162,10 @@ def test_display_sales_records_by_year_and_month_and_book_id_endpoint(
     if year <= book_obj.publication_date.year <= Genius.todays_date.year:
         book_obj.publication_date = book_obj.publication_date.replace(year=year - 1)
     db.session.commit()
-    [Genius.gen_sales_record_obj(book_obj.book_id, year, month) for month in range(1, 13)]
+    [
+        Genius.gen_sales_record_obj(book_obj.book_id, year, month)
+        for month in range(1, 13)
+    ]
     other_year = randint_excluding(2000, 2020, year)
     response = client.get(
         f"/sales_records/years/{other_year}/months/{month}/books/{book_obj.book_id}"

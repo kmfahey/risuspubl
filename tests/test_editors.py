@@ -260,7 +260,11 @@ def test_display_editor_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id]
+            [
+                jsobj
+                for jsobj in manuscript_jsobj_l
+                if jsobj["manuscript_id"] == manuscript_obj.manuscript_id
+            ],
         )
 
     for manuscript_obj, manuscript_jsobj in manuscript_jsobj_obj_matches.values():

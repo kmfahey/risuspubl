@@ -366,12 +366,19 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
         is not None
     )
 
+    # Testing for 400 error when author_id arguments are equal
+    author_obj = Genius.gen_author_obj()
+    book_obj = Genius.gen_book_obj()
+    book_id = book_obj.book_id
+    Genius.gen_authors_books_obj(author_obj.author_id, book_id)
+    response = client.delete(
+        f"/authors/{author_obj.author_id}"
+        + f"/{author_obj.author_id}/books/{book_id}"
+    )
+    assert response.status_code == 400
+
 
 # Testing DELETE /authors/<id>/<id>/manuscripts/<id>
-#
-# This test function is literally a copy-paste of the preceding one with
-# :'<,'>s/book/manuscript/g|'<,'>s/Book/Manuscript/g
-# DRY isn't so much of a thing in testing but even so :/
 def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 12/83
     db = db_w_cleanup
     app, client = staged_app_client
@@ -543,3 +550,14 @@ def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         .first()
         is not None
     )
+
+    # Testing for 400 error when author_id arguments are equal
+    author_obj = Genius.gen_author_obj()
+    manuscript_obj = Genius.gen_manuscript_obj()
+    manuscript_id = manuscript_obj.manuscript_id
+    Genius.gen_authors_manuscripts_obj(author_obj.author_id, manuscript_id)
+    response = client.delete(
+        f"/authors/{author_obj.author_id}"
+        + f"/{author_obj.author_id}/manuscripts/{manuscript_id}"
+    )
+    assert response.status_code == 400
