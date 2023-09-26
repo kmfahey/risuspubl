@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from datetime import date
 from flask import Blueprint, abort, jsonify
 
 from risuspubl.api.utility import display_table_row_by_id_function, handle_exception
@@ -70,9 +71,10 @@ def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
     """
     try:
         retval = list()
-        if not (1990 <= year <= 2022):
+        this_year = date.today().year
+        if not (1990 <= year <= date.today().year):
             raise ValueError(
-                f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year"
+                f"year parameter value {year} not in the range [1990, {this_year}]: no sales in specified year"
             )
         elif not (1 <= month <= 12):
             raise ValueError(
@@ -82,6 +84,8 @@ def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
             SalesRecord.month == month
         ):
             retval.append(sales_record_obj.serialize())
+        if not len(retval):
+            return abort(404)
         retval.sort(
             key=lambda dictval: (dictval["year"], dictval["month"], dictval["book_id"])
         )
