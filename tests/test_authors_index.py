@@ -1,10 +1,7 @@
 #!/usr/bin/python3
 
 import os
-import pprint
-import json
 
-import pytest
 from risuspubl.dbmodels import Author
 
 from conftest import Genius

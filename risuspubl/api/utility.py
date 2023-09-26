@@ -40,7 +40,7 @@ _foreign_keys_to_model_subclasses = {
 }
 
 
-def create_model_obj(model_subclass, params_argd, optional_params=set()):
+def create_model_obj(model_subclass, params_argd, optional_params=()):
     """
     Instantiates an object in the provided SQLAlchemy.Model subclass using the
     dict of key/value pairs as arguments to the constructor. A value in that
@@ -260,7 +260,7 @@ def _validate_bool(param_name, param_value):
     # returned. If it fails, a ValueError is raised.
 
     # If it's already a boolean, just return it.
-    if isinstance(param_value, bool) or param_value is None:
+    if param_value is True or param_value is False or param_value is None:
         return param_value
     elif param_value.lower() in ("true", "t", "yes", "1"):  # Tries to accept a
         return True  # variety of
@@ -494,8 +494,8 @@ def delete_table_row_by_id_and_foreign_key_function(
             # Verifying that a row exists in the inner table with a foreign key
             # from the outer table, else it's a 404.
             if not any(
-                getattr(inner_class, inner_id_column) == inner_id
-                for inner_class in inner_class.query.where(
+                getattr(inner_class_obj, inner_id_column) == inner_id
+                for inner_class_obj in inner_class.query.where(
                     getattr(inner_class, outer_id_column) == outer_id
                 )
             ):
@@ -743,8 +743,8 @@ def update_table_row_by_id_and_foreign_key_function(
 def check_json_req_props(
     sqlal_model_cls,
     request_json,
-    excl_cols=set(),
-    optional_cols=set(),
+    excl_cols=frozenset(),
+    optional_cols=frozenset(),
     chk_missing=True,
     chk_unexp=True,
 ):

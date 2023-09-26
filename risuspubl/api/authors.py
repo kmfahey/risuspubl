@@ -143,7 +143,7 @@ def display_authors_book_by_id_endpoint(author1_id: int, author2_id: int, book_i
 # and display_authors_manuscript_by_id() to generate a list of Book objects
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
-def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> set:
+def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> list:
     if author1_id == author2_id:
         raise ValueError("author1_id and author2_id were identical")
     author1_obj = Author.query.get_or_404(author1_id)
@@ -386,7 +386,7 @@ def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
 # This private utility function is used by display_authors_books() and
 # display_authors_book_by_id() to generate a list of Book objects with book_ids
 # that are associated with both author_ids in the authors_books table.
-def _authors_shared_book_ids(author1_id: int, author2_id: int) -> set:
+def _authors_shared_book_ids(author1_id: int, author2_id: int) -> list:
     author1_obj = Author.query.get_or_404(author1_id)
     author2_obj = Author.query.get_or_404(author2_id)
     # The books attribute on an Author object comprises the Book

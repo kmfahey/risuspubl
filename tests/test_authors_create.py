@@ -3,9 +3,6 @@
 import os
 import random
 
-import pprint
-import json
-import pytest
 from risuspubl.dbmodels import AuthorsBooks, AuthorsManuscripts
 
 from conftest import Genius, DbBasedTester, randint_excluding

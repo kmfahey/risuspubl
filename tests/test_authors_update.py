@@ -3,10 +3,6 @@
 import os
 import random
 
-import pprint
-import json
-import pytest
-
 from conftest import Genius, DbBasedTester, randint_excluding
 
 
@@ -306,7 +302,6 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
     # test for unexpected params and missing params
     author_no1_obj, author_no2_obj, editor_obj, book_obj = _setup()
     author_dict = Genius.gen_author_dict()
-    author_dict = Genius.gen_author_dict()
     response = client.patch(
         f"/authors/{author_no1_obj.author_id}/{author_no2_obj.author_id}"
         + f"/books/{book_obj.book_id}",
@@ -400,7 +395,6 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
 
     # test for unexpected params and missing params
     author_no1_obj, author_no2_obj, editor_obj, manuscript_obj = _setup()
-    author_dict = Genius.gen_author_dict()
     author_dict = Genius.gen_author_dict()
     response = client.patch(
         f"/authors/{author_no1_obj.author_id}/{author_no2_obj.author_id}"

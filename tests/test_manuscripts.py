@@ -2,8 +2,6 @@
 
 import os
 import random
-import pprint
-import json
 
 import pytest
 
@@ -34,7 +32,7 @@ def test_delete_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     Genius.gen_authors_manuscripts_obj(author_id, manuscript_id)
     response = client.delete(f"/manuscripts/{manuscript_id}")
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Author).get(author_id) is not None
     assert db.session.query(Manuscript).get(manuscript_id) is None
     assert (
@@ -111,7 +109,6 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     # Testing for 400 error if PATCHed json is empty
     editor_obj = Genius.gen_editor_obj()
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
-    manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
     response = client.patch(f"/manuscripts/{manuscript_obj.manuscript_id}", json={})
     assert response.status_code == 400, response.data.decode("utf8")
 

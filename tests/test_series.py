@@ -2,10 +2,8 @@
 
 import os
 import random
-
-import pprint
-import json
 import pytest
+
 from risuspubl.dbmodels import Series
 
 from conftest import Genius, DbBasedTester
@@ -108,7 +106,6 @@ def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):  # 76/8
     DbBasedTester.cleanup__empty_all_tables()
 
     # Testing for 404 error when the series_id is bogus
-    editor_obj = Genius.gen_editor_obj()
     bogus_series_id = random.randint(1, 10)
     response = client.get(f"/series/{bogus_series_id}/books")
     assert response.status_code == 404
@@ -194,7 +191,6 @@ def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     DbBasedTester.cleanup__empty_all_tables()
 
     # Testing for 404 error when the series_id is bogus
-    editor_obj = Genius.gen_editor_obj()
     bogus_series_id = random.randint(1, 10)
     response = client.get(f"/series/{bogus_series_id}/manuscripts")
     assert response.status_code == 404

@@ -2,8 +2,6 @@
 
 import os
 import random
-import pprint
-import json
 import operator
 
 import pytest
@@ -33,7 +31,7 @@ def test_create_salesperson_client_endpoint(db_w_cleanup, staged_app_client):  #
     salesperson_id, client_dict = _setup()
 
     response = client.post(f"/salespeople/{salesperson_id}/clients", json=client_dict)
-    resp_jsobj, client_obj = DbBasedTester.test_client_resp(response, client_dict)
+    DbBasedTester.test_client_resp(response, client_dict)
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -84,7 +82,7 @@ def test_delete_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
 
     response = client.delete(f"/salespeople/{salesperson_obj.salesperson_id}")
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Salesperson).get(salesperson_id) is None
     assert db.session.query(Client).get(client_id) is not None
 
@@ -110,7 +108,7 @@ def test_delete_salesperson_client_by_id_endpoint(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{client_id}"
     )
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Client).get(client_id) is None
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -185,17 +183,12 @@ def test_display_salesperson_clients_endpoint(db_w_cleanup, staged_app_client): 
     ]
     response = client.get(f"/salespeople/{salesperson_obj.salesperson_id}/clients")
     assert response.status_code == 200, response.data.decode("utf8")
-    client_jsobj_l = json.loads(response.data)
+    client_jsobj_l = response.get_json()
     client_jsobj_obj_matches = dict()
     for client_obj in client_objs_l:
         client_jsobj_obj_matches[client_obj.client_id] = operator.concat(
             [client_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["client_id"] == client_obj.client_id,
-                    client_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in client_jsobj_l if jsobj["client_id"] == client_obj.client_id],
         )
 
     for client_obj, client_jsobj in client_jsobj_obj_matches.values():

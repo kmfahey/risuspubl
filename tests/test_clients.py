@@ -2,8 +2,6 @@
 
 import os
 import random
-import pprint
-import json
 
 import pytest
 
@@ -48,7 +46,7 @@ def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
     client_id = client_obj.client_id
     response = client.delete(f"/clients/{client_id}")
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Salesperson).get(salesperson_id) is not None
     assert db.session.query(Client).get(client_id) is None
 

@@ -42,21 +42,21 @@ def randint_excluding(lb, ub, *exclints):
 
 def pytest_sessionstart(session):
     # PostgreSQL server details
-    HOST = "localhost"
-    PORT = 5432
-    TARGET_DATABASE = "risusp_test"
-    TARGET_USER = "pguser"
-    TARGET_PASSWORD = "pguser"  # Be careful with storing plaintext passwords!
+    host = "localhost"
+    port = 5432
+    target_database = "risusp_test"
+    target_user = "pguser"
+    target_password = "pguser"  # Be careful with storing plaintext passwords!
 
     # Check for user existence by attempting to connect with the provided credentials
     try:
         # This connection will just use the default 'postgres' database
         conn = psycopg2.connect(
             dbname="postgres",
-            user=TARGET_USER,
-            password=TARGET_PASSWORD,
-            host=HOST,
-            port=PORT,
+            user=target_user,
+            password=target_password,
+            host=host,
+            port=port,
         )
     except psycopg2.OperationalError as e:
         if (
@@ -65,21 +65,22 @@ def pytest_sessionstart(session):
             and "does not exist" in str(e)
         ):
             pytest.exit(
-                f"The user '{TARGET_USER}' does not exist or wrong password "
+                f"The user '{target_user}' does not exist or wrong password "
                 + "provided. Please run ansible with setup_playbook.yml."
             )
-        pytest.exit(f"Failed to connect to the PostgreSQL server. Error: {str(e)}")
+        else:
+            pytest.exit(f"Failed to connect to the PostgreSQL server. Error: {str(e)}")
 
     # If the above connection succeeded, the user exists. Now, check for the
     # database's existence.
     try:
         with conn.cursor() as cursor:
             cursor.execute(
-                f"SELECT 1 FROM pg_database WHERE datname='{TARGET_DATABASE}'"
+                f"SELECT 1 FROM pg_database WHERE datname='{target_database}'"
             )
             if not cursor.fetchone():
                 pytest.exit(
-                    f"The test database '{TARGET_DATABASE}' does not exist. "
+                    f"The test database '{target_database}' does not exist. "
                     + "Please run ansible with setup_playbook.yml."
                 )
     finally:
@@ -283,11 +284,10 @@ in culpa qui officia deserunt mollit anim id est laborum."""
     def gen_sales_record_dict(cls, book_id, year=None, month=None):
         book_obj = db.session.query(Book).get(book_id)
 
+        publ_year = book_obj.publication_date.year
+        this_year = cls.todays_date.year
         if year is None:
-            publ_year = book_obj.publication_date.year
-            this_year = cls.todays_date.year
             year = random.randint(publ_year, this_year)
-
         if month is None:
             match year:
                 case yr if yr == publ_year:
@@ -305,7 +305,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
             sum(
                 itertools.islice(
                     filter(
-                        lambda copies_sold: copies_sold > 0,
+                        lambda intval: intval > 0,
                         (round(random.gauss(12.5, 5), 2) for _ in itertools.count()),
                     ),
                     copies_sold,
@@ -451,6 +451,11 @@ class DbBasedTester:
             assert resp_jsobj["first_name"] == author_obj.first_name
             assert resp_jsobj["last_name"] == author_obj.last_name
 
+        else:
+            raise TypeError(
+                "second argument had unexpected type " + type(author_data).__name__
+            )
+
         assert resp_jsobj["author_id"] == author_obj.author_id
 
         return resp_jsobj, author_obj
@@ -570,6 +575,11 @@ class DbBasedTester:
             assert resp_jsobj["first_name"] == editor_obj.first_name
             assert resp_jsobj["last_name"] == editor_obj.last_name
             assert resp_jsobj["salary"] == editor_obj.salary
+
+        else:
+            raise TypeError(
+                "second argument had unexpected type " + type(editor_data).__name__
+            )
 
         assert resp_jsobj["editor_id"] == editor_obj.editor_id
 

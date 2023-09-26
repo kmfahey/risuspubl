@@ -2,8 +2,6 @@
 
 import os
 import random
-import pprint
-import json
 import operator
 
 import pytest
@@ -47,7 +45,7 @@ def test_delete_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     book_id = book_obj.book_id
     response = client.delete(f"/editors/{editor_obj.editor_id}/books/{book_id}")
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Editor).get(editor_obj.editor_id) is not None
     assert db.session.query(Book).get(book_id) is None
 
@@ -86,7 +84,7 @@ def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client):  # 42/83
 
     response = client.delete(f"/editors/{editor_obj.editor_id}")
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Editor).get(editor_id) is None
     assert db.session.query(Book).get(book_id) is not None
     assert db.session.query(Manuscript).get(manuscript_id) is not None
@@ -113,7 +111,7 @@ def test_delete_editor_manuscript_by_id_endpoint(
         f"/editors/{editor_obj.editor_id}/manuscripts/{manuscript_id}"
     )
     assert response.status_code == 200, response.data.decode("utf8")
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Editor).get(editor_obj.editor_id) is not None
     assert db.session.query(Manuscript).get(manuscript_id) is None
 
@@ -174,17 +172,12 @@ def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client):  # 45/8
     book_objs_l = [Genius.gen_book_obj(editor_obj.editor_id) for _ in range(3)]
     response = client.get(f"/editors/{editor_obj.editor_id}/books")
     assert response.status_code == 200, response.data.decode("utf8")
-    book_jsobj_l = json.loads(response.data)
+    book_jsobj_l = response.get_json()
     book_jsobj_obj_matches = dict()
     for book_obj in book_objs_l:
         book_jsobj_obj_matches[book_obj.book_id] = operator.concat(
             [book_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["book_id"] == book_obj.book_id,
-                    book_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in book_jsobj_l if jsobj["book_id"] == book_obj.book_id],
         )
 
     for book_obj, book_jsobj in book_jsobj_obj_matches.values():
@@ -262,18 +255,12 @@ def test_display_editor_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     ]
     response = client.get(f"/editors/{editor_obj.editor_id}/manuscripts")
     assert response.status_code == 200, response.data.decode("utf8")
-    manuscript_jsobj_l = json.loads(response.data)
+    manuscript_jsobj_l = response.get_json()
     manuscript_jsobj_obj_matches = dict()
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["manuscript_id"]
-                    == manuscript_obj.manuscript_id,
-                    manuscript_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id]
         )
 
     for manuscript_obj, manuscript_jsobj in manuscript_jsobj_obj_matches.values():

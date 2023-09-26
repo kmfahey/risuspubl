@@ -2,10 +2,7 @@
 
 import os
 import random
-
-import pprint
 import json
-import pytest
 import operator
 
 from conftest import Genius, DbBasedTester, randint_excluding
@@ -46,17 +43,12 @@ def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):  # 14/8
         Genius.gen_authors_books_obj(author_obj.author_id, book_obj.book_id)
     response = client.get(f"/authors/{author_obj.author_id}/books")
     assert response.status_code == 200, response.data.decode("utf8")
-    book_jsobj_l = json.loads(response.data)
+    book_jsobj_l = response.get_json()
     book_jsobj_obj_matches = dict()
     for book_obj in book_objs_l:
         book_jsobj_obj_matches[book_obj.book_id] = operator.concat(
             [book_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["book_id"] == book_obj.book_id,
-                    book_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in book_jsobj_l if jsobj["book_id"] == book_obj.book_id],
         )
 
     for _, (book_obj, book_jsobj) in book_jsobj_obj_matches.items():
@@ -134,13 +126,7 @@ def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["manuscript_id"]
-                    == manuscript_obj.manuscript_id,
-                    manuscript_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id],
         )
 
     for _, (manuscript_obj, manuscript_jsobj) in manuscript_jsobj_obj_matches.items():
@@ -268,12 +254,7 @@ def test_display_authors_books_endpoint(db_w_cleanup, staged_app_client):  # 20/
     for book_obj in book_objs_l:
         book_jsobj_obj_matches[book_obj.book_id] = operator.concat(
             [book_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["book_id"] == book_obj.book_id,
-                    book_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in book_jsobj_l if jsobj["book_id"] == book_obj.book_id],
         )
 
     for _, (book_obj, book_jsobj) in book_jsobj_obj_matches.items():
@@ -467,13 +448,7 @@ def test_display_authors_manuscripts_endpoint(db_w_cleanup, staged_app_client): 
     for manuscript_obj in manuscript_objs_l:
         manuscript_jsobj_obj_matches[manuscript_obj.manuscript_id] = operator.concat(
             [manuscript_obj],
-            list(
-                filter(
-                    lambda jsobj: jsobj["manuscript_id"]
-                    == manuscript_obj.manuscript_id,
-                    manuscript_jsobj_l,
-                )
-            ),
+            [jsobj for jsobj in manuscript_jsobj_l if jsobj["manuscript_id"] == manuscript_obj.manuscript_id],
         )
 
     for _, (manuscript_obj, manuscript_jsobj) in manuscript_jsobj_obj_matches.items():

@@ -3,9 +3,7 @@
 import os
 import random
 
-import pprint
 import json
-import pytest
 from risuspubl.dbmodels import (
     Author,
     AuthorMetadata,
@@ -35,7 +33,7 @@ def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):  # 7/83
 
     response = client.delete(f"/authors/{author_obj.author_id}/books/{book_id}")
     assert response.status_code == 200
-    assert json.loads(response.data) is True
+    assert response.get_json() is True
     assert db.session.query(Author).get(author_obj.author_id) is not None
     assert db.session.query(Book).get(book_id) is None
     assert (
