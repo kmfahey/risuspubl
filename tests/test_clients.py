@@ -33,7 +33,7 @@ def test_client_create_endpoint(db_w_cleanup, staged_app_client):  # 35/83
     # Testing for 400 error when sending missing or unexpected params
     book_dict = Genius.gen_book_dict()
     response = client.post("/clients", json=book_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing DELETE /clients/<id>
@@ -47,7 +47,7 @@ def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
     client_obj = Genius.gen_client_obj(salesperson_id)
     client_id = client_obj.client_id
     response = client.delete(f"/clients/{client_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     assert json.loads(response.data) is True
     assert db.session.query(Salesperson).get(salesperson_id) is not None
     assert db.session.query(Client).get(client_id) is None
@@ -57,7 +57,7 @@ def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
     # Testing for 404 error when called with a bogus client_id
     bogus_client_id = random.randint(1, 10)
     response = client.delete(f"/clients/{bogus_client_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 #  Testing the GET /clients/<id> endpoint
@@ -74,7 +74,7 @@ def test_display_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 37/8
     # Testing for 404 error when called with a bogus client_id
     bogus_client_id = random.randint(1, 10)
     response = client.get(f"/clients/{bogus_client_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 #  Testing the GET /clients endpoint
@@ -86,7 +86,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 38/83
         Genius.gen_client_obj(salesperson_obj.salesperson_id) for _ in range(3)
     ]
     response = client.get("/clients")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     for client_jsobj in response.get_json():
         assert any(
             client_jsobj["email_address"] == client_obj.email_address
@@ -118,7 +118,7 @@ def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 39/83
     salesperson_obj = Genius.gen_salesperson_obj()
     client_obj = Genius.gen_client_obj(salesperson_obj.salesperson_id)
     response = client.patch(f"/clients/{client_obj.client_id}", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -126,7 +126,7 @@ def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 39/83
     bogus_client_id = random.randint(1, 10)
     client_dict = Genius.gen_client_dict()
     response = client.patch(f"/clients/{bogus_client_id}", json=client_dict)
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -135,4 +135,4 @@ def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 39/83
     client_obj = Genius.gen_client_obj(salesperson_obj.salesperson_id)
     salesperson_dict = Genius.gen_salesperson_dict()
     response = client.patch(f"/clients/{client_obj.client_id}", json=salesperson_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")

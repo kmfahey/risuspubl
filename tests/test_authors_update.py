@@ -41,7 +41,7 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
     response = client.patch(
         f"/authors/{author_obj.author_id}/books/{book_obj.book_id}", json={}
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -53,7 +53,7 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
     response = client.patch(
         f"/authors/{bogus_author_id}/books/{book_obj.book_id}", json=book_dict
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -64,7 +64,7 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
     response = client.patch(
         f"/authors/{author_obj.author_id}/books/{bogus_book_id}", json=book_dict
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -74,7 +74,7 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
     response = client.patch(
         f"/authors/{author_obj.author_id}/books/{book_obj.book_id}", json=author_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the PATCH /authors/<id> endpoint
@@ -92,7 +92,7 @@ def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 26/83
     # Testing for 400 error if PATCHed json is empty
     author_obj = Genius.gen_author_obj()
     response = client.patch(f"/authors/{author_obj.author_id}", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -100,7 +100,7 @@ def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 26/83
     bogus_author_id = random.randint(1, 10)
     author_dict = Genius.gen_author_dict()
     response = client.patch(f"/authors/{bogus_author_id}", json=author_dict)
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -108,7 +108,7 @@ def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 26/83
     author_obj = Genius.gen_author_obj()
     book_dict = Genius.gen_book_dict()
     response = client.patch(f"/authors/{author_obj.author_id}", json=book_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the PATCH /authors/<id>/manuscripts/<id> endpoint
@@ -141,7 +141,7 @@ def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
         f"/authors/{author_obj.author_id}/manuscripts/{manuscript_obj.manuscript_id}",
         json={},
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -154,7 +154,7 @@ def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
         f"/authors/{bogus_author_id}/manuscripts/{manuscript_obj.manuscript_id}",
         json=manuscript_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -166,7 +166,7 @@ def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
         f"/authors/{author_obj.author_id}/manuscripts/{bogus_manuscript_id}",
         json=manuscript_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -177,7 +177,7 @@ def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
         f"/authors/{author_obj.author_id}/manuscripts/{manuscript_obj.manuscript_id}",
         json=author_dict,
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the PATCH /authors/<id>/metadata endpoint
@@ -202,7 +202,7 @@ def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 28
     # Testing for 400 error if PATCHed json is empty
     author_obj, metadata_obj = _setup()
     response = client.patch(f"/authors/{author_obj.author_id}/metadata", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -211,7 +211,7 @@ def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 28
     bogus_author_id = randint_excluding(1, 10, author_obj.author_id)
     metadata_dict = Genius.gen_metadata_dict()
     response = client.patch(f"/authors/{bogus_author_id}/metadata", json=metadata_dict)
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -221,7 +221,7 @@ def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 28
     response = client.patch(
         f"/authors/{author_obj.author_id}/metadata", json=author_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the PATCH /authors/<id>/<id>/books/<id> endpoint
@@ -256,7 +256,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         + f"/books/{book_obj.book_id}",
         json={},
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -271,7 +271,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         + f"/books/{book_obj.book_id}",
         json=book_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -286,7 +286,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         + f"/books/{book_obj.book_id}",
         json=book_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -299,7 +299,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         + f"/books/{bogus_book_id}",
         json=book_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -312,7 +312,7 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
         + f"/books/{book_obj.book_id}",
         json=author_dict,
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the PATCH /authors/<id>/<id>/manuscripts/<id> endpoint
@@ -351,7 +351,7 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         + f"/manuscripts/{manuscript_obj.manuscript_id}",
         json={},
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -366,7 +366,7 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         + f"/manuscripts/{manuscript_obj.manuscript_id}",
         json=manuscript_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -381,7 +381,7 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         + f"/manuscripts/{manuscript_obj.manuscript_id}",
         json=manuscript_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -394,7 +394,7 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         + f"/manuscripts/{bogus_manuscript_id}",
         json=manuscript_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -407,4 +407,4 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         + f"/manuscripts/{manuscript_obj.manuscript_id}",
         json=author_dict,
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")

@@ -35,14 +35,14 @@ def test_create_salesperson_client_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(f"/salespeople/{salesperson_id}/clients", json=client_dict)
     resp_jsobj, client_obj = DbBasedTester.test_client_resp(response, client_dict)
 
-    # DbBasedTester.cleanup__empty_all_tables()
+    DbBasedTester.cleanup__empty_all_tables()
 
     # Testing with bogus id
     bogus_salesperson_id = random.randint(1, 10)
     response = client.post(
         f"/salespeople/{bogus_salesperson_id}/clients", json=client_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -52,7 +52,7 @@ def test_create_salesperson_client_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients", json=salesperson_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing POST /salespeople endpoint
@@ -68,7 +68,7 @@ def test_create_salesperson_endpoint(db_w_cleanup, staged_app_client):  # 58/83
 
     client_dict = Genius.gen_client_dict()
     response = client.post("/salespeople", json=client_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing DELETE /salespeople/<id> endpoint
@@ -83,7 +83,7 @@ def test_delete_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     client_id = client_obj.client_id
 
     response = client.delete(f"/salespeople/{salesperson_obj.salesperson_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     assert json.loads(response.data) is True
     assert db.session.query(Salesperson).get(salesperson_id) is None
     assert db.session.query(Client).get(client_id) is not None
@@ -92,7 +92,7 @@ def test_delete_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
 
     bogus_salesperson_id = random.randint(1, 10)
     response = client.delete(f"/salespeople/{bogus_salesperson_id}")
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing DELETE /salespeople/<id>/clients/<id> endpoint
@@ -109,7 +109,7 @@ def test_delete_salesperson_client_by_id_endpoint(
     response = client.delete(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{client_id}"
     )
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     assert json.loads(response.data) is True
     assert db.session.query(Client).get(client_id) is None
 
@@ -120,7 +120,7 @@ def test_delete_salesperson_client_by_id_endpoint(
     response = client.delete(
         f"/salespeople/{bogus_salesperson_id}/clients/{client_obj.client_id}"
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
     assert db.session.query(Client).get(client_obj.client_id) is not None
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -130,7 +130,7 @@ def test_delete_salesperson_client_by_id_endpoint(
     response = client.delete(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{bogus_client_id}"
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing GET /salespeople/<id> endpoint
@@ -146,7 +146,7 @@ def test_display_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  #
 
     bogus_salesperson_id = random.randint(1, 10)
     response = client.get(f"/salespeople/{bogus_salesperson_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing GET /salespeople/<id>/clients/<id> endpoint
@@ -162,7 +162,7 @@ def test_display_salesperson_client_by_id_endpoint(
         f"/salespeople/{salesperson_obj.salesperson_id}"
         + f"/clients/{client_obj.client_id}"
     )
-    assert response.status_code == 200, response.data
+    assert response.status_code == 200, response.data.decode("utf8")
     DbBasedTester.test_client_resp(response, client_obj)
 
     DbBasedTester.cleanup__empty_all_tables()
@@ -172,7 +172,7 @@ def test_display_salesperson_client_by_id_endpoint(
     response = client.get(
         f"/salespeople/{bogus_salesperson_id}/clients/{bogus_client_id}"
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing GET /salespeople/<id>/clients endpoint
@@ -184,7 +184,7 @@ def test_display_salesperson_clients_endpoint(db_w_cleanup, staged_app_client): 
         Genius.gen_client_obj(salesperson_obj.salesperson_id) for _ in range(3)
     ]
     response = client.get(f"/salespeople/{salesperson_obj.salesperson_id}/clients")
-    assert response.status_code == 200, response.data
+    assert response.status_code == 200, response.data.decode("utf8")
     client_jsobj_l = json.loads(response.data)
     client_jsobj_obj_matches = dict()
     for client_obj in client_objs_l:
@@ -212,7 +212,7 @@ def test_display_salesperson_clients_endpoint(db_w_cleanup, staged_app_client): 
 
     bogus_salesperson_id = random.randint(1, 10)
     response = client.get(f"/salespeople/{bogus_salesperson_id}/clients")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing GET /salespeople
@@ -225,7 +225,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 64/83
         db.session.add(Salesperson(**salesperson_dict))
     db.session.commit()
     response = client.get("/salespeople")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     for salesperson_jsobj in response.get_json():
         assert any(
             salesperson_dict["first_name"] == salesperson_jsobj["first_name"]
@@ -252,7 +252,7 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     # Testing for 400 error if PATCHed json is empty
     salesperson_obj = Genius.gen_salesperson_obj()
     response = client.patch(f"/salespeople/{salesperson_obj.salesperson_id}", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -262,7 +262,7 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     response = client.patch(
         f"/salespeople/{bogus_salesperson_id}", json=salesperson_dict
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -272,7 +272,7 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     response = client.patch(
         f"/salespeople/{salesperson_obj.salesperson_id}", json=client_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing PATCH /salespeople/<id>/clients/<id> endpoint
@@ -303,7 +303,7 @@ def test_update_salesperson_client_by_id_endpoint(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{client_obj.client_id}",
         json={},
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -316,7 +316,7 @@ def test_update_salesperson_client_by_id_endpoint(
         f"/salespeople/{bogus_salesperson_id}/clients/{client_obj.client_id}",
         json=client_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -328,7 +328,7 @@ def test_update_salesperson_client_by_id_endpoint(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{bogus_client_id}",
         json=client_dict,
     )
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -339,4 +339,4 @@ def test_update_salesperson_client_by_id_endpoint(
         f"/salespeople/{salesperson_obj.salesperson_id}/clients/{client_obj.client_id}",
         json=salesperson_dict,
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")

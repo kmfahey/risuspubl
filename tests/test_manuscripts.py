@@ -33,7 +33,7 @@ def test_delete_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     manuscript_id = manuscript_obj.manuscript_id
     Genius.gen_authors_manuscripts_obj(author_id, manuscript_id)
     response = client.delete(f"/manuscripts/{manuscript_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     assert json.loads(response.data) is True
     assert db.session.query(Author).get(author_id) is not None
     assert db.session.query(Manuscript).get(manuscript_id) is None
@@ -48,7 +48,7 @@ def test_delete_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     # Testing for 404 error when called with a bogus manuscript_id
     bogus_manuscript_id = random.randint(1, 10)
     response = client.delete(f"/manuscripts/{bogus_manuscript_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 # Testing the GET /manuscripts/<id> endpoint
@@ -65,7 +65,7 @@ def test_display_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     # Testing for 404 error when called with a bogus manuscript_id
     bogus_manuscript_id = random.randint(1, 10)
     response = client.get(f"/manuscripts/{bogus_manuscript_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 #  Testing the GET /manuscripts endpoint
@@ -82,7 +82,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 55/83
             author_obj.author_id, manuscript_obj.manuscript_id
         )
     response = client.get("/manuscripts")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     for manuscript_jsobj in response.get_json():
         assert any(
             manuscript_jsobj["editor_id"] == manuscript_obj.editor_id
@@ -113,7 +113,7 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
     manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
     response = client.patch(f"/manuscripts/{manuscript_obj.manuscript_id}", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -121,7 +121,7 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     bogus_manuscript_id = random.randint(1, 10)
     manuscript_dict = Genius.gen_manuscript_dict()
     response = client.patch(f"/manuscripts/{bogus_manuscript_id}", json=manuscript_dict)
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -132,4 +132,4 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     response = client.patch(
         f"/manuscripts/{manuscript_obj.manuscript_id}", json=author_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")

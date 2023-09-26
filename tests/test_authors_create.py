@@ -30,7 +30,7 @@ def test_author_create_endpoint(db_w_cleanup, staged_app_client):  # 1/83
     author_dict = Genius.gen_author_dict()
     author_dict.update(Genius.gen_book_dict())
     response = client.post("/authors", json=author_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing POST /authors/<id>/books
@@ -89,7 +89,7 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     # Testing with bogus id
     bogus_author_id = random.randint(1, 10)
     response = client.post(f"/authors/{bogus_author_id}/", json=book_dict)
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
     authors_books_obj = (
         db.session.query(AuthorsBooks).filter_by(author_id=bogus_author_id).first()
     )
@@ -101,7 +101,7 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     author_id, book_dict = _setup()
     book_dict["author_id"] = author_id
     response = client.post(f"/authors/{author_id}/books", json=book_dict)
-    assert response.status_code == 400
+    assert response.status_code == 400, response.data.decode("utf8")
 
     # Checking that authors_books bridge table row *wasn't* created
     authors_books_obj = (
@@ -115,7 +115,7 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):  # 2/83
     author_obj = Genius.gen_author_obj()
     author_dict = Genius.gen_author_dict()
     response = client.post(f"/authors/{author_obj.author_id}/books", json=author_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing POST /authors/<id>/manuscripts
@@ -178,7 +178,7 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     response = client.post(
         f"/authors/{bogus_author_id}/manuscripts", json=manuscript_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     # Checking that authors_manuscripts bridge table row *wasn't* created
     authors_manuscripts_obj = (
@@ -192,7 +192,7 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     response = client.post(
         f"/authors/{author_obj.author_id}/manuscripts", json=author_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing POST /authors/<id>/metadata
@@ -222,7 +222,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 4/
     response = client.post(
         f"/authors/{author_obj.author_id}/metadata", json=metadata_dict
     )
-    assert response.status_code == 400
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -318,7 +318,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     response = client.post(
         f"/authors/{author_no1_id}/{bogus_author_id}/books", json=book_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     # Checking that authors_books bridge table rows were created
     author_no1_book_obj = (
@@ -338,7 +338,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     response = client.post(
         f"/authors/{bogus_author_id}/{author_no2_id}/books", json=book_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     # Checking that authors_books bridge table rows were created
     bogus_authors_books_obj = (
@@ -358,7 +358,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     # Checking that authors_books bridge table rows *weren't* created
     author_no1_book_obj = (
@@ -378,7 +378,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 5/83
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/books", json=book_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing POST /authors/<id>/<id>/manuscripts
@@ -461,7 +461,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(
         f"/authors/{author_no1_id}/{bogus_author_id}/manuscripts", json=manuscript_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (
@@ -483,7 +483,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(
         f"/authors/{bogus_author_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    assert response.status_code == 404
+    assert response.status_code == 404, response.data.decode("utf8")
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     bogus_authors_manuscripts_obj = (
@@ -505,7 +505,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (
@@ -525,7 +525,7 @@ def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
     response = client.post(
         f"/authors/{author_no1_id}/{author_no2_id}/manuscripts", json=manuscript_dict
     )
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     # Checking that authors_manuscripts bridge table rows *weren't* created
     author_no1_manuscript_obj = (

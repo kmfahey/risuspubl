@@ -33,7 +33,7 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
     book_id = book_obj.book_id
     Genius.gen_authors_books_obj(author_id, book_id)
     response = client.delete(f"/books/{book_id}")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     assert json.loads(response.data) is True
     assert db.session.query(Author).get(author_id) is not None
     assert db.session.query(Book).get(book_id) is None
@@ -48,7 +48,7 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
     # Testing for 404 error when called with a bogus book_id
     bogus_book_id = random.randint(1, 10)
     response = client.delete(f"/books/{bogus_book_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 #  Testing the GET /books/<id> endpoint
@@ -65,7 +65,7 @@ def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 32/83
     # Testing for 404 error when called with a bogus book_id
     bogus_book_id = random.randint(1, 10)
     response = client.get(f"/books/{bogus_book_id}")
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
 
 #  Testing the GET /books endpoint
@@ -80,7 +80,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 33/83
         book_objs_l.append(book_obj)
         Genius.gen_authors_books_obj(author_obj.author_id, book_obj.book_id)
     response = client.get("/books")
-    assert response.status_code == 200
+    assert response.status_code == 200, response.data.decode("utf8")
     for book_jsobj in response.get_json():
         assert any(
             book_jsobj["edition_number"] == book_obj.edition_number
@@ -110,7 +110,7 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     book_dict = Genius.gen_book_dict(editor_obj.editor_id)
     response = client.patch(f"/books/{book_obj.book_id}", json={})
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -118,7 +118,7 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     bogus_book_id = random.randint(1, 10)
     book_dict = Genius.gen_book_dict()
     response = client.patch(f"/books/{bogus_book_id}", json=book_dict)
-    assert response.status_code == 404, response.data
+    assert response.status_code == 404, response.data.decode("utf8")
 
     DbBasedTester.cleanup__empty_all_tables()
 
@@ -127,4 +127,4 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     author_dict = Genius.gen_author_dict()
     response = client.patch(f"/books/{book_obj.book_id}", json=author_dict)
-    assert response.status_code == 400, response.data
+    assert response.status_code == 400, response.data.decode("utf8")

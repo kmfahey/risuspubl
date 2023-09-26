@@ -290,9 +290,9 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
         if month is None:
             match year:
-                case int(publ_year):
+                case yr if yr == publ_year:
                     month = random.randint(book_obj.publication_date.month, 12)
-                case int(this_year):
+                case yr if yr == this_year:
                     month = random.randint(1, cls.todays_date.month)
                 case _:
                     month = random.randint(1, 12)
@@ -331,10 +331,13 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return retdict
 
     @classmethod
-    def gen_series_dict(cls):
-        return dict(
-            title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
-        )
+    def gen_series_dict(cls, volumes=None):
+        if volumes is not None:
+            return dict(title=random.choice(cls.series_titles), volumes=volumes)
+        else:
+            return dict(
+                title=random.choice(cls.series_titles), volumes=random.randint(1, 5)
+            )
 
     @classmethod
     def gen_author_obj(cls):
@@ -389,8 +392,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return editor_obj
 
     @classmethod
-    def gen_manuscript_obj(cls, editor_id=None):
-        manuscript_obj = Manuscript(**cls.gen_manuscript_dict(editor_id))
+    def gen_manuscript_obj(cls, editor_id=None, series_id=None):
+        manuscript_obj = Manuscript(**cls.gen_manuscript_dict(editor_id, series_id))
         db.session.add(manuscript_obj)
         db.session.commit()
         return manuscript_obj
@@ -404,7 +407,9 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
     @classmethod
     def gen_sales_record_obj(cls, book_id, year=None, month=None):
-        sales_record_obj = SalesRecord(**cls.gen_sales_record_dict(book_id, year, month))
+        sales_record_obj = SalesRecord(
+            **cls.gen_sales_record_dict(book_id, year, month)
+        )
         db.session.add(sales_record_obj)
         db.session.commit()
         return sales_record_obj
@@ -417,8 +422,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return salesperson_obj
 
     @classmethod
-    def gen_series_obj(cls):
-        series_obj = Series(**cls.gen_series_dict())
+    def gen_series_obj(cls, volumes=None):
+        series_obj = Series(**cls.gen_series_dict(volumes))
         db.session.add(series_obj)
         db.session.commit()
         return series_obj
@@ -427,7 +432,7 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 class DbBasedTester:
     @classmethod
     def test_author_resp(cls, response, author_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(author_data, dict):
@@ -452,7 +457,7 @@ class DbBasedTester:
 
     @classmethod
     def test_book_resp(cls, response, book_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(book_data, dict):
@@ -495,7 +500,7 @@ class DbBasedTester:
 
     @classmethod
     def test_client_resp(cls, response, client_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(client_data, dict):
@@ -544,7 +549,7 @@ class DbBasedTester:
 
     @classmethod
     def test_editor_resp(cls, response, editor_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(editor_data, dict):
@@ -572,7 +577,7 @@ class DbBasedTester:
 
     @classmethod
     def test_manuscript_resp(cls, response, manuscript_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(manuscript_data, dict):
@@ -610,7 +615,7 @@ class DbBasedTester:
 
     @classmethod
     def test_metadata_resp(cls, response, metadata_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(metadata_data, dict):
@@ -652,7 +657,7 @@ class DbBasedTester:
 
     @classmethod
     def test_sales_record_resp(cls, response, sales_record_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(sales_record_data, dict):
@@ -700,7 +705,7 @@ class DbBasedTester:
 
     @classmethod
     def test_salesperson_resp(cls, response, salesperson_data):
-        assert response.status_code == 200, response.data
+        assert response.status_code == 200, response.data.decode("utf8")
 
         resp_jsobj = response.get_json()
         if isinstance(salesperson_data, dict):
@@ -733,6 +738,37 @@ class DbBasedTester:
         assert resp_jsobj["salesperson_id"] == salesperson_obj.salesperson_id
 
         return resp_jsobj, salesperson_obj
+
+    @classmethod
+    def test_series_resp(cls, response, series_data):
+        assert response.status_code == 200, response.data.decode("utf8")
+
+        resp_jsobj = response.get_json()
+        if isinstance(series_data, dict):
+            series_dict = series_data
+
+            assert series_dict["title"] == resp_jsobj["title"]
+            assert series_dict["volumes"] == resp_jsobj["volumes"]
+
+            series_obj = db.session.query(Series).get(resp_jsobj["series_id"])
+
+            assert series_dict["title"] == series_obj.title
+            assert series_dict["volumes"] == series_obj.volumes
+
+        elif isinstance(series_data, Series):
+            series_obj = series_data
+
+            assert resp_jsobj["title"] == series_obj.title
+            assert resp_jsobj["volumes"] == series_obj.volumes
+
+        else:
+            raise TypeError(
+                "second argument had unexpected type " + type(series_data).__name__
+            )
+
+        assert resp_jsobj["series_id"] == series_obj.series_id
+
+        return resp_jsobj, series_obj
 
     @classmethod
     def cleanup__empty_all_tables(cls):
