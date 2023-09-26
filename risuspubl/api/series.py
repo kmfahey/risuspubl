@@ -3,14 +3,16 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
+    check_json_req_props,
     create_table_row_function,
     delete_table_row_by_id_function,
-    display_table_row_by_id_function,
     display_table_row_by_id_and_foreign_key_function,
-    display_table_rows_function,
+    display_table_row_by_id_function,
     display_table_rows_by_foreign_id_function,
-    update_table_row_by_id_function,
+    display_table_rows_function,
+    handle_exception,
     update_table_row_by_id_and_foreign_key_function,
+    update_table_row_by_id_function,
 )
 from risuspubl.dbmodels import Book, Manuscript, Series
 
@@ -161,6 +163,7 @@ def create_series_endpoint():
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Series, request.json, {"series_id"})
         return create_series(request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -176,6 +179,7 @@ def update_series_by_id_endpoint(series_id: int):
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Series, request.json, {"series_id"}, chk_missing=False)
         return update_series_by_id(series_id, request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -193,6 +197,7 @@ def update_series_book_by_id_endpoint(series_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
         return update_book_by_book_id_and_series_id(series_id, book_id, request.json)
     except Exception as exception:
         return handle_exception(exception)
@@ -212,6 +217,9 @@ def update_series_manuscript_by_id_endpoint(series_id: int, manuscript_id: int):
     :return:    A flask.Response object.
     """
     try:
+        check_json_req_props(
+            Manuscript, request.json, {"manuscript_id"}, chk_missing=False
+        )
         return update_manuscript_by_manuscript_id_and_series_idr(
             series_id, manuscript_id, request.json
         )
