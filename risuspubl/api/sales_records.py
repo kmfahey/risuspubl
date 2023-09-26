@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, abort, jsonify
 
 from risuspubl.api.utility import display_table_row_by_id_function, handle_exception
 from risuspubl.dbmodels import SalesRecord
@@ -39,23 +39,26 @@ def display_sales_records_by_year_endpoint(year: int):
     :year:   The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
-    retval = list()
-    if not (1990 <= year <= 2022):
-        raise ValueError(
-            f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year"
+    try:
+        retval = list()
+        if not (1990 <= year <= 2022):
+            raise ValueError(
+                f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year"
+            )
+        for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
+            retval.append(sales_record_obj.serialize())
+        retval.sort(
+            key=lambda dictval: (dictval["year"], dictval["month"], dictval["book_id"])
         )
-    for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
-        retval.append(sales_record_obj.serialize())
-    retval.sort(
-        key=lambda dictval: (dictval["year"], dictval["month"], dictval["book_id"])
-    )
-    return jsonify(retval)
+        return jsonify(retval)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
-@blueprint.route("/years/<int:year>/month/<int:month>", methods=["GET"])
+@blueprint.route("/years/<int:year>/months/<int:month>", methods=["GET"])
 def display_sales_records_by_year_and_month_endpoint(year: int, month: int):
     """
-    Implements a GET /sales_records/years/{year}/month/{month} endpoint. All rows in the
+    Implements a GET /sales_records/years/{year}/months/{month} endpoint. All rows in the
     sales_records table with that year and that month are loaded and output as a
     JSON list.
 
@@ -97,12 +100,19 @@ def display_sales_records_by_book_id_endpoint(book_id: int):
     :book_id: The book_id of the book to see the complete sales records for.
     :return:  a flask.Response object
     """
-    sales_record_objs = tuple(SalesRecord.query.where(SalesRecord.book_id == book_id))
-    if len(sales_record_objs) == 0:
-        return abort(404)
-    retval = [sales_record_obj.serialize() for sales_record_obj in sales_record_objs]
-    retval.sort(key=lambda dictval: (dictval["year"], dictval["month"]))
-    return jsonify(retval)
+    try:
+        sales_record_objs = tuple(
+            SalesRecord.query.where(SalesRecord.book_id == book_id)
+        )
+        if len(sales_record_objs) == 0:
+            return abort(404)
+        retval = [
+            sales_record_obj.serialize() for sales_record_obj in sales_record_objs
+        ]
+        retval.sort(key=lambda dictval: (dictval["year"], dictval["month"]))
+        return jsonify(retval)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route("/years/<int:year>/books/<int:book_id>", methods=["GET"])
@@ -116,16 +126,21 @@ def display_sales_records_by_year_and_book_id_endpoint(year: int, book_id: int):
     :book_id: the book_id of the book to retrieve sales data for
     :return:  a flask.Response object
     """
-    sales_record_objs = tuple(
-        SalesRecord.query.where(SalesRecord.book_id == book_id).where(
-            SalesRecord.year == year
+    try:
+        sales_record_objs = tuple(
+            SalesRecord.query.where(SalesRecord.book_id == book_id).where(
+                SalesRecord.year == year
+            )
         )
-    )
-    if len(sales_record_objs) == 0:
-        return abort(404)
-    retval = [sales_record_obj.serialize() for sales_record_obj in sales_record_objs]
-    retval.sort(key=lambda dictval: (dictval["year"], dictval["month"]))
-    return jsonify()
+        if len(sales_record_objs) == 0:
+            return abort(404)
+        retval = [
+            sales_record_obj.serialize() for sales_record_obj in sales_record_objs
+        ]
+        retval.sort(key=lambda dictval: (dictval["year"], dictval["month"]))
+        return jsonify(retval)
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 @blueprint.route(
@@ -144,15 +159,18 @@ def display_sales_records_by_year_and_month_and_book_id_endpoint(
     :book_id: the book_id to retrieve sales data for
     :return:    a flask.Response object
     """
-    sales_record_objs = tuple(
-        SalesRecord.query.where(SalesRecord.book_id == book_id)
-        .where(SalesRecord.year == year)
-        .where(SalesRecord.month == month)
-    )
-    if len(sales_record_objs) == 0:
-        return abort(404)
-    (sales_record_obj,) = sales_record_objs
-    return jsonify(sales_record_obj.serialize())
+    try:
+        sales_record_objs = tuple(
+            SalesRecord.query.where(SalesRecord.book_id == book_id)
+            .where(SalesRecord.year == year)
+            .where(SalesRecord.month == month)
+        )
+        if len(sales_record_objs) == 0:
+            return abort(404)
+        (sales_record_obj,) = sales_record_objs
+        return jsonify(sales_record_obj.serialize())
+    except Exception as exception:
+        return handle_exception(exception)
 
 
 # Adding, updating and deleting sales records is deliberately made impossible
@@ -161,6 +179,6 @@ def display_sales_records_by_year_and_month_and_book_id_endpoint(
 # out of print if it's out of print. New records are generated in bulk at the
 # end of each month. If a record were to be removed, the entire sales history
 # for that book would be impaired. Records aren't just added or removed at
-# any time, and the way they're added in bulk at end-of-month isn't done by a
-# RESTful algorithm, you use SQL to INSERT from a csv for that. So records are
+# any time, and the way they're added in bulk at end-of-month isn't done via a
+# RESTful interface, you use SQL to INSERT from a csv for that. So records are
 # read-only.

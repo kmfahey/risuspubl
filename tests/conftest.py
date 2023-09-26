@@ -280,19 +280,22 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return retdict
 
     @classmethod
-    def gen_sales_record_dict(cls, book_id):
+    def gen_sales_record_dict(cls, book_id, year=None, month=None):
         book_obj = db.session.query(Book).get(book_id)
 
-        publ_year = book_obj.publication_date.year
-        this_year = cls.todays_date.year
-        rand_year = random.randint(publ_year, this_year)
-        match rand_year:
-            case int(publ_year):
-                rand_month = random.randint(book_obj.publication_date.month, 12)
-            case int(this_year):
-                rand_month = random.randint(1, cls.todays_date.month)
-            case _:
-                rand_month = random.randint(1, 12)
+        if year is None:
+            publ_year = book_obj.publication_date.year
+            this_year = cls.todays_date.year
+            year = random.randint(publ_year, this_year)
+
+        if month is None:
+            match year:
+                case int(publ_year):
+                    month = random.randint(book_obj.publication_date.month, 12)
+                case int(this_year):
+                    month = random.randint(1, cls.todays_date.month)
+                case _:
+                    month = random.randint(1, 12)
 
         profit_margin = random.uniform(0.075, 0.125)
         copies_sold = round(random.gauss(87.5, 20))
@@ -314,8 +317,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
 
         return dict(
             book_id=book_id,
-            year=rand_year,
-            month=rand_month,
+            year=year,
+            month=month,
             copies_sold=copies_sold,
             gross_profit=gross_profit,
             net_profit=net_profit,
@@ -400,8 +403,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         return author_metadata_obj
 
     @classmethod
-    def gen_sales_record_obj(cls, book_id):
-        sales_record_obj = SalesRecord(**cls.gen_sales_record_dict(book_id))
+    def gen_sales_record_obj(cls, book_id, year=None, month=None):
+        sales_record_obj = SalesRecord(**cls.gen_sales_record_dict(book_id, year, month))
         db.session.add(sales_record_obj)
         db.session.commit()
         return sales_record_obj
