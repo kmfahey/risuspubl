@@ -355,9 +355,10 @@ def display_author_manuscript_by_id_endpoint(author_id: int, manuscript_id: int)
         return handle_exception(exception)
 
 
-# To be frank this endpoint doesn't have much of a reason to exist, save that
-# if this endpoint is loaded something *should* be here since /authors/{author_id} is
-# valid and /authors/{author1_id}/{author2_id}/books is valid. Provied for completGETeness. /<int:author1_id>/<int:author2_id>
+# To be frank this endpoint doesn't have much of a reason to exist,
+# save that if this endpoint is loaded something *should* be here since
+# /authors/{author_id} is valid and /authors/{author1_id}/{author2_id}/books
+# is valid. Provied for completeness.
 @blueprint.route("/<int:author1_id>/<int:author2_id>", methods=["GET"])
 def display_authors_by_ids_endpoint(author1_id: int, author2_id: int):
     """

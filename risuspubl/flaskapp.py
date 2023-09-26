@@ -27,7 +27,7 @@ def create_app(test_config=None):
         # load the instance config, if it exists, when not testing
         app.config.from_mapping(
             dict(
-                SQLALCHEMY_DATABASE_URI=f"postgresql://pguser:pguser@localhost:5432/risuspubl"
+                SQLALCHEMY_DATABASE_URI="postgresql://pguser:pguser@localhost:5432/risuspubl"
             )
         )
     else:

@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-import abc
 import math
 import traceback
 from datetime import date, timedelta
@@ -531,11 +530,6 @@ def display_table_rows_by_foreign_id_function(
     :outer_id:    a value for the primary key column in the outer table
     :return:      A flask.Response object.
     """
-    __slots__ = (
-        "outer_class",
-        "outer_id_column",
-        "inner_class",
-    )
 
     def _internal_display_table_rows_by_foreign_id(outer_id):
         try:
