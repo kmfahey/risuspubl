@@ -97,7 +97,6 @@ def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
     app, client = staged_app_client
 
     # Testing base case
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     book_obj = Genius.gen_book_obj(editor_obj.editor_id)
     book_dict = Genius.gen_book_dict(editor_obj.editor_id)

@@ -3,6 +3,7 @@
 import math
 import os
 import random
+import itertools
 from datetime import date, timedelta
 
 import faker
@@ -18,6 +19,7 @@ from risuspubl.dbmodels import (
     Client,
     Editor,
     Manuscript,
+    SalesRecord,
     Salesperson,
     Series,
     db,
@@ -68,7 +70,8 @@ def pytest_sessionstart(session):
             )
         pytest.exit(f"Failed to connect to the PostgreSQL server. Error: {str(e)}")
 
-    # If the above connection succeeded, the user exists. Now, check for the database's existence.
+    # If the above connection succeeded, the user exists. Now, check for the
+    # database's existence.
     try:
         with conn.cursor() as cursor:
             cursor.execute(
@@ -115,6 +118,10 @@ def staged_app_client():
 
 # called it Genius because Generator already has a definition in python.
 class Genius:
+    faker_obj = faker.Faker()
+
+    todays_date = date.today()
+
     lorem_ipsum = """\
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor \
 incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis \
@@ -122,8 +129,6 @@ nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. \
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore \
 eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt \
 in culpa qui officia deserunt mollit anim id est laborum."""
-
-    faker_obj = faker.Faker()
 
     book_titles = [
         "Steel Alley",
@@ -247,8 +252,8 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         retdict = dict(
             advance=random.randint(10, 20) * 1000,
             due_date=cls.faker_obj.date_between_dates(
-                date.today() + timedelta(days=1),
-                date(date.today().year + 2, date.today().month, 1),
+                cls.todays_date + timedelta(days=1),
+                date(cls.todays_date.year + 2, cls.todays_date.month, 1),
             ).isoformat(),
             series_id=None,
             working_title=random.choice(cls.manuscript_titles),
@@ -273,6 +278,48 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         if author_id is not None:
             retdict["author_id"] = author_id
         return retdict
+
+    @classmethod
+    def gen_sales_record_dict(cls, book_id):
+        book_obj = db.session.query(Book).get(book_id)
+
+        publ_year = book_obj.publication_date.year
+        this_year = cls.todays_date.year
+        rand_year = random.randint(publ_year, this_year)
+        match rand_year:
+            case int(publ_year):
+                rand_month = random.randint(book_obj.publication_date.month, 12)
+            case int(this_year):
+                rand_month = random.randint(1, cls.todays_date.month)
+            case _:
+                rand_month = random.randint(1, 12)
+
+        profit_margin = random.uniform(0.075, 0.125)
+        copies_sold = round(random.gauss(87.5, 20))
+        # Generates random profit amounts from random.gauss(12.5, 5) dropping
+        # results <= 0 and sums them
+        gross_profit = round(
+            sum(
+                itertools.islice(
+                    filter(
+                        lambda copies_sold: copies_sold > 0,
+                        (round(random.gauss(12.5, 5), 2) for _ in itertools.count()),
+                    ),
+                    copies_sold,
+                )
+            ),
+            2,
+        )
+        net_profit = round(gross_profit * profit_margin, 2)
+
+        return dict(
+            book_id=book_id,
+            year=rand_year,
+            month=rand_month,
+            copies_sold=copies_sold,
+            gross_profit=gross_profit,
+            net_profit=net_profit,
+        )
 
     @classmethod
     def gen_salesperson_dict(cls):
@@ -351,6 +398,13 @@ in culpa qui officia deserunt mollit anim id est laborum."""
         db.session.add(author_metadata_obj)
         db.session.commit()
         return author_metadata_obj
+
+    @classmethod
+    def gen_sales_record_obj(cls, book_id):
+        sales_record_obj = SalesRecord(**cls.gen_sales_record_dict(book_id))
+        db.session.add(sales_record_obj)
+        db.session.commit()
+        return sales_record_obj
 
     @classmethod
     def gen_salesperson_obj(cls):
@@ -592,6 +646,54 @@ class DbBasedTester:
         assert resp_jsobj["author_metadata_id"] == metadata_obj.author_metadata_id
 
         return resp_jsobj, metadata_obj
+
+    @classmethod
+    def test_sales_record_resp(cls, response, sales_record_data):
+        assert response.status_code == 200, response.data
+
+        resp_jsobj = response.get_json()
+        if isinstance(sales_record_data, dict):
+            sales_record_dict = sales_record_data
+
+            assert sales_record_dict["book_id"] == resp_jsobj["book_id"]
+            assert sales_record_dict["year"] == resp_jsobj["year"]
+            assert sales_record_dict["month"] == resp_jsobj["month"]
+            assert sales_record_dict["copies_sold"] == resp_jsobj["copies_sold"]
+            assert sales_record_dict["gross_profit"] == resp_jsobj["gross_profit"]
+            assert sales_record_dict["net_profit"] == resp_jsobj["net_profit"]
+
+            sales_record_obj = db.session.query(SalesRecord).get(
+                resp_jsobj["sales_record_id"]
+            )
+
+            assert sales_record_dict["book_id"] == sales_record_obj.book_id
+            assert sales_record_dict["year"] == sales_record_obj.year
+            assert sales_record_dict["month"] == sales_record_obj.month
+            assert sales_record_dict["copies_sold"] == sales_record_obj.copies_sold
+            assert sales_record_dict["gross_profit"] == float(
+                sales_record_obj.gross_profit
+            )
+            assert sales_record_dict["net_profit"] == float(sales_record_obj.net_profit)
+
+        elif isinstance(sales_record_data, SalesRecord):
+            sales_record_obj = sales_record_data
+
+            assert resp_jsobj["book_id"] == sales_record_obj.book_id
+            assert resp_jsobj["year"] == sales_record_obj.year
+            assert resp_jsobj["month"] == sales_record_obj.month
+            assert resp_jsobj["copies_sold"] == sales_record_obj.copies_sold
+            assert resp_jsobj["gross_profit"] == float(sales_record_obj.gross_profit)
+            assert resp_jsobj["net_profit"] == float(sales_record_obj.net_profit)
+
+        else:
+            raise TypeError(
+                "second argument had unexpected type "
+                + type(sales_record_data).__name__
+            )
+
+        assert resp_jsobj["sales_record_id"] == sales_record_obj.sales_record_id
+
+        return resp_jsobj, sales_record_obj
 
     @classmethod
     def test_salesperson_resp(cls, response, salesperson_data):

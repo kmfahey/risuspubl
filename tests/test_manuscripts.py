@@ -98,7 +98,6 @@ def test_update_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):  # 5
     app, client = staged_app_client
 
     # Testing base case
-    author_obj = Genius.gen_author_obj()
     editor_obj = Genius.gen_editor_obj()
     manuscript_obj = Genius.gen_manuscript_obj(editor_obj.editor_id)
     manuscript_dict = Genius.gen_manuscript_dict(editor_obj.editor_id)
