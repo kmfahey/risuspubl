@@ -42,20 +42,19 @@ _foreign_keys_to_model_subclasses = {
 
 def crt_model_obj(model_subclass, params_argd, optional_params=()):
     """
-    Instantiates an object in the provided SQLAlchemy.Model subclass using the
-    dict of key/value pairs as arguments to the constructor. A value in that
-    dict can be None if the key is in optional_params, otherwise a ValueError is
-    raised. The object is returned.
+    Instantiates an object in the provided SQLAlchemy.Model subclass
+    using the dict of key/value pairs as arguments to the constructor.
+    A value in that dict can be None if the key is in optional_params,
+    otherwise a ValueError is raised. The object is returned.
 
-    :model_subclass:  An SQLAlchemy.Model subclass class object, the class to
-                      instance an object of.
-    :params_argd:     A dict of parameters key to values.
-    :optional_params: An optional argument, a set of parameter names that are
-                      not required for the constructor. If the value of one of
-                      these parameters is None, it's skipped. If a parameter
-                      does NOT occur in this set and it's None, a ValueError is
-                      raised.
-    :return:          An instance of the class that was the first argument.
+    :model_subclass: An SQLAlchemy.Model subclass class object, the
+    class to instance an object of.
+    :params_argd: A dict of parameters key to values.
+    :optional_params: An optional argument, a set of parameter names
+    that are not required for the constructor. If the value of one of
+    these parameters is None, it's skipped. If a parameter does NOT
+    occur in this set and it's None, a ValueError is raised.
+    :return: An instance of the class that was the first argument.
     """
     model_obj_args = dict()
     for param_name, param_value in params_argd.items():
@@ -82,15 +81,15 @@ def crt_model_obj(model_subclass, params_argd, optional_params=()):
 
 def updt_model_obj(id_val, model_subclass, params_argd):
     """
-    Retrieves the object in the SQLAlchemy.Model subclass by the given id, and
-    updates it using the dict of key/value pairs to assign new attribute values.
-    If a value in the parameter argd is None, it is skipped. The object is
-    returned.
+    Retrieves the object in the SQLAlchemy.Model subclass by the given
+    id, and updates it using the dict of key/value pairs to assign new
+    attribute values. If a value in the parameter argd is None, it is
+    skipped. The object is returned.
 
-    :model_subclass: An SQLAlchemy.Model subclass class object, the class to
-                     instance an object of.
-    :params_argd:    A dict of parameter keys to values.
-    :return:         An instance of the class that was the first argument.
+    :model_subclass: An SQLAlchemy.Model subclass class object, the
+    class to instance an object of.
+    :params_argd: A dict of parameter keys to values.
+    :return: An instance of the class that was the first argument.
     """
     model_obj = model_subclass.query.get_or_404(id_val)
     # If all the dict's param_value slots are None, this update can't proceed bc
@@ -119,16 +118,16 @@ def updt_model_obj(id_val, model_subclass, params_argd):
 
 def del_model_obj(id_val, model_subclass):
     """
-    Looks up an id value in the provided SQLAlchemy.Model subclass, and has
-    the matching row in that table deleted. If the model subclass is Book or
-    Manuscript, the matching row(s) in authors_books or authors_manuscripts are
-    deleted too.
+    Looks up an id value in the provided SQLAlchemy.Model subclass, and
+    has the matching row in that table deleted. If the model subclass
+    is Book or Manuscript, the matching row(s) in authors_books or
+    authors_manuscripts are deleted too.
 
-    :id_val:         An int, the value of the id primary key column of the table
-                     represented by the model subclass argument.
-    :model_subclass: A subclass of SQLAlchemy.Model representing the table to
-                     delete a row from.
-    :return:         None
+    :id_val: An int, the value of the id primary key column of the table
+    represented by the model subclass argument.
+    :model_subclass: A subclass of SQLAlchemy.Model representing the
+    table to delete a row from.
+    :return: None
     """
     model_obj = model_subclass.query.get_or_404(id_val)
     # In the case of Book or Manuscript objects, there's also corresponding rows
@@ -275,22 +274,23 @@ def _validate_bool(param_name, param_value):
 
 def generate_crt_updt_argd(model_class, request_json, **argd):
     """
-    Accepts a SQLAlchemy.Model subclass and a request.json object and returns a
-    dict of parameter key/value pairs, whose values have been validated, that
-    can be used as an argument to crt_model_obj() or updt_model_obj().
+    Accepts a SQLAlchemy.Model subclass and a request.json object and
+    returns a dict of parameter key/value pairs, whose values have been
+    validated, that can be used as an argument to crt_model_obj() or
+    updt_model_obj().
 
-    :model_class:  A SQLAlchemy.Model subclass class object, the target to build
-                   constructor/update arguments for.
-    :request_json: The value of request.json during the execution of a flask
-                   endpoint function, containing the key-value pairs to convert
-                   to constructor/update arguments.
+    :model_class: A SQLAlchemy.Model subclass class object, the target
+    to build constructor/update arguments for.
+    :request_json: The value of request.json during the execution of a
+    flask endpoint function, containing the key-value pairs to convert
+    to constructor/update arguments.
     :**argd:       (Optional.) A single key/value pair, where the key is the
                    name of a foreign key in the relevant table, and the value
                    is the value for that key supplied to the flask endpoint
                    function as a URL argument. If the value for that column in
                    request.json, it is replaced with the value.
-    :return:       A dict that can be constructor/update arguments for the
-                   SQLAlchemy.Model subclass target.
+    :return: A dict that can be constructor/update arguments for the
+    SQLAlchemy.Model subclass target.
     """
 
     # An argument to _validate_date for Book, predefined for easier reading.
@@ -392,12 +392,12 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
 
 def handle_exc(exception):
     """
-    A generalized exception handler which implements an ideal handler for
-    endpoint function try/except blocks.
+    A generalized exception handler which implements an ideal handler
+    for endpoint function try/except blocks.
 
     :exception: The exception being handled.
-    :return:    A flask.Response object. NB: May raise an exception rather
-                than returning.
+    :return: A flask.Response object. NB: May raise an exception rather
+    than returning.
     """
     # If the exception is a 404 error, it's passed through unmodified. (`from
     # None` ensures it isn't modified by passing through this try/except
@@ -417,11 +417,11 @@ def handle_exc(exception):
 
 def crt_tbl_row_clos(model_class):
     """
-    Returns a function that executes a endpoint function POST /{table}, using
-    the supplied SQLAlchemy.Model subclass.
+    Returns a function that executes a endpoint function POST /{table},
+    using the supplied SQLAlchemy.Model subclass.
 
     :model_class: the Model subclass for outer table
-    :return:      a function that executes POST/{table}
+    :return: a function that executes POST/{table}
     """
 
     def _internal_create_table_row(request_json):
@@ -446,12 +446,10 @@ def del_tbl_row_by_id_clos(model_class):
     /{table}/{id}, using the supplied SQLAlchemy.Model subclass.
 
     :model_class: the Model subclass for the table
-    :returns:     a function that executes DELETE/{table}/{id}
-
-    The returned function:
-
-    :model_id:    The primary key value for the row to delete.
-    :return:      A flask.Response object.
+    :returns: a function that executes DELETE/{table}/{id} The returned
+    function:
+    :model_id: The primary key value for the row to delete.
+    :return: A flask.Response object.
     """
 
     def _internal_delete_table_row_by_id(model_id):
@@ -469,20 +467,20 @@ def del_tbl_row_by_id_foreign_key_clos(
 ):
     """
     Returns a function that executes DELETE
-    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
-    SQLAlchemy.Model subclasses.
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the
+    supplied SQLAlchemy.Model subclasses.
 
     :outer_class: the Model subclass for the outer table
     :inner_class: the Model subclass for the inner table
-    :return:      a function that executes DELETE
-                  /{outer_table}/{outer_id}/{inner_table}/{inner_id}
+    :return: a function that executes DELETE
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}
 
-    The returned function:
+    The closure:
 
-    :outer_id:    a value for the primary key column in the outer table
-    :inner_id:    a value for the primary key column in the inner table; this row
-                  will be deleted
-    :return:      A flask.Response object.
+    :outer_id: a value for the primary key column in the outer table
+    :inner_id: a value for the primary key column in the inner table;
+    this row will be deleted
+    :return: A flask.Response object.
     """
 
     def _internal_delete_table_row_by_id_and_foreign_key(outer_id, inner_id):
@@ -520,13 +518,14 @@ def disp_tbl_rows_by_foreign_id_clos(outer_class, outer_id_column, inner_class):
 
     :outer_class: the Model subclass for the outer table
     :inner_class: the Model subclass for the inner table
-    :return:      a function that executes
-                  GET /{outer_table}/{outer_id}/{inner_table}
 
-    The returned function:
+    :return: a function that executes GET
+    /{outer_table}/{outer_id}/{inner_table}
 
-    :outer_id:    a value for the primary key column in the outer table
-    :return:      A flask.Response object.
+    The closure:
+
+    :outer_id: a value for the primary key column in the outer table
+    :return: A flask.Response object.
     """
 
     def _internal_display_table_rows_by_foreign_id(outer_id):
@@ -551,15 +550,15 @@ def disp_tbl_rows_by_foreign_id_clos(outer_class, outer_id_column, inner_class):
 
 def disp_tbl_rows_clos(model_class):
     """
-    Returns an endpoint function that executes GET /{table}, using the supplied
-    SQLAlchemy.Model subclasses.
+    Returns an endpoint function that executes GET /{table}, using the
+    supplied SQLAlchemy.Model subclasses.
 
     :model_class: the Model subclass for the table
-    :return:      a function that executes GET /{table}
+    :return: a function that executes GET /{table}
 
-    The returned function (takes no arguments):
+    The closure (takes no arguments):
 
-    :return:      a flask.Response object
+    :return: a flask.Response object
     """
 
     def _internal_display_table_rows():
@@ -577,16 +576,16 @@ def disp_tbl_rows_clos(model_class):
 
 def disp_tbl_row_by_id_clos(model_class):
     """
-    Returns an endpoint function that executes GET /{table}/{id}, using the
-    supplied SQLAlchemy.Model subclass.
+    Returns an endpoint function that executes GET /{table}/{id}, using
+    the supplied SQLAlchemy.Model subclass.
 
     :model_class: the Model subclass for the table
+
     :return:      a function that executes GET /{table}/{id}
+    The closure:
 
-    The returned function:
-
-    :model_id:    a value for the primary key column in the table
-    :return:      a flask.Response object
+    :model_id: a value for the primary key column in the table
+    :return: a flask.Response object
     """
 
     def _internal_display_table_row_by_id(model_id):
@@ -604,20 +603,20 @@ def disp_tbl_row_by_id_foreign_key_clos(
 ):
     """
     Returns an endpoint function that executes GET
-    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
-    SQLAlchemy.Model subclasses.
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the
+    supplied SQLAlchemy.Model subclasses.
 
     :outer_class: the Model subclass for the outer table
     :inner_class: the Model subclass for the inner table
-    :return:      a function that executes GET
-                  /{outer_table}/{outer_id}/{inner_table}/{inner_id}
+    :return: a function that executes GET
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}
 
-    The returned function:
+    The closure:
 
-    :outer_id:    a value for the primary key column in the outer table
-    :inner_id:    a value for the primary key column in the inner table; this row
-                  will be deleted
-    :return:      a flask.Response object
+    :outer_id: a value for the primary key column in the outer table
+    :inner_id: a value for the primary key column in the inner table;
+    this row will be deleted
+    :return: a flask.Response object
     """
 
     def _internal_display_table_row_by_id_and_foreign_key(outer_id, inner_id):
@@ -645,18 +644,18 @@ def disp_tbl_row_by_id_foreign_key_clos(
 
 def updt_tbl_row_by_id_clos(model_class):
     """
-    Returns an endpoint function that executes PATCH /{table}/{id}, using the
-    supplied SQLAlchemy.Model subclass.
+    Returns an endpoint function that executes PATCH /{table}/{id},
+    using the supplied SQLAlchemy.Model subclass.
 
-    :model_class:  the Model subclass for the table
-    :return:       a function that executes GET /{table}/{id}
+    :model_class: the Model subclass for the table
+    :return: a function that executes GET /{table}/{id}
 
-    The returned function:
+    The closure:
 
-    :model_id:     a value for the primary key column in the table
-    :request_json: a reference to the request.json object available within the
-                   endpoint function
-    :return:       a flask.Response object
+    :model_id: a value for the primary key column in the table
+    :request_json: a reference to the request.json object available
+    within the endpoint function
+    :return: a flask.Response object
     """
 
     def _internal_update_table_row_by_id(model_id, request_json):
@@ -684,22 +683,22 @@ def updt_tbl_row_by_id_foreign_key_clos(
 ):
     """
     Returns an endpoint function that executes PATCH
-    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the supplied
-    SQLAlchemy.Model subclasses.
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}, using the
+    supplied SQLAlchemy.Model subclasses.
 
-    :outer_class:  the Model subclass for the outer table
-    :inner_class:  the Model subclass for the inner table
-    :return:       a function that executes PATCH
-                   /{outer_table}/{outer_id}/{inner_table}/{inner_id}
+    :outer_class: the Model subclass for the outer table
+    :inner_class: the Model subclass for the inner table
+    :return: a function that executes PATCH
+    /{outer_table}/{outer_id}/{inner_table}/{inner_id}
 
-    The returned function:
+    The closure:
 
-    :outer_id:     a value for the primary key column in the outer table
-    :inner_id:     a value for the primary key column in the inner table; this row
-                   will be deleted
-    :request_json: a reference to the request.json object available within the
-                   endpoint function
-    :return:       a flask.Response object
+    :outer_id: a value for the primary key column in the outer table
+    :inner_id: a value for the primary key column in the inner table;
+    this row will be deleted
+    :request_json: a reference to the request.json object available
+    within the endpoint function
+    :return: a flask.Response object
     """
 
     def _internal_update_table_row_by_id_and_foreign_key(

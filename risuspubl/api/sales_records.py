@@ -18,10 +18,10 @@ disp_slrcd_by_id = disp_tbl_row_by_id_clos(SalesRecord)
 @blueprint.route("/<int:sales_record_id>", methods=["GET"])
 def disp_slrcd_endpt(sales_record_id: int):
     """
-    Implements a GET /sales_records/{sales_record_id} endpoint. The row with
-    that sales_record_id in the sales_records table is displayed.
+    Implements a GET /sales_records/{sales_record_id} endpoint. The row
+    with that sales_record_id in the sales_records table is displayed.
 
-    :year:   The year of rows from sales_records table to display.
+    :year: The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
     try:
@@ -33,11 +33,11 @@ def disp_slrcd_endpt(sales_record_id: int):
 @blueprint.route("/years/<int:year>", methods=["GET"])
 def disp_slrcds_by_yr_endpt(year: int):
     """
-    Implements a GET /sales_records/years/{year} endpoint. All rows in the
-    sales_records table with that year are displayed in order by year, month and
-    book_id.
+    Implements a GET /sales_records/years/{year} endpoint. All rows in
+    the sales_records table with that year are displayed in order by
+    year, month and book_id.
 
-    :year:   The year of rows from sales_records table to display.
+    :year: The year of rows from sales_records table to display.
     :return: A flask.Response object.
     """
     try:
@@ -59,14 +59,14 @@ def disp_slrcds_by_yr_endpt(year: int):
 @blueprint.route("/years/<int:year>/months/<int:month>", methods=["GET"])
 def disp_slrcds_by_yr_mo_endpt(year: int, month: int):
     """
-    Implements a GET /sales_records/years/{year}/months/{month} endpoint. All rows in the
-    sales_records table with that year and that month are loaded and output as a
-    JSON list.
+    Implements a GET /sales_records/years/{year}/months/{month}
+    endpoint. All rows in the sales_records table with that year and
+    that month are loaded and output as a JSON list.
 
-    :year:   The year of rows from sales_records table to display (between 1990
-             and the current year).
-    :month:  The month of rows from sales_records table to display (between 1
-             and 12).
+    :year: The year of rows from sales_records table to display (between
+    1990 and the current year).
+    :month: The month of rows from sales_records table to display
+    (between 1 and 12).
     :return: A flask.Response object.
     """
     try:
@@ -97,12 +97,13 @@ def disp_slrcds_by_yr_mo_endpt(year: int, month: int):
 @blueprint.route("/books/<int:book_id>", methods=["GET"])
 def disp_slrcds_by_bkid_endpt(book_id: int):
     """
-    Implements a GET /sales_records/books/{book_id} endpoint. All rows in the
-    sales_records table with that book_id value are displayed in order by year
-    and month.
+    Implements a GET /sales_records/books/{book_id} endpoint. All rows
+    in the sales_records table with that book_id value are displayed in
+    order by year and month.
 
-    :book_id: The book_id of the book to see the complete sales records for.
-    :return:  a flask.Response object
+    :book_id: The book_id of the book to see the complete sales records
+    for.
+    :return: a flask.Response object
     """
     try:
         sales_record_objs = tuple(
@@ -122,13 +123,14 @@ def disp_slrcds_by_bkid_endpt(book_id: int):
 @blueprint.route("/years/<int:year>/books/<int:book_id>", methods=["GET"])
 def disp_slrcds_by_yr_bkid_endpt(year: int, book_id: int):
     """
-    Implements a GET /sales_records/years/{year}/books/{book_id} endpoint. Loads
-    the sales data from the sales_records table for the specified year and the
-    specified book and displays them in order by month.
+    Implements a GET /sales_records/years/{year}/books/{book_id}
+    endpoint. Loads the sales data from the sales_records table for the
+    specified year and the specified book and displays them in order by
+    month.
 
-    :year:    the year to retrieve sales data for
+    :year: the year to retrieve sales data for
     :book_id: the book_id of the book to retrieve sales data for
-    :return:  a flask.Response object
+    :return: a flask.Response object
     """
     try:
         sales_record_objs = tuple(
@@ -152,14 +154,15 @@ def disp_slrcds_by_yr_bkid_endpt(year: int, book_id: int):
 )
 def disp_slrcds_by_yr_mo_bkid_endpt(year: int, month: int, book_id: int):
     """
-    Implements a GET /sales_records/years/{year}/months/{month}/books/{book_id}
-    endpoint. Retrieves the row in the sales_records table with the given year,
+    Implements a GET
+    /sales_records/years/{year}/months/{month}/books/{book_id} endpoint.
+    Retrieves the row in the sales_records table with the given year,
     month and book_id values and displays it.
 
     :year: the year to retrieve sales data for
     :month: the month to retrieve sales data for
     :book_id: the book_id to retrieve sales data for
-    :return:    a flask.Response object
+    :return: a flask.Response object
     """
     try:
         sales_record_objs = tuple(

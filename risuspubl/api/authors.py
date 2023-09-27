@@ -40,11 +40,13 @@ updt_auth_by_auid = updt_tbl_row_by_id_clos(Author)
 @blueprint.route("/<int:author_id>/metadata", methods=["GET"])
 def disp_auth_metdt_endpt(author_id: int):
     """
-    Implements a GET /authors/{author_id}/metadata endpoint. The row in the
-    authors_metadata table for that author_id is retrieved and displayed.
+    Implements a GET /authors/{author_id}/metadata endpoint. The row
+    in the authors_metadata table for that author_id is retrieved and
+    displayed.
 
-    :author_id: the value for the author_id column in the authors_metadata table
-    :return:    a flask.Response object
+    :author_id: the value for the author_id column in the
+    authors_metadata table
+    :return: a flask.Response object
     """
     try:
         metadata_objs = list(
@@ -67,8 +69,8 @@ def disp_auth_metdt_endpt(author_id: int):
 @blueprint.route("", methods=["GET"])
 def index_endpt():
     """
-    Implements a GET /authors endpoint. All rows in the authors table are loaded
-    and output as a JSON list.
+    Implements a GET /authors endpoint. All rows in the authors table
+    are loaded and output as a JSON list.
 
     :return:    a flask.Response object
     """
@@ -81,22 +83,22 @@ def index_endpt():
 @blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["GET"])
 def disp_auths_bks_endpt(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/{author1_id}/{author2_id}/books endpoint. All rows
-    in the books table associated with those two author_ids in the authors_books
-    table are loaded and output as a JSON list.
+    Implements a GET /authors/{author1_id}/{author2_id}/books endpoint.
+    All rows in the books table associated with those two author_ids in
+    the authors_books table are loaded and output as a JSON list.
 
-    :author1_id: One of the two author_ids associated with matching book_ids
-                 in the authors_books table.
-    :author2_id: The other of the two author_ids associated with matching
-                 book_ids in the authors_books table.
-    :return:     a flask.Response object
+    :author1_id: One of the two author_ids associated with matching
+    book_ids in the authors_books table.
+    :author2_id: The other of the two author_ids associated with
+    matching book_ids in the authors_books table.
+    :return: a flask.Response object
     """
     try:
         if author1_id == author2_id:
             raise ValueError("author1_id and author2_id were identical")
         # A utility function is used to fetch a list of Book objects whose
         # book_id is associated with both author_ids in authors_books.
-        shared_books = _authors_shared_book_ids(author1_id, author2_id)
+        shared_books = _auths_shared_bkids(author1_id, author2_id)
         # The list is serialized and returned as json.
         retval = [book_obj.serialize() for book_obj in shared_books]
         return jsonify(retval)
@@ -110,23 +112,24 @@ def disp_auths_bks_endpt(author1_id: int, author2_id: int):
 def disp_auths_bk_by_bkid_endpt(author1_id: int, author2_id: int, book_id: int):
     """
     Implements a GET /authors/{author1_id}/{author2_id}/books/{book_id}
-    endpoint. The row in the books table with that book_id associated with those
-    two author_ids in the authors_books table is loaded and outputed in JSON.
+    endpoint. The row in the books table with that book_id associated
+    with those two author_ids in the authors_books table is loaded and
+    outputed in JSON.
 
-    :author1_id: One of the two author_ids associated with the given book_id
-                 in the authors_books table.
-    :author2_id: The other of the two author_ids associated with the given
-                 book_id in the authors_books table.
-    :book_id:    The book_id of the row in the books table to load and
-                 display.
-    :return:     a flask.Response object
+    :author1_id: One of the two author_ids associated with the given
+    book_id in the authors_books table.
+    :author2_id: The other of the two author_ids associated with the
+    given book_id in the authors_books table.
+    :book_id: The book_id of the row in the books table to load and
+    display.
+    :return: a flask.Response object
     """
     try:
         if author1_id == author2_id:
             raise ValueError("author1_id and author2_id were identical")
         # A utility function is used to fetch a list of Book objects whose
         # book_id is associated with both author_ids in authors_books.
-        shared_books = _authors_shared_book_ids(author1_id, author2_id)
+        shared_books = _auths_shared_bkids(author1_id, author2_id)
         # The Book object list is iterated over, looking for the object with the
         # matching book_id. If it's found, it's serialized and returned as json.
         for book_obj in shared_books:
@@ -143,7 +146,7 @@ def disp_auths_bk_by_bkid_endpt(author1_id: int, author2_id: int, book_id: int):
 # and display_authors_manuscript_by_id() to generate a list of Book objects
 # with manuscript_ids that are associated with both author_ids in the
 # authors_manuscripts table.
-def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> list:
+def _auths_shared_msids(author1_id: int, author2_id: int) -> list:
     if author1_id == author2_id:
         raise ValueError("author1_id and author2_id were identical")
     author1_obj = Author.query.get_or_404(author1_id)
@@ -178,15 +181,16 @@ def _authors_shared_manuscript_ids(author1_id: int, author2_id: int) -> list:
 @blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["GET"])
 def disp_auths_mscrpts_endpt(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/{author1_id}/{author2_id}/manuscripts endpoint.
-    All rows in the manuscripts table associated with those two author_ids in
-    the authors_manuscripts table are loaded and output as a JSON list.
+    Implements a GET /authors/{author1_id}/{author2_id}/manuscripts
+    endpoint. All rows in the manuscripts table associated with those
+    two author_ids in the authors_manuscripts table are loaded and
+    output as a JSON list.
 
-    :author1_id:    One of the two author_ids associated with matching
-                    manuscript_ids in the authors_manuscripts table.
-    :author2_id:    The other of the two author_ids associated with matching
-                    manuscript_ids in the authors_manuscripts table.
-    :return:        a flask.Response object
+    :author1_id: One of the two author_ids associated with matching
+    manuscript_ids in the authors_manuscripts table.
+    :author2_id: The other of the two author_ids associated with
+    matching manuscript_ids in the authors_manuscripts table.
+    :return: a flask.Response object
     """
     try:
         if author1_id == author2_id:
@@ -194,7 +198,7 @@ def disp_auths_mscrpts_endpt(author1_id: int, author2_id: int):
         # This utility function looks up which manuscript_ids are associated
         # with both author_ids in authors_manuscripts and returns Manuscript()
         # objects for those manuscript_ids.
-        shared_manuscripts = _authors_shared_manuscript_ids(author1_id, author2_id)
+        shared_manuscripts = _auths_shared_msids(author1_id, author2_id)
         # A list of serializations is built # and returned via jsonify.
         retval = [manuscript_obj.serialize() for manuscript_obj in shared_manuscripts]
         return jsonify(retval)
@@ -210,24 +214,25 @@ def disp_auths_mscrpt_by_msid_endpt(
     author1_id: int, author2_id: int, manuscript_id: int
 ):
     """
-    Implements a GET /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
+    Implements a GET
+    /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
-    associated with those two author_ids in the authors_manuscripts table is
-    loaded and outputed in JSON.
+    associated with those two author_ids in the authors_manuscripts
+    table is loaded and outputed in JSON.
 
-    :author1_id:    One of the two author_ids associated with the given
-                    manuscript_id in the authors_manuscripts table.
-    :author2_id:    The other of the two author_ids associated with the given
-                    manuscript_id in the authors_manuscripts table.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    load and display.
-    :return:        a flask.Response object
+    :author1_id: One of the two author_ids associated with the given
+    manuscript_id in the authors_manuscripts table.
+    :author2_id: The other of the two author_ids associated with the
+    given manuscript_id in the authors_manuscripts table.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to load and display.
+    :return: a flask.Response object
     """
     try:
         # Using a utility function to look up which manuscript_ids are
         # associated with both author_ids in authors_manuscripts and return
         # Manuscript() objects for those manuscript_ids.
-        shared_manuscripts = _authors_shared_manuscript_ids(author1_id, author2_id)
+        shared_manuscripts = _auths_shared_msids(author1_id, author2_id)
         # Iterating across the Manuscript object list until the object with the
         # matching manuscript_id is found.
         for manuscript_obj in shared_manuscripts:
@@ -244,12 +249,12 @@ def disp_auths_mscrpt_by_msid_endpt(
 @blueprint.route("/<int:author_id>", methods=["GET"])
 def disp_auth_by_auid_endpt(author_id: int):
     """
-    Implements a GET /authors/{author_id} endpoint. The row in the authors table
-    with the given author_id is loaded and output in JSON.
+    Implements a GET /authors/{author_id} endpoint. The row in the
+    authors table with the given author_id is loaded and output in JSON.
 
-    :author_id: The author_id of the row in the authors table to load and
-                display.
-    :return:    a flask.Response object
+    :author_id: The author_id of the row in the authors table to load
+    and display.
+    :return: a flask.Response object
     """
     try:
         return disp_auth_by_auid(author_id)
@@ -260,13 +265,13 @@ def disp_auth_by_auid_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/books", methods=["GET"])
 def disp_auth_bks_endpt(author_id: int):
     """
-    Implements a GET /authors/{author_id}/books endpoint. All rows in the books
-    table associated with that author_id in the authors_books table are loaded
-    and output as a JSON list.
+    Implements a GET /authors/{author_id}/books endpoint. All rows in
+    the books table associated with that author_id in the authors_books
+    table are loaded and output as a JSON list.
 
-    :author_id: The author_id associated with book_ids in the authors_books
-                table of rows from the books table to display.
-    :return:    a flask.Response object
+    :author_id: The author_id associated with book_ids in the
+    authors_books table of rows from the books table to display.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -279,14 +284,15 @@ def disp_auth_bks_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["GET"])
 def disp_auth_bk_by_bkid_endpt(author_id: int, book_id: int):
     """
-    Implements a GET /authors/{author_id}/books/{book_id} endpoint. The row in
-    the books table with that book_id associated with that author_id in the
-    authors_books table is loaded and outputed in JSON.
+    Implements a GET /authors/{author_id}/books/{book_id} endpoint.
+    The row in the books table with that book_id associated with that
+    author_id in the authors_books table is loaded and outputed in JSON.
 
     :author_id: The author_id associated with the given book_id in the
-                authors_books table.
-    :book_id:   The book_id of the row in the books table to load and display.
-    :return:    a flask.Response object
+    authors_books table.
+    :book_id: The book_id of the row in the books table to load and
+    display.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -308,14 +314,14 @@ def disp_auth_bk_by_bkid_endpt(author_id: int, book_id: int):
 @blueprint.route("/<int:author_id>/manuscripts", methods=["GET"])
 def disp_auth_mscrpts_endpt(author_id: int):
     """
-    Implements a GET /authors/{author_id}/manuscripts endpoint. All rows in the
-    manuscripts table associated with that author_ids in the authors_manuscripts
-    table are loaded and output as a JSON list.
+    Implements a GET /authors/{author_id}/manuscripts endpoint. All rows
+    in the manuscripts table associated with that author_ids in the
+    authors_manuscripts table are loaded and output as a JSON list.
 
     :author_id: The author_id associated with manuscript_ids in the
-                authors_manuscripts table of rows from the manuscripts table to
-                display.
-    :return:    a flask.Response object
+    authors_manuscripts table of rows from the manuscripts table to
+    display.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -330,16 +336,16 @@ def disp_auth_mscrpts_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
 def disp_auth_mscrpt_by_msid_endpt(author_id: int, manuscript_id: int):
     """
-    Implements a GET /authors/{author_id}/manuscripts/{manuscript_id} endpoint.
-    The row in the manuscripts table with that manuscript_id associated with
-    that author_id in the authors_manuscripts table is loaded and outputed in
-    JSON.
+    Implements a GET /authors/{author_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that manuscript_id
+    associated with that author_id in the authors_manuscripts table is
+    loaded and outputed in JSON.
 
-    :author_id:     The author_id associated with the given manuscript_id in
-                    the authors_manuscripts table.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    load and display.
-    :return:        a flask.Response object
+    :author_id: The author_id associated with the given manuscript_id in
+    the authors_manuscripts table.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to load and display.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -362,15 +368,15 @@ def disp_auth_mscrpt_by_msid_endpt(author_id: int, manuscript_id: int):
 @blueprint.route("/<int:author1_id>/<int:author2_id>", methods=["GET"])
 def disp_auths_by_auids_endpt(author1_id: int, author2_id: int):
     """
-    Implements a GET /authors/{author_id}/{author_id} endpoint. The rows in
-    the authors table with those two author_ids are loaded and outputed in a
-    JSON list.
+    Implements a GET /authors/{author_id}/{author_id} endpoint. The
+    rows in the authors table with those two author_ids are loaded and
+    outputed in a JSON list.
 
-    :author1_id: One of the two author_ids of rows in the authors table to
-                 load and display.
-    :author2_id: The other of the two author_ids of rows in the authors table
-                 to load and display.
-    :return:     a flask.Response object
+    :author1_id: One of the two author_ids of rows in the authors table
+    to load and display.
+    :author2_id: The other of the two author_ids of rows in the authors
+    table to load and display.
+    :return: a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -388,7 +394,7 @@ def disp_auths_by_auids_endpt(author1_id: int, author2_id: int):
 # This private utility function is used by display_authors_books() and
 # display_authors_book_by_id() to generate a list of Book objects with book_ids
 # that are associated with both author_ids in the authors_books table.
-def _authors_shared_book_ids(author1_id: int, author2_id: int) -> list:
+def _auths_shared_bkids(author1_id: int, author2_id: int) -> list:
     author1_obj = Author.query.get_or_404(author1_id)
     author2_obj = Author.query.get_or_404(author2_id)
     # The books attribute on an Author object comprises the Book
@@ -415,13 +421,13 @@ def _authors_shared_book_ids(author1_id: int, author2_id: int) -> list:
 @blueprint.route("/<int:author_id>/metadata", methods=["PATCH"])
 def updt_auth_metdt_endpt(author_id: int):
     """
-    Implements a PATCH /authors/{author_id}/metadata endpoint. The row in the
-    authors_metadata table associated with the given author_id is updated from
-    the JSON parameters.
+    Implements a PATCH /authors/{author_id}/metadata endpoint. The row
+    in the authors_metadata table associated with the given author_id is
+    updated from the JSON parameters.
 
     :author_id: the author_id to locate the row to change in the
-                authors_metadata table with
-    :return:    a flask.Response object
+    authors_metadata table with
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -458,17 +464,18 @@ def updt_auth_metdt_endpt(author_id: int):
 )
 def updt_auths_bk_endpt(author1_id: int, author2_id: int, book_id: int):
     """
-    Implements a PATCH /authors/{author1_id}/{author2_id}/books/{book_id}
-    endpoint. The row in the books table with that book_id associated with
-    those two author_ids in the authors_books table is updated from the JSON
+    Implements a PATCH
+    /authors/{author1_id}/{author2_id}/books/{book_id} endpoint. The
+    row in the books table with that book_id associated with those two
+    author_ids in the authors_books table is updated from the JSON
     parameters.
 
-    :author1_id: One of the two author_ids associated with that book_id in the
-                 authors_books table.
-    :author2_id: The other of the two author_ids associated with that book_id
-                 in the authors_books table.
-    :book_id:    The book_id of the row in the books table to update.
-    :return:     a flask.Response object
+    :author1_id: One of the two author_ids associated with that book_id
+    in the authors_books table.
+    :author2_id: The other of the two author_ids associated with that
+    book_id in the authors_books table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -504,18 +511,19 @@ def updt_auths_bk_endpt(author1_id: int, author2_id: int, book_id: int):
 )
 def updt_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int):
     """
-    Implements a PATCH /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
+    Implements a PATCH
+    /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
-    associated with those two author_ids in the authors_manuscripts table is
-    updated from the JSON parameters.
+    associated with those two author_ids in the authors_manuscripts
+    table is updated from the JSON parameters.
 
-    :author1_id:    One of the two author_ids associated with that
-                    manuscript_id in the authors_manuscripts table.
-    :author2_id:    The other of the two author_ids associated with that
-                    manuscript_id in the authors_manuscripts table.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    update.
-    :return:        a flask.Response object
+    :author1_id: One of the two author_ids associated with that
+    manuscript_id in the authors_manuscripts table.
+    :author2_id: The other of the two author_ids associated with that
+    manuscript_id in the authors_manuscripts table.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to update.
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -562,11 +570,12 @@ def updt_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int
 @blueprint.route("/<int:author_id>", methods=["PATCH", "PUT"])
 def updt_auth_by_auid_endpt(author_id: int):
     """
-    Implements a PATCH /authors/{author_id} endpoint. The row in the authors
-    table with that author_id is updated from the JSON parameters.
+    Implements a PATCH /authors/{author_id} endpoint. The row in
+    the authors table with that author_id is updated from the JSON
+    parameters.
 
     :author_id: The author_id of the row in the authors table to update.
-    :return:    a flask.Response object
+    :return: a flask.Response object
     """
     try:
         return updt_auth_by_auid(author_id, request.json)
@@ -578,15 +587,15 @@ def updt_auth_by_auid_endpt(author_id: int):
 # HERE
 def updt_auth_bk_endpt(author_id: int, book_id: int):
     """
-    Implements a PATCH /authors/{author_id}/books/{book_id} endpoint. The row
-    in the books table with that book_id associated with that author_id in the
-    authors_books table is updated from the JSON parameters.
+    Implements a PATCH /authors/{author_id}/books/{book_id} endpoint.
+    The row in the books table with that book_id associated with that
+    author_id in the authors_books table is updated from the JSON
+    parameters.
 
     :author_id: The author_id associated with that book_id in the
-                authors_books table.
-    :book_id:   The book_id of the row in the books table to
-                update.
-    :return:    a flask.Response object
+    authors_books table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -617,14 +626,14 @@ def updt_auth_mscrpt_endpt(author_id: int, manuscript_id: int):
     """
     Implements a PATCH /authors/{author_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
-    associated with that author_id in the authors_manuscripts table is updated
-    from the JSON parameters.
+    associated with that author_id in the authors_manuscripts table is
+    updated from the JSON parameters.
 
-    :author_id:     The author_id associated with that manuscript_id in the
-                    authors_manuscripts table.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    update.
-    :return:        a flask.Response object
+    :author_id: The author_id associated with that manuscript_id in the
+    authors_manuscripts table.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to update.
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -657,14 +666,14 @@ def updt_auth_mscrpt_endpt(author_id: int, manuscript_id: int):
 @blueprint.route("/<int:author_id>/metadata", methods=["POST"])
 def crt_auth_metdt_endpt(author_id: int):
     """
-    Implements a POST /authors/{author_id}/metadata endpoint. Creates a row
-    in the authors_metadata table with the given author_id from the JSON
-    parameters. Fails if there already is a row in the authors_metadata table
-    with that author_id value.
+    Implements a POST /authors/{author_id}/metadata endpoint. Creates
+    a row in the authors_metadata table with the given author_id
+    from the JSON parameters. Fails if there already is a row in the
+    authors_metadata table with that author_id value.
 
     :author_id: the author_id value to set on the new row in the
-                authors_metadata table
-    :return:    a flask.Response object
+    authors_metadata table
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(
@@ -696,10 +705,10 @@ def crt_auth_metdt_endpt(author_id: int):
 @blueprint.route("", methods=["POST"])
 def auth_crt_endpt():
     """
-    Implements a POST /authors endpoint. A new row in the authors table is
-    constituted from the JSON parameters and saved to that table.
+    Implements a POST /authors endpoint. A new row in the authors table
+    is constituted from the JSON parameters and saved to that table.
 
-    :return:    a flask.Response object
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(Author, request.json, {"author_id"})
@@ -711,17 +720,17 @@ def auth_crt_endpt():
 @blueprint.route("/<int:author1_id>/<int:author2_id>/books", methods=["POST"])
 def crt_auths_bk_endpt(author1_id: int, author2_id: int):
     """
-    Implements a POST /authors/{author_id}/books endpoint. A new row in the
-    books table is constituted from the JSON parameters and saved to that table.
-    In addition, rows in the authors_books table associating the new book_id
-    with those two author_ids are added.
+    Implements a POST /authors/{author_id}/books endpoint. A new row in
+    the books table is constituted from the JSON parameters and saved to
+    that table. In addition, rows in the authors_books table associating
+    the new book_id with those two author_ids are added.
 
     :author1_id: One of the two author_ids to associate the new book_id
-                 with in the authors_books table.
+    with in the authors_books table.
     :author2_id: The other of the two author_ids to associate the new
-                 book_id with in the authors_books table.
-    :book_id:    The book_id of the row in the books table to update.
-    :return:     a flask.Response object
+    book_id with in the authors_books table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         Author.query.get_or_404(author1_id)
@@ -757,17 +766,18 @@ def crt_auths_bk_endpt(author1_id: int, author2_id: int):
 @blueprint.route("/<int:author1_id>/<int:author2_id>/manuscripts", methods=["POST"])
 def crt_auths_mscrpt_endpt(author1_id: int, author2_id: int):
     """
-    Implements a POST /authors/{author1_id}/{author2_id}/manuscripts endpoint.
-    A new row in the manuscripts table is constituted from the JSON parameters
-    and saved to that table. In addition, rows in the authors_manuscripts table
-    associating the new manuscript_id with those two author_ids are added.
+    Implements a POST /authors/{author1_id}/{author2_id}/manuscripts
+    endpoint. A new row in the manuscripts table is constituted from the
+    JSON parameters and saved to that table. In addition, rows in the
+    authors_manuscripts table associating the new manuscript_id with
+    those two author_ids are added.
 
-    :author1_id: One of the two author_ids to associate the new manuscript_id
-                 with in the authors_manuscripts table.
+    :author1_id: One of the two author_ids to associate the new
+    manuscript_id with in the authors_manuscripts table.
     :author2_id: The other of the two author_ids to associate the new
-                 manuscript_id with in the authors_manuscripts table.
-    :book_id:    The book_id of the row in the books table to update.
-    :return:     a flask.Response object
+    manuscript_id with in the authors_manuscripts table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         Author.query.get_or_404(author1_id)
@@ -803,15 +813,15 @@ def crt_auths_mscrpt_endpt(author1_id: int, author2_id: int):
 @blueprint.route("/<int:author_id>/books", methods=["POST"])
 def crt_auth_bk_endpt(author_id: int):
     """
-    Implements a POST /authors/{author_id}/books endpoint. A new row in the
-    books table is constituted from the JSON parameters and saved to that
-    table. In addition, a row in the authors_books table associating the
-    new book_id with that author_id is added.
+    Implements a POST /authors/{author_id}/books endpoint. A new row
+    in the books table is constituted from the JSON parameters and
+    saved to that table. In addition, a row in the authors_books table
+    associating the new book_id with that author_id is added.
 
     :author_id: The author_id to associate the new book_id with in the
-                authors_books table.
-    :book_id:   The book_id of the row in the books table to update.
-    :return:    a flask.Response object
+    authors_books table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         Author.query.get_or_404(author_id)
@@ -842,15 +852,16 @@ def crt_auth_bk_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/manuscripts", methods=["POST"])
 def crt_auth_mscrpt_endpt(author_id: int):
     """
-    Implements a POST /authors/{author_id}/manuscripts endpoint. A new row in
-    the manuscripts table is constituted from the JSON parameters and saved to
-    that table. In addition, a row in the authors_manuscripts table associating
-    the new manuscript_id with that author_id is added.
+    Implements a POST /authors/{author_id}/manuscripts endpoint. A
+    new row in the manuscripts table is constituted from the JSON
+    parameters and saved to that table. In addition, a row in the
+    authors_manuscripts table associating the new manuscript_id with
+    that author_id is added.
 
-    :author_id: The author_id to associate the new manuscript_id with in the
-                authors_manuscripts table.
-    :book_id:   The book_id of the row in the books table to update.
-    :return:    a flask.Response object
+    :author_id: The author_id to associate the new manuscript_id with in
+    the authors_manuscripts table.
+    :book_id: The book_id of the row in the books table to update.
+    :return: a flask.Response object
     """
     try:
         check_json_req_props(Manuscript, request.json, {"manuscript_id"})
@@ -879,13 +890,13 @@ def crt_auth_mscrpt_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/metadata", methods=["DELETE"])
 def del_auth_metdt_endpt(author_id: int):
     """
-    Implements a DELETE /authors/{author_id}/metadata endpoint. Locates the row
-    in the authors_metadata table with the specified author_id value and deletes
-    it.
+    Implements a DELETE /authors/{author_id}/metadata endpoint. Locates
+    the row in the authors_metadata table with the specified author_id
+    value and deletes it.
 
-    :author_id: the value for the author_id column to use when locating the row
-                in the authors_metadata table to delete
-    :return:    a flask.Response object
+    :author_id: the value for the author_id column to use when locating
+    the row in the authors_metadata table to delete
+    :return: a flask.Response object
     """
     try:
         metadata_objs = tuple(
@@ -912,18 +923,18 @@ def del_auth_metdt_endpt(author_id: int):
 )
 def del_auths_bk_endpt(author1_id: int, author2_id: int, book_id: int):
     """
-    Implements a DELETE /authors/{author1_id}/{author2_id}/books/{book_id}
-    endpoint. The row in the books table with that book_id associated with
-    those author_ids in the authors_books table is deleted. The row(s) in
+    Implements a DELETE
+    /authors/{author1_id}/{author2_id}/books/{book_id} endpoint. The
+    row in the books table with that book_id associated with those
+    author_ids in the authors_books table is deleted. The row(s) in
     authors_books table with that book_id are also deleted.
 
-    :author1_id: The author_id of one of the two rows in the authors table
-                 associated with this book_id.
-    :author2_id: The author_id of the other of the two rows in the authors
-                 table associated with this book_id.
-    :book_id:    The book_id value of the row in the books table to
-                 delete.
-    :return:     a flask.Response object
+    :author1_id: The author_id of one of the two rows in the authors
+    table associated with this book_id.
+    :author2_id: The author_id of the other of the two rows in the
+    authors table associated with this book_id.
+    :book_id: The book_id value of the row in the books table to delete.
+    :return: a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -958,18 +969,20 @@ def del_auths_bk_endpt(author1_id: int, author2_id: int, book_id: int):
 )
 def del_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int):
     """
-    Implements a DELETE /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id} endpoint.
-    The row in the manuscripts table with that id associated with those
-    author_ids in the authors_books table is deleted. The row(s) in
-    authors_manuscripts table with that manuscript id are also deleted.
+    Implements a DELETE
+    /authors/{author1_id}/{author2_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that id associated
+    with those author_ids in the authors_books table is deleted. The
+    row(s) in authors_manuscripts table with that manuscript id are also
+    deleted.
 
-    :author1_id:    The author_id of one of the two rows in the authors table
-                    associated with this manuscript id.
-    :author2_id:    The author_id of the other of the two rows in the authors
-                    table associated with this manuscript id.
-    :manuscript_id: The manuscript_id value of the row in the manuscripts
-                    table to delete.
-    :return:        a flask.Response object
+    :author1_id: The author_id of one of the two rows in the authors
+    table associated with this manuscript id.
+    :author2_id: The author_id of the other of the two rows in the
+    authors table associated with this manuscript id.
+    :manuscript_id: The manuscript_id value of the row in the
+    manuscripts table to delete.
+    :return: a flask.Response object
     """
     try:
         author1_obj = Author.query.get_or_404(author1_id)
@@ -1010,12 +1023,13 @@ def del_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int)
 @blueprint.route("/<int:author_id>", methods=["DELETE"])
 def del_auth_by_auid_endpt(author_id: int):
     """
-    Implements a DELETE /authors/{author_id} endpoint. The row in the authors
-    table with that author_id is deleted. The row(s) in authors_books and
-    authors_manuscripts tables with that author_id are also deleted.
+    Implements a DELETE /authors/{author_id} endpoint. The row in
+    the authors table with that author_id is deleted. The row(s) in
+    authors_books and authors_manuscripts tables with that author_id are
+    also deleted.
 
     :author_id: The author_id of the row in the authors table to delete.
-    :return:    a flask.Response object
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -1036,16 +1050,15 @@ def del_auth_by_auid_endpt(author_id: int):
 @blueprint.route("/<int:author_id>/books/<int:book_id>", methods=["DELETE"])
 def del_auth_bk_endpt(author_id: int, book_id: int):
     """
-    Implements a DELETE /authors/{author_id}/books/{book_id} endpoint. The row
-    in the books table with that book_id associated with that author_id in the
-    authors_books table is deleted. The row(s) in authors_books table with that
-    book_id are also deleted.
+    Implements a DELETE /authors/{author_id}/books/{book_id} endpoint.
+    The row in the books table with that book_id associated with that
+    author_id in the authors_books table is deleted. The row(s) in
+    authors_books table with that book_id are also deleted.
 
-    :author_id: The author_id of the row in the authors table associated with
-                this book_id.
-    :book_id:   The book_id value of the row in the books table to
-                delete.
-    :return:    a flask.Response object
+    :author_id: The author_id of the row in the authors table associated
+    with this book_id.
+    :book_id: The book_id value of the row in the books table to delete.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)
@@ -1071,15 +1084,15 @@ def del_auth_mscrpt_endpt(author_id: int, manuscript_id: int):
     """
     Implements a DELETE /authors/{author_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id
-    associated with that author_id in the authors_manuscripts table is deleted.
-    The row(s) in authors_manuscripts table with that manuscript_id are also
-    deleted.
+    associated with that author_id in the authors_manuscripts table
+    is deleted. The row(s) in authors_manuscripts table with that
+    manuscript_id are also deleted.
 
-    :author_id:     The author_id of the row in the authors table associated
-                    with this manuscript id.
-    :manuscript_id: The manuscript_id value of the row in the manuscripts
-                    table to delete.
-    :return:        a flask.Response object
+    :author_id: The author_id of the row in the authors table associated
+    with this manuscript id.
+    :manuscript_id: The manuscript_id value of the row in the
+    manuscripts table to delete.
+    :return: a flask.Response object
     """
     try:
         author_obj = Author.query.get_or_404(author_id)

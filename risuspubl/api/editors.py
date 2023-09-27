@@ -55,8 +55,8 @@ updt_mscrpt_by_msid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
 @blueprint.route("", methods=["GET"])
 def index_endpt():
     """
-    Implements a GET /editors endpoint. All rows in the editors table are loaded
-    and output as a JSON list.
+    Implements a GET /editors endpoint. All rows in the editors table
+    are loaded and output as a JSON list.
 
     :return: A flask.Response object.
     """
@@ -69,12 +69,12 @@ def index_endpt():
 @blueprint.route("/<int:editor_id>", methods=["GET"])
 def disp_edtr_by_edid_endpt(editor_id: int):
     """
-    Implements a GET /editors/{editor_id} endpoint. The row in the editors table
-    with the given editor_id is loaded and output in JSON.
+    Implements a GET /editors/{editor_id} endpoint. The row in the
+    editors table with the given editor_id is loaded and output in JSON.
 
-    :editor_id: The editor_id of the row in the editors table to load and
-                display.
-    :return:    A flask.Response object.
+    :editor_id: The editor_id of the row in the editors table to load
+    and display.
+    :return: A flask.Response object.
     """
     try:
         return disp_edtr_by_id(editor_id)
@@ -85,12 +85,13 @@ def disp_edtr_by_edid_endpt(editor_id: int):
 @blueprint.route("/<int:editor_id>/books", methods=["GET"])
 def disp_edtr_bks_endpt(editor_id: int):
     """
-    Implements a GET /editors/{editor_id}/books endpoint. All rows in the books
-    table with that editor_id are loaded and output as a JSON list.
+    Implements a GET /editors/{editor_id}/books endpoint. All rows in
+    the books table with that editor_id are loaded and output as a JSON
+    list.
 
     :editor_id: The editor_id associated with book_ids in the
-                editors_books table of rows from the books table to display.
-    :return:    A flask.Response object.
+    editors_books table of rows from the books table to display.
+    :return: A flask.Response object.
     """
     try:
         return disp_bks_by_edtr_id(editor_id)
@@ -101,13 +102,14 @@ def disp_edtr_bks_endpt(editor_id: int):
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["GET"])
 def disp_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
-    Implements a GET /editors/{editor_id}/books/{book_id} endpoint. The row in
-    the books table with that editor_id and that book_id is loaded and outputed
-    in JSON.
+    Implements a GET /editors/{editor_id}/books/{book_id} endpoint.
+    The row in the books table with that editor_id and that book_id is
+    loaded and outputed in JSON.
 
     :editor_id: The editor_id of the row in the books table to display.
-    :book_id:   The book_id of the row in the books table to load and display.
-    :return:    A flask.Response object.
+    :book_id: The book_id of the row in the books table to load and
+    display.
+    :return: A flask.Response object.
     """
     try:
         return disp_bk_by_bkid_and_edtr_id(editor_id, book_id)
@@ -118,13 +120,14 @@ def disp_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
 @blueprint.route("/<int:editor_id>/manuscripts", methods=["GET"])
 def disp_edtr_mscrpts_endpt(editor_id: int):
     """
-    Implements a GET /editors/{editor_id}/manuscripts endpoint. All rows in the
-    manuscripts table with that editor_id are loaded and output as a JSON list.
+    Implements a GET /editors/{editor_id}/manuscripts endpoint. All rows
+    in the manuscripts table with that editor_id are loaded and output
+    as a JSON list.
 
     :editor_id: The editor_id associated with manuscript_ids in the
-                editors_manuscripts table of rows from the manuscripts table to
-                display.
-    :return:    A flask.Response object.
+    editors_manuscripts table of rows from the manuscripts table to
+    display.
+    :return: A flask.Response object.
     """
     try:
         return disp_mscrpts_by_edtr_id(editor_id)
@@ -135,15 +138,15 @@ def disp_edtr_mscrpts_endpt(editor_id: int):
 @blueprint.route("/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
 def disp_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
-    Implements a GET /editors/{editor_id}/manuscripts/{manuscript_id} endpoint.
-    The row in the manuscripts table with that editor_id and that manuscript_id
-    is loaded and outputed in JSON.
+    Implements a GET /editors/{editor_id}/manuscripts/{manuscript_id}
+    endpoint. The row in the manuscripts table with that editor_id and
+    that manuscript_id is loaded and outputed in JSON.
 
-    :editor_id:       The editor_id of the row in the manuscripts table to
-                      display.
-    :manuscript_id:   The manuscript_id of the row in the manuscripts table to
-                      load and display.
-    :return:          A flask.Response object.
+    :editor_id: The editor_id of the row in the manuscripts table to
+    display.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to load and display.
+    :return: A flask.Response object.
     """
     try:
         return disp_mscrpt_by_msid_and_edtr_id(editor_id, manuscript_id)
@@ -154,10 +157,10 @@ def disp_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
 @blueprint.route("", methods=["POST"])
 def crt_edtr_endpt():
     """
-    Implements a POST /editors endpoint. A new row in the editors table is
-    constituted from the JSON parameters and saved to that table.
+    Implements a POST /editors endpoint. A new row in the editors table
+    is constituted from the JSON parameters and saved to that table.
 
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         check_json_req_props(Editor, request.json, {"editor_id"})
@@ -169,11 +172,12 @@ def crt_edtr_endpt():
 @blueprint.route("/<int:editor_id>", methods=["PATCH", "PUT"])
 def updt_edtr_by_edid_endpt(editor_id: int):
     """
-    Implements a PATCH /editors/{editor_id} endpoint. The row in the editors
-    table with that editor_id is updated from the JSON parameters.
+    Implements a PATCH /editors/{editor_id} endpoint. The row in
+    the editors table with that editor_id is updated from the JSON
+    parameters.
 
     :editor_id: The editor_id of the row in the editors table to update.
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         return updt_edtr_by_id(editor_id, request.json)
@@ -184,13 +188,13 @@ def updt_edtr_by_edid_endpt(editor_id: int):
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
 def updt_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
-    Implements a PATCH /editors/{editor_id}/books/{book_id} endpoint. The row
-    in the books table with that book_id and that editor_id is updated from the
-    JSON parameters.
+    Implements a PATCH /editors/{editor_id}/books/{book_id} endpoint.
+    The row in the books table with that book_id and that editor_id is
+    updated from the JSON parameters.
 
     :editor_id: The editor_id of the row in the books table to update.
-    :book_id:   The book_id of the row in the books table to update.
-    :return:    A flask.Response object.
+    :book_id: The book_id of the row in the books table to update.
+    :return: A flask.Response object.
     """
     try:
         if not len(request.json):
@@ -210,13 +214,14 @@ def updt_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
 def updt_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
     Implements a PATCH /editors/{editor_id}/manuscripts/{manuscript_id}
-    endpoint. The row in the manuscripts table with that manuscript_id and that
-    editor_id is updated from the JSON parameters.
+    endpoint. The row in the manuscripts table with that manuscript_id
+    and that editor_id is updated from the JSON parameters.
 
-    :editor_id:     The editor_id of the row in the manuscripts table to update.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    update.
-    :return:        A flask.Response object.
+    :editor_id: The editor_id of the row in the manuscripts table to
+    update.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to update.
+    :return: A flask.Response object.
     """
     try:
         if not len(request.json):
@@ -241,7 +246,7 @@ def del_edtr_by_edid_endpt(editor_id: int):
     have it reset to null.
 
     :editor_id: The editor_id of the row in the editors table to delete.
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         editor_obj = Editor.query.get_or_404(editor_id)
@@ -262,12 +267,13 @@ def del_edtr_by_edid_endpt(editor_id: int):
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["DELETE"])
 def del_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
-    Implements a DELETE /editors/{editor_id}/books/{book_id} endpoint. The row
-    in the books table with that book_id and that editor_id is deleted.
+    Implements a DELETE /editors/{editor_id}/books/{book_id} endpoint.
+    The row in the books table with that book_id and that editor_id is
+    deleted.
 
     :editor_id: The editor_id of the row in the books table to delete.
-    :book_id:   The book_id of the row in the books table to delete.
-    :return:    A flask.Response object.
+    :book_id: The book_id of the row in the books table to delete.
+    :return: A flask.Response object.
     """
     try:
         return del_bk_by_bkid_and_edtr_id(editor_id, book_id)
@@ -279,13 +285,15 @@ def del_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
 def del_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
     Implements a DELETE /editors/{editor_id}/manuscripts/{manuscript_id}
-    endpoint. The row in the manuscripts table with that manuscript_id and that
-    editor_id is deleted.
+    endpoint. The row in the manuscripts table with that manuscript_id
+    and that editor_id is deleted.
 
-    :editor_id:     The editor_id of the row in the manuscripts table to delete.
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    delete.
-    :return:        A flask.Response object.
+
+    :editor_id: The editor_id of the row in the manuscripts table to
+    delete.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to delete.
+    :return: A flask.Response object.
     """
     try:
         return del_mscrpt_by_msid_and_edtr_id(editor_id, manuscript_id)

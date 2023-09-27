@@ -26,10 +26,10 @@ updt_mscrpt_by_msd = updt_tbl_row_by_id_clos(Manuscript)
 @blueprint.route("", methods=["GET"])
 def index_endpoint():
     """
-    Implements a GET /manuscripts endpoint. All rows in the manuscripts table
-    are loaded and output as a JSON list.
+    Implements a GET /manuscripts endpoint. All rows in the manuscripts
+    table are loaded and output as a JSON list.
 
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         return disp_mscrpts()
@@ -40,12 +40,13 @@ def index_endpoint():
 @blueprint.route("/<int:manuscript_id>", methods=["GET"])
 def disp_mscrpt_by_msid_endpt(manuscript_id: int):
     """
-    Implements a GET /manuscripts/{manuscript_id} endpoint. The row in the
-    manuscripts table with the given manuscript_id is loaded and output in JSON.
+    Implements a GET /manuscripts/{manuscript_id} endpoint. The row in
+    the manuscripts table with the given manuscript_id is loaded and
+    output in JSON.
 
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    load and display.
-    :return:        A flask.Response object.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to load and display.
+    :return: A flask.Response object.
     """
     try:
         return disp_mscrpt_by_msid(manuscript_id)
@@ -66,12 +67,13 @@ def disp_mscrpt_by_msid_endpt(manuscript_id: int):
 def updt_mscrpt_by_msid_endpt(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/{manuscript_id} endpoint. The row in
-    the manuscripts table with that manuscript_id is updated from the JSON
-    parameters.
+    the manuscripts table with that manuscript_id is updated from the
+    JSON parameters.
 
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    update.
-    :return:        A flask.Response object.
+
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to update.
+    :return: A flask.Response object.
     """
     try:
         return updt_mscrpt_by_msd(manuscript_id, request.json)
@@ -82,12 +84,12 @@ def updt_mscrpt_by_msid_endpt(manuscript_id: int):
 @blueprint.route("/<int:manuscript_id>", methods=["DELETE"])
 def del_mscrpt_by_msid_endpt(manuscript_id: int):
     """
-    Implements a DELETE /manuscripts/{manuscript_id} endpoint. The row in the
-    manuscripts table with that manuscript_id is deleted.
+    Implements a DELETE /manuscripts/{manuscript_id} endpoint. The row
+    in the manuscripts table with that manuscript_id is deleted.
 
-    :manuscript_id: The manuscript_id of the row in the manuscripts table to
-                    delete.
-    :return:        A flask.Response object.
+    :manuscript_id: The manuscript_id of the row in the manuscripts
+    table to delete.
+    :return: A flask.Response object.
     """
     try:
         return del_mscrpt_by_msid(manuscript_id)

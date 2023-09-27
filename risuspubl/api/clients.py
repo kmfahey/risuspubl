@@ -29,8 +29,8 @@ update_clnt_by_id = updt_tbl_row_by_id_clos(Client)
 @blueprint.route("", methods=["GET"])
 def index_endpt():
     """
-    Implements a GET /clients endpoint. All rows in the clients table are loaded
-    and output as a JSON list.
+    Implements a GET /clients endpoint. All rows in the clients table
+    are loaded and output as a JSON list.
 
     :return: A flask.Response object.
     """
@@ -43,12 +43,12 @@ def index_endpt():
 @blueprint.route("/<int:client_id>", methods=["GET"])
 def disp_clnt_by_clid_endpt(client_id: int):
     """
-    Implements a GET /clients/{client_id} endpoint. The row in the clients table
-    with the given client_id is loaded and output in JSON.
+    Implements a GET /clients/{client_id} endpoint. The row in the
+    clients table with the given client_id is loaded and output in JSON.
 
-    :client_id: The client_id of the row in the clients table to load and
-                display.
-    :return:    A flask.Response object.
+    :client_id: The client_id of the row in the clients table to load
+    and display.
+    :return: A flask.Response object.
     """
     try:
         return display_clnt_by_id(client_id)
@@ -59,10 +59,10 @@ def disp_clnt_by_clid_endpt(client_id: int):
 @blueprint.route("", methods=["POST"])
 def crt_clnt_endpt():
     """
-    Implements a POST /clients endpoint. A new row in the clients table is
-    constituted from the JSON parameters and saved to that table.
+    Implements a POST /clients endpoint. A new row in the clients table
+    is constituted from the JSON parameters and saved to that table.
 
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"})
@@ -74,11 +74,12 @@ def crt_clnt_endpt():
 @blueprint.route("/<int:client_id>", methods=["PATCH", "PUT"])
 def updt_clnt_by_clid_endpt(client_id: int):
     """
-    Implements a PATCH /clients/{client_id} endpoint. The row in the clients
-    table with that client_id is updated from the JSON parameters.
+    Implements a PATCH /clients/{client_id} endpoint. The row in
+    the clients table with that client_id is updated from the JSON
+    parameters.
 
     :client_id: The client_id of the row in the clients table to update.
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"}, chk_missing=False)
@@ -90,11 +91,11 @@ def updt_clnt_by_clid_endpt(client_id: int):
 @blueprint.route("/<int:client_id>", methods=["DELETE"])
 def del_clnt_by_clid_endpt(client_id: int):
     """
-    Implements a DELETE /clients/{client_id} endpoint. The row in the clients
-    table with that client_id is deleted.
+    Implements a DELETE /clients/{client_id} endpoint. The row in the
+    clients table with that client_id is deleted.
 
     :client_id: The client_id of the row in the clients table to delete.
-    :return:    A flask.Response object.
+    :return: A flask.Response object.
     """
     try:
         return delete_clnt_by_id(client_id)
