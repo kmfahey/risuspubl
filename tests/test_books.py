@@ -18,8 +18,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing DELETE /books/<id>
-def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
+# Testing the DELETE /books/<id> endpoint -- test 31 of 83
+def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -49,8 +49,8 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 31/83
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-#  Testing the GET /books/<id> endpoint
-def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 32/83
+# Testing the GET /books/<id> endpoint -- test 32 of 83
+def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -66,8 +66,8 @@ def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 32/83
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-#  Testing the GET /books endpoint
-def test_index_endpoint(db_w_cleanup, staged_app_client):  # 33/83
+# Testing the GET /books endpoint -- test 33 of 83
+def test_index_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     author_obj = Genius.gen_author_obj()
@@ -90,8 +90,8 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 33/83
         )
 
 
-# Testing the PATCH /books/<id> endpoint
-def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 34/83
+# Testing the PATCH /books/<id> endpoint -- test 34 of 83
+def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case

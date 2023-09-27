@@ -14,8 +14,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing POST /series
-def test_create_series_endpoint(db_w_cleanup, staged_app_client):  # 73/83
+# Testing the POST /series endpoint -- test 73 of 83
+def test_create_series_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -32,8 +32,8 @@ def test_create_series_endpoint(db_w_cleanup, staged_app_client):  # 73/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing DELETE /series/<id> endpoint
-def test_delete_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 74/83
+# Testing the DELETE /series/<id> endpoint -- test 74 of 83
+def test_delete_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -53,8 +53,8 @@ def test_delete_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 74/83
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /series/<id>/books/<id> endpoint
-def test_display_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 75/83
+# Testing the GET /series/<id>/books/<id> endpoint -- test 75 of 83
+def test_display_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -81,8 +81,8 @@ def test_display_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):  #
     assert response.status_code == 404
 
 
-# Testing GET /series/<id>/books endpoint
-def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):  # 76/83
+# Testing the GET /series/<id>/books endpoint -- test 76 of 83
+def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -111,8 +111,8 @@ def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):  # 76/8
     assert response.status_code == 404
 
 
-# Testing GET /series/<id> endpoint
-def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 77/83
+# Testing the GET /series/<id> endpoint -- test 77 of 83
+def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -128,10 +128,10 @@ def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 77/8
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /series/<id>/manuscripts/<id> endpoint
+# Testing the GET /series/<id>/manuscripts/<id> endpoint -- test 78 of 83
 def test_display_series_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
-):  # 78/83
+):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -167,8 +167,8 @@ def test_display_series_manuscript_by_id_endpoint(
     assert response.status_code == 404
 
 
-# Testing GET /series/<id>/manuscripts endpoint
-def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):  # 79/83
+# Testing the GET /series/<id>/manuscripts endpoint -- test 79 of 83
+def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -196,8 +196,8 @@ def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):  
     assert response.status_code == 404
 
 
-# Testing GET /series
-def test_index_endpoint(db_w_cleanup, staged_app_client):  # 80/83
+# Testing the GET /series endpoint -- test 80 of 83
+def test_index_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_objs_l = [Genius.gen_series_obj() for _ in range(3)]
@@ -211,8 +211,8 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 80/83
         )
 
 
-# Testing PATCH /series/<id>/books/<id> endpoint
-def test_update_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 81/83
+# Testing the PATCH /series/<id>/books/<id> endpoint -- test 81 of 83
+def test_update_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -261,8 +261,8 @@ def test_update_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):  # 
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing PATCH /series/<id> endpoint
-def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 82/83
+# Testing the PATCH /series/<id> endpoint -- test 82 of 83
+def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -287,10 +287,10 @@ def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):  # 82/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing PATCH /series/<id>/manuscripts/<id> endpoint
+# Testing the PATCH /series/<id>/manuscripts/<id> endpoint -- test 83 of 83
 def test_update_series_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
-):  # 83/83
+):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()

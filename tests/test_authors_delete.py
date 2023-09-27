@@ -21,8 +21,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing DELETE /authors/<id>/books/<id>
-def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):  # 7/83
+# Testing the DELETE /authors/<id>/books/<id> endpoint -- test 7 of 83
+def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -60,8 +60,8 @@ def test_delete_author_book_endpoint(db_w_cleanup, staged_app_client):  # 7/83
     assert db.session.query(Author).get(author_obj.author_id) is not None
 
 
-# Testing DELETE /authors/<id>
-def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 8/83
+# Testing the DELETE /authors/<id> endpoint -- test 8 of 83
+def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -102,8 +102,8 @@ def test_delete_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 8/83
     assert response.status_code == 404
 
 
-# Testing DELETE /authors/<id>/manuscripts/<id>
-def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 9/83
+# Testing the DELETE /authors/<id>/manuscripts/<id> endpoint -- test 9 of 83
+def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -147,8 +147,8 @@ def test_delete_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert db.session.query(Author).get(author_obj.author_id) is not None
 
 
-# Testing DELETE /authors/<id>/metadata
-def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 10/83
+# Testing the DELETE /authors/<id>/metadata endpoint -- test 10 of 83
+def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
     #
@@ -186,8 +186,8 @@ def test_delete_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 10
     assert db.session.query(AuthorMetadata).get(metadata_no2_id) is not None
 
 
-# Testing DELETE /authors/<id>/<id>/books/<id>
-def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
+# Testing the DELETE /authors/<id>/<id>/books/<id> endpoint -- test 11 of 83
+def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -377,8 +377,8 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     assert response.status_code == 400
 
 
-# Testing DELETE /authors/<id>/<id>/manuscripts/<id>
-def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 12/83
+# Testing the DELETE /authors/<id>/<id>/manuscripts/<id> endpoint -- test 12 of 83
+def test_delete_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 

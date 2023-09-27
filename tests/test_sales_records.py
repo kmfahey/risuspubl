@@ -14,8 +14,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing GET /sales_records/<id> endpoint
-def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):  # 67/83
+# Testing the GET /sales_records/<id> endpoint -- test 67 of 83
+def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -32,10 +32,10 @@ def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):  # 67/8
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /sales_records/books/<id> endpoint
+# Testing the GET /sales_records/books/<id> endpoint -- test 68 of 83
 def test_display_sales_records_by_book_id_endpoint(
     db_w_cleanup, staged_app_client
-):  # 68/83
+):
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -65,10 +65,10 @@ def test_display_sales_records_by_book_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /sales_records/years/<year>/books/<id> endpoint
+# Testing the GET /sales_records/years/<year>/books/<id> endpoint -- test 69 of 83
 def test_display_sales_records_by_year_and_book_id_endpoint(
     db_w_cleanup, staged_app_client
-):  # 69/83
+):
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -101,10 +101,10 @@ def test_display_sales_records_by_year_and_book_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /sales_records/years/<year>/months/<month>/books/<id> endpoint
+# Testing the GET /sales_records/years/<year>/months/<month>/books/<id> endpoint -- test 70 of 83
 def test_display_sales_records_by_year_and_month_and_book_id_endpoint(
     db_w_cleanup, staged_app_client
-):  # 70/83
+):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -195,10 +195,10 @@ def _setup_for_display_by_date(db, year, *months):
     return editor_obj, book_objs_l, sales_record_objs_l
 
 
-# Testing GET /sales_records/years/<year>/month/<month> endpoint
+# Testing the GET /sales_records/years/<year>/month/<month> endpoint -- test 71 of 83
 def test_display_sales_records_by_year_and_month_endpoint(
     db_w_cleanup, staged_app_client
-):  # 71/83
+):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -242,10 +242,10 @@ def test_display_sales_records_by_year_and_month_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing GET /sales_records/years/<year> endpoint
+# Testing the GET /sales_records/years/<year> endpoint -- test 72 of 83
 def test_display_sales_records_by_year_endpoint(
     db_w_cleanup, staged_app_client
-):  # 72/83
+):
     db = db_w_cleanup
     app, client = staged_app_client
 

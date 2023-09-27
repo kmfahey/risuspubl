@@ -17,8 +17,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing POST /clients
-def test_client_create_endpoint(db_w_cleanup, staged_app_client):  # 35/83
+# Testing the POST /clients endpoint -- test 35 of 83
+def test_client_create_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -34,8 +34,8 @@ def test_client_create_endpoint(db_w_cleanup, staged_app_client):  # 35/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing DELETE /clients/<id>
-def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
+# Testing the DELETE /clients/<id> endpoint -- test 36 of 83
+def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -58,8 +58,8 @@ def test_delete_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 36/83
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-#  Testing the GET /clients/<id> endpoint
-def test_display_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 37/83
+# Testing the GET /clients/<id> endpoint -- test 37 of 83
+def test_display_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -75,8 +75,8 @@ def test_display_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 37/8
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-#  Testing the GET /clients endpoint
-def test_index_endpoint(db_w_cleanup, staged_app_client):  # 38/83
+# Testing the GET /clients endpoint -- test 38 of 83
+def test_index_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     salesperson_obj = Genius.gen_salesperson_obj()
@@ -99,8 +99,8 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):  # 38/83
         )
 
 
-# Testing the PATCH /books/<id> endpoint
-def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):  # 39/83
+# Testing the PATCH /clients/<id> endpoint -- test 39 of 83
+def test_update_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case

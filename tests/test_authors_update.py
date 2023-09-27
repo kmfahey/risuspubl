@@ -11,8 +11,8 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the PATCH /authors/<id>/books/<id> endpoint
-def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
+# Testing the PATCH /authors/<id>/books/<id> endpoint -- test 25 of 83
+def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():
@@ -73,8 +73,8 @@ def test_update_author_book_endpoint(db_w_cleanup, staged_app_client):  # 25/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /authors/<id> endpoint
-def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 26/83
+# Testing the PATCH /authors/<id> endpoint -- test 26 of 83
+def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -107,8 +107,8 @@ def test_update_author_by_id_endpoint(db_w_cleanup, staged_app_client):  # 26/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /authors/<id>/manuscripts/<id> endpoint
-def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 27/83
+# Testing the PATCH /authors/<id>/manuscripts/<id> endpoint -- test 27 of 83
+def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():
@@ -176,8 +176,8 @@ def test_update_author_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /authors/<id>/metadata endpoint
-def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 28/83
+# Testing the PATCH /authors/<id>/metadata endpoint -- test 28 of 83
+def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():
@@ -220,8 +220,8 @@ def test_update_author_metadata_endpoint(db_w_cleanup, staged_app_client):  # 28
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /authors/<id>/<id>/books/<id> endpoint
-def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
+# Testing the PATCH /authors/<id>/<id>/books/<id> endpoint -- test 29 of 83
+def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():
@@ -322,8 +322,8 @@ def test_update_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 29/83
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /authors/<id>/<id>/manuscripts/<id> endpoint
-def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  # 30/83
+# Testing the PATCH /authors/<id>/<id>/manuscripts/<id> endpoint -- test 30 of 83
+def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():
