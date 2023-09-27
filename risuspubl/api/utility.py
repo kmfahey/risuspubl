@@ -24,10 +24,10 @@ from risuspubl.dbmodels import (
 import werkzeug.exceptions
 
 
-# Associates a *_id param name with the SQLAlchemy.Model subclass class object
-# representing the table where a column by that name is the primary key. Used to
-# validate whether a parameter with such a name has a value that is associated
-# with a row in that table.
+# Associates a *_id param name with the SQLAlchemy.Model subclass class
+# object representing the table where a column by that name is the
+# primary key. Used to validate whether a parameter with such a name has
+# a value that is associated with a row in that table.
 _foreign_keys_to_model_subclasses = {
     "author_id": Author,
     "book_id": Book,
@@ -58,22 +58,24 @@ def crt_model_obj(model_subclass, params_argd, optional_params=()):
     """
     model_obj_args = dict()
     for param_name, param_value in params_argd.items():
-        # optional_params is the list of names of parameters that may be None.
+        # optional_params is the list of names of parameters that may be
+        # None.
         if param_value is None and param_name in optional_params:
             continue
         # If a required param is none, a ValueError is raised.
         elif param_value is None:
             raise ValueError(f"required parameter '{param_name}' not present")
         if param_name.endswith("_id") and param_value is not None:
-            # Matching a *_id parameter with the Model class for the table where
-            # that column is a primary key, and doing a get() to confirm the *_id
-            # value corresponds to a row in that table. If not, a ValueError is
-            # raised.
+            # Matching a *_id parameter with the Model class for the
+            # table where that column is a primary key, and doing a
+            # get() to confirm the *_id value corresponds to a row in
+            # that table. If not, a ValueError is raised.
             id_model_subclass = _foreign_keys_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(
-                    f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
-                    f"the `{id_model_subclass.__tablename__}` table"
+                    f"supplied '{param_name}' value '{param_value}' does not "
+                    + "correspond to any row in the "
+                    + f"`{id_model_subclass.__tablename__}` table"
                 )
         model_obj_args[param_name] = param_value
     return model_subclass(**model_obj_args)
@@ -92,8 +94,8 @@ def updt_model_obj(id_val, model_subclass, params_argd):
     :return: An instance of the class that was the first argument.
     """
     model_obj = model_subclass.query.get_or_404(id_val)
-    # If all the dict's param_value slots are None, this update can't proceed bc
-    # there's nothing to update, so a ValueError is raised.
+    # If all the dict's param_value slots are None, this update can't
+    # proceed bc there's nothing to update, so a ValueError is raised.
     if all(param_value is None for param_value in params_argd.values()):
         raise ValueError(
             "update action executed with no parameters indicating fields to update"
@@ -102,15 +104,16 @@ def updt_model_obj(id_val, model_subclass, params_argd):
         if param_value is None:
             continue
         if param_name.endswith("_id"):
-            # Matching a *_id parameters with the Model class for the table
-            # where that column is a primary key, and doing a get() to confirm
-            # the *_id value corresponds to a row in that table. If not, a
-            # ValueError is raised.
+            # Matching a *_id parameters with the Model class for the
+            # table where that column is a primary key, and doing a
+            # get() to confirm the *_id value corresponds to a row in
+            # that table. If not, a ValueError is raised.
             id_model_subclass = _foreign_keys_to_model_subclasses[param_name]
             if id_model_subclass.query.get(param_value) is None:
                 raise ValueError(
-                    f"supplied '{param_name}' value '{param_value}' does not correspond to any row in "
-                    f"the `{id_model_subclass.__tablename__}` table"
+                    f"supplied '{param_name}' value '{param_value}' does not "
+                    + "correspond to any row in the "
+                    + f"`{id_model_subclass.__tablename__}` table"
                 )
         setattr(model_obj, param_name, param_value)
     return model_obj
@@ -130,8 +133,9 @@ def del_model_obj(id_val, model_subclass):
     :return: None
     """
     model_obj = model_subclass.query.get_or_404(id_val)
-    # In the case of Book or Manuscript objects, there's also corresponding rows
-    # in authors_books or authors_manuscripts that need to be deleted as well.
+    # In the case of Book or Manuscript objects, there's also
+    # corresponding rows in authors_books or authors_manuscripts that
+    # need to be deleted as well.
     if model_subclass is Book:
         ab_del = AuthorsBooks.delete().where(AuthorsBooks.columns[1] == id_val)
         db.session.execute(ab_del)
@@ -152,37 +156,39 @@ def _validate_date(
     lower_bound="1900-01-01",
     upper_bound=date.today().isoformat(),
 ):
-    # Parses a param value to a date, and tests if it falls within lower and
-    # upper bounds. If it succeeds, the param value string is returned. If
-    # it fails, a ValueError is raised.
+    # Parses a param value to a date, and tests if it falls within
+    # lower and upper bounds. If it succeeds, the param value string is
+    # returned. If it fails, a ValueError is raised.
     if param_value is None:
         return param_value
     try:
         param_date_obj = date.fromisoformat(param_value)
     except ValueError as exception:
-        # Attempting to parse the date using datetime.date.fromisoformat() is
-        # the fastest way to find out if it's a legal date. Its error message
-        # is fine to use, but the parameter name and value are prepended.
+        # Attempting to parse the date using
+        # datetime.date.fromisoformat() is the fastest way to find out
+        # if it's a legal date. Its error message is fine to use, but
+        # the parameter name and value are prepended.
         message = f", {exception.args[0]}" if len(exception.args) else ""
         raise ValueError(
-            f"parameter {param_name}: value {param_value} doesn't parse as a date{message}"
+            f"parameter {param_name}: value {param_value} doesn't parse as a "
+            + f"date{message}"
         ) from None
     lower_bound_date = date.fromisoformat(lower_bound)
     upper_bound_date = date.fromisoformat(upper_bound)
-    # datetime.date objects support comparisons so the values are converted to
-    # date objects and a two-sided comparison is used.
+    # datetime.date objects support comparisons so the values are
+    # dateconverted to objects and a two-sided comparison is used.
     if not (lower_bound_date <= param_date_obj <= upper_bound_date):
         raise ValueError(
-            f"parameter {param_name}: supplied date value {param_value} does not fall within "
-            f"[{lower_bound}, {upper_bound}]"
+            f"parameter {param_name}: supplied date value {param_value} does "
+            + f"not fall within [{lower_bound}, {upper_bound}]"
         )
     return param_value
 
 
 def _validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=math.inf):
     # Parses a param value to an int, and tests if it falls within lower
-    # and upper bounds. If it succeeds, the int is returned. If it fails, a
-    # ValueError is raised.
+    # and upper bounds. If it succeeds, the int is returned. If it
+    # fails, a ValueError is raised.
 
     # If it's already an int, just return it.
     if isinstance(param_value, int) or param_value is None:
@@ -190,66 +196,68 @@ def _validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=ma
     try:
         param_int_value = int(param_value)
     except ValueError:
-        # A different ValueError is raised with a more explicit error message
-        # that makes the 400 Bad Request output informative.
+        # A different ValueError is raised with a more explicit error
+        # message that makes the 400 Bad Request output informative.
         raise ValueError(
             f"parameter {param_name}: value {param_value} doesn't parse as an integer"
         )
     if not (lower_bound <= param_int_value <= upper_bound):
-        # Checking against the bounds. By default these are (-inf, +int), which
-        # are impossible to fall outside of.
+        # Checking against the bounds. By default these are (-inf,
+        # +int), which are impossible to fall outside of.
         if lower_bound == -math.inf and upper_bound != math.inf:
             raise ValueError(
-                f"parameter {param_name}: supplied integer value '{param_int_value}' is greater than "
-                f"{upper_bound}"
+                f"parameter {param_name}: supplied integer value "
+                + f"'{param_int_value}' is greater than {upper_bound}"
             )
         elif lower_bound != -math.inf and upper_bound == math.inf:
             raise ValueError(
-                f"parameter {param_name}: supplied integer value '{param_int_value}' is less than "
-                f"{lower_bound}"
+                f"parameter {param_name}: supplied integer value "
+                + f"'{param_int_value}' is less than {lower_bound}"
             )
         else:
             raise ValueError(
-                f"parameter {param_name}: supplied integer value '{param_int_value}' does not fall "
-                f"within [{lower_bound}, {upper_bound}]"
+                f"parameter {param_name}: supplied integer value "
+                + f"'{param_int_value}' does not fall within [{lower_bound}, "
+                + f"{upper_bound}]"
             )
     return param_int_value
 
 
 def _validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
-    # Tests if a param value string's length falls between lower and upper
-    # bounds. If it succeeds, the string is returned. If it fails, a
-    # ValueError is raised.
+    # Tests if a param value string's length falls between lower and
+    # upper bounds. If it succeeds, the string is returned. If it fails,
+    # a ValueError is raised.
 
     if param_value is None:
         return param_value
     elif not (lower_bound <= len(param_value) <= upper_bound):
-        # If the reason for failure is the str is length zero, a more specific
-        # error message is used.
+        # If the reason for failure is the str is length zero, a more
+        # specific error message is used.
         if len(param_value) == 0:
             raise ValueError(f"parameter {param_name}: may not be zero-length")
         elif len(param_value) < lower_bound and upper_bound == math.inf:
             raise ValueError(
-                f"parameter {param_name}: the supplied string value '{param_value}' is not at least "
-                f"{lower_bound} characters long"
+                f"parameter {param_name}: the supplied string value "
+                + f"'{param_value}' is not at least {lower_bound} characters long"
             )
         elif lower_bound == 0 and len(param_value) > upper_bound:
             raise ValueError(
-                f"parameter {param_name}: the supplied string value '{param_value}' is more than "
-                f"{upper_bound} characters in length"
+                f"parameter {param_name}: the supplied string value "
+                + f"'{param_value}' is more than {upper_bound} characters in length"
             )
-        # If the upper and lower bounds are equal, that's a requirement the
-        # string be that length, so the error message states that.
+        # If the upper and lower bounds are equal, that's a requirement
+        # the string be that length, so the error message states that.
         elif lower_bound == upper_bound:
             raise ValueError(
-                f"parameter {param_name}: the length of supplied string value '{param_value}' is not "
-                f"equal to {lower_bound}"
+                f"parameter {param_name}: the length of supplied string value "
+                + f"'{param_value}' is not equal to {lower_bound}"
             )
         # Otherwise use the full error message.
         else:
             raise ValueError(
-                f"parameter {param_name}: the length of supplied string value '{param_value}' does "
-                f"not fall between [{lower_bound}, {upper_bound}]"
+                f"parameter {param_name}: the length of supplied string value "
+                + f"'{param_value}' does not fall between [{lower_bound}, "
+                + f"{upper_bound}]"
             )
     return param_value
 
@@ -261,14 +269,15 @@ def _validate_bool(param_name, param_value):
     # If it's already a boolean, just return it.
     if param_value is True or param_value is False or param_value is None:
         return param_value
-    elif param_value.lower() in ("true", "t", "yes", "1"):  # Tries to accept a
-        return True  # variety of
-    elif param_value.lower() in ("false", "f", "no", "0"):  # conventions for
-        return False  # True or False.
+    # Tries to accept a variety of conventions for True or False.
+    elif param_value.lower() in ("true", "t", "yes", "1"):
+        return True
+    elif param_value.lower() in ("false", "f", "no", "0"):
+        return False
     else:
         raise ValueError(
-            f"parameter {param_name}: the supplied parameter value '{param_value}' does not parse as "
-            "either True or False"
+            f"parameter {param_name}: the supplied parameter value "
+            + f"'{param_value}' does not parse as either True or False"
         )
 
 
@@ -293,13 +302,15 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
     SQLAlchemy.Model subclass target.
     """
 
-    # An argument to _validate_date for Book, predefined for easier reading.
+    # An argument to _validate_date for Book, predefined for easier
+    # reading.
     tm_date_str = (date.today() + timedelta(days=1)).isoformat()
 
-    # This data structure associates a SQLAlchemy.Model subclass object with a
-    # lambda that returns a valid constructor/update argd when called with the
-    # value of requests.json. Executing the lambda passes each value through the
-    # correct _validate_*() function so the argd has valid parameter values.
+    # This data structure associates a SQLAlchemy.Model subclass object
+    # with a lambda that returns a valid constructor/update argd when
+    # called with the value of requests.json. Executing the lambda
+    # passes each value through the correct _validate_*() function so
+    # the argd has valid parameter values.
     classes_to_argd_lambdas = {
         Author: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
@@ -374,15 +385,15 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
         },
     }
 
-    # The lambda that computes the argd that can be constructor or update
-    # arguments for the model_class arguments is located, and called with
-    # request_json so it evaluates.
+    # The lambda that computes the argd that can be constructor or
+    # update arguments for the model_class arguments is located, and
+    # called with request_json so it evaluates.
     create_or_update_argd = classes_to_argd_lambdas[model_class](request_json)
 
-    # If the id_column and its value id_value are defined, and the argd's
-    # value for a key of id_column is None, then it's set to id_value. (If
-    # the JSON contains a different value than the one included from the URL
-    # argument, it can override.)
+    # If the id_column and its value id_value are defined, and the
+    # argd's value for a key of id_column is None, then it's set to
+    # id_value. (If the JSON contains a different value than the one
+    # included from the URL argument, it can override.)
     if len(argd):
         ((id_column_name, id_column_value),) = argd.items()
         if create_or_update_argd.get(id_column_name) is None:
@@ -399,19 +410,19 @@ def handle_exc(exception):
     :return: A flask.Response object. NB: May raise an exception rather
     than returning.
     """
-    # If the exception is a 404 error, it's passed through unmodified. (`from
-    # None` ensures it isn't modified by passing through this try/except
-    # statement.)
+    # If the exception is a 404 error, it's passed through unmodified.
+    # (`from None` ensures it isn't modified by passing through this
+    # try/except statement.)
     if isinstance(exception, werkzeug.exceptions.NotFound):
         raise exception from None
 
-    # The validation logic that checks arguments uses ValueError to indicate an
-    # invalid argument. So if it's a ValueError, that's a 400; anything else is
-    # a coding error, a 500.
+    # The validation logic that checks arguments uses ValueError to
+    # indicate an invalid argument. So if it's a ValueError, that's a
+    # 400; anything else is a coding error, a 500.
     status = 400 if isinstance(exception, ValueError) else 500
 
-    # If the exception has a message, it's extracted and built into a helpful
-    # text for the error;
+    # If the exception has a message, it's extracted and built into a
+    # helpful text for the error;
     return Response("".join(traceback.format_exception(exception)), status)
 
 
@@ -427,7 +438,8 @@ def crt_tbl_row_clos(model_class):
     def _internal_create_table_row(request_json):
         try:
             # Using crt_model_obj() to process request.json into a
-            # model_class argument dict and instance a model_class object.
+            # model_class argument dict and instance a model_class
+            # object.
             model_class_obj = crt_model_obj(
                 model_class, generate_crt_updt_argd(model_class, request_json)
             )
@@ -485,12 +497,12 @@ def del_tbl_row_by_id_foreign_key_clos(
 
     def _internal_delete_table_row_by_id_and_foreign_key(outer_id, inner_id):
         try:
-            # Verifying that a row in the outer table with a primary key equal
-            # to outer_id exists, else it's a 404.
+            # Verifying that a row in the outer table with a primary key
+            # equal to outer_id exists, else it's a 404.
             outer_class.query.get_or_404(outer_id)
 
-            # Verifying that a row exists in the inner table with a foreign key
-            # from the outer table, else it's a 404.
+            # Verifying that a row exists in the inner table with a
+            # foreign key from the outer table, else it's a 404.
             if not any(
                 getattr(inner_class_obj, inner_id_column) == inner_id
                 for inner_class_obj in inner_class.query.where(
@@ -531,8 +543,8 @@ def disp_tbl_rows_by_foreign_id_clos(outer_class, outer_id_column, inner_class):
     def _internal_display_table_rows_by_foreign_id(outer_id):
         try:
             outer_class.query.get_or_404(outer_id)
-            # A outer_class object for every row in the inner_class table with
-            # the given outer_id.
+            # A outer_class object for every row in the inner_class
+            # table with the given outer_id.
             retval = [
                 inner_class_obj.serialize()
                 for inner_class_obj in inner_class.query.where(
@@ -622,16 +634,16 @@ def disp_tbl_row_by_id_foreign_key_clos(
     def _internal_display_table_row_by_id_and_foreign_key(outer_id, inner_id):
         try:
             outer_class.query.get_or_404(outer_id)
-            # An inner_class object for every row in the inner_class table with
-            # the given outer_id.
+            # An inner_class object for every row in the inner_class
+            # table with the given outer_id.
             inner_class_objs = list(
                 inner_class.query.where(
                     getattr(inner_class, outer_id_column) == outer_id
                 )
             )
-            # Iterating across the list looking for the inner_class object
-            # with the given inner_class_id. If it's found, it's serialized and
-            # returned. Otherwise, a 404 error is raised.
+            # Iterating across the list looking for the inner_class
+            # object with the given inner_class_id. If it's found, it's
+            # serialized and returned. Otherwise, a 404 error is raised.
             for inner_class_obj in inner_class_objs:
                 if getattr(inner_class_obj, inner_id_column) == inner_id:
                     return jsonify(inner_class_obj.serialize())
@@ -661,9 +673,9 @@ def updt_tbl_row_by_id_clos(model_class):
     def _internal_update_table_row_by_id(model_id, request_json):
         try:
             # updt_model_obj is used to fetch and update the model class
-            # object indicates by the model_class object and its id value
-            # model_id. generate_crt_updt_argd() is used to build its param
-            # dict argument.
+            # object indicates by the model_class object and its id
+            # value model_id. generate_crt_updt_argd() is used to build
+            # its param dict argument.
             model_class_obj = updt_model_obj(
                 model_id,
                 model_class,
@@ -705,12 +717,12 @@ def updt_tbl_row_by_id_foreign_key_clos(
         outer_id, inner_id, request_json
     ):
         try:
-            # Verifying that a row in the outer table with a primary key equal
-            # to outer_id exists, else it's a 404.
+            # Verifying that a row in the outer table with a primary key
+            # equal to outer_id exists, else it's a 404.
             outer_class.query.get_or_404(outer_id)
 
-            # Verifying that a row exists in the inner table with a foreign key
-            # from the outer table, else it's a 404.
+            # Verifying that a row exists in the inner table with a
+            # foreign key from the outer table, else it's a 404.
             if not any(
                 getattr(inner_class_obj, inner_id_column) == inner_id
                 for inner_class_obj in inner_class.query.where(

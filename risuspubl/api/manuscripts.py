@@ -15,8 +15,8 @@ from risuspubl.dbmodels import Manuscript
 blueprint = Blueprint("manuscripts", __name__, url_prefix="/manuscripts")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 del_mscrpt_by_msid = del_tbl_row_by_id_clos(Manuscript)
 disp_mscrpt_by_msid = disp_tbl_row_by_id_clos(Manuscript)
 disp_mscrpts = disp_tbl_rows_clos(Manuscript)
@@ -54,13 +54,14 @@ def disp_mscrpt_by_msid_endpt(manuscript_id: int):
         return handle_exc(exception)
 
 
-# A Create endpoint is deliberately not implemented, because without a way
-# to specify the author or authors to attach the manuscript to, no entry
-# in the authors_manuscripts table would be created and the manuscript
-# would an orphan in the database. /authors/<author_id>/manuscripts and
-# /authors/<author1_id>/<author2_id>/manuscripts already accept Create actions
-# and when done that way associations with an author or authors can be created
-# appropriately.
+# A Create endpoint is deliberately not implemented, because
+# without a way to specify the author or authors to attach
+# the manuscript to, no entry in the authors_manuscripts
+# table would be created and the manuscript would an orphan
+# in the database. /authors/<author_id>/manuscripts and
+# /authors/<author1_id>/<author2_id>/manuscripts already accept Create
+# actions and when done that way associations with an author or authors
+# can be created appropriately.
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["PATCH", "PUT"])

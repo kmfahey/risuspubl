@@ -16,8 +16,8 @@ from risuspubl.dbmodels import Book
 blueprint = Blueprint("books", __name__, url_prefix="/books")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 del_bk_by_bkid = del_tbl_row_by_id_clos(Book)
 disp_bk_by_bkid = disp_tbl_row_by_id_clos(Book)
 disp_bks = disp_tbl_rows_clos(Book)
@@ -58,9 +58,9 @@ def disp_bk_by_bkid_endpt(book_id: int):
 # a way to specify the author or authors to attach the book to, no
 # entry in the authors_books table would be created and the book
 # would an orphan in the database. /authors/<author_id>/books and
-# /authors/<author1_id>/<author2_id>/books already accept Create actions and
-# when done that way associations with an author or authors can be created
-# appropriately.
+# /authors/<author1_id>/<author2_id>/books already accept Create actions
+# and when done that way associations with an author or authors can be
+# created appropriately.
 
 
 @blueprint.route("/<int:book_id>", methods=["PATCH", "PUT"])

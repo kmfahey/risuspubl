@@ -10,8 +10,8 @@ from risuspubl.dbmodels import SalesRecord
 blueprint = Blueprint("sales_records", __name__, url_prefix="/sales_records")
 
 
-# This function returns a closure that implements the requested function,
-# filling in the blank with the provided class object.
+# This function returns a closure that implements the requested
+# function, filling in the blank with the provided class object.
 disp_slrcd_by_id = disp_tbl_row_by_id_clos(SalesRecord)
 
 
@@ -44,7 +44,8 @@ def disp_slrcds_by_yr_endpt(year: int):
         retval = list()
         if not (1990 <= year <= 2022):
             raise ValueError(
-                f"year parameter value {year} not in the range [1990, 2022]: no sales in specified year"
+                f"year parameter value {year} not in the range [1990, 2022]: "
+                + f"no sales in specified year"
             )
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
             retval.append(sales_record_obj.serialize())
@@ -74,11 +75,13 @@ def disp_slrcds_by_yr_mo_endpt(year: int, month: int):
         this_year = date.today().year
         if not (1990 <= year <= date.today().year):
             raise ValueError(
-                f"year parameter value {year} not in the range [1990, {this_year}]: no sales in specified year"
+                f"year parameter value {year} not in the range [1990, "
+                + f"{this_year}]: no sales in specified year"
             )
         elif not (1 <= month <= 12):
             raise ValueError(
-                f"month parameter value {month} not in the range [1, 12]: invalid month parameter"
+                f"month parameter value {month} not in the range [1, 12]: "
+                + "invalid month parameter"
             )
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year).where(
             SalesRecord.month == month
@@ -178,12 +181,13 @@ def disp_slrcds_by_yr_mo_bkid_endpt(year: int, month: int, book_id: int):
         return handle_exc(exception)
 
 
-# Adding, updating and deleting sales records is deliberately made impossible
-# since that's outside their object model: each book has sales records for
-# every month between its publication date and present, or the date it went
-# out of print if it's out of print. New records are generated in bulk at the
-# end of each month. If a record were to be removed, the entire sales history
-# for that book would be impaired. Records aren't just added or removed at
-# any time, and the way they're added in bulk at end-of-month isn't done via a
-# RESTful interface, you use SQL to INSERT from a csv for that. So records are
+# Adding, updating and deleting sales records is deliberately made
+# impossible since that's outside their object model: each book has
+# sales records for every month between its publication date and
+# present, or the date it went out of print if it's out of print. New
+# records are generated in bulk at the end of each month. If a record
+# were to be removed, the entire sales history for that book would be
+# impaired. Records aren't just added or removed at any time, and the
+# way they're added in bulk at end-of-month isn't done via a RESTful
+# interface, you use SQL to INSERT from a csv for that. So records are
 # read-only.

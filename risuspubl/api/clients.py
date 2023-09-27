@@ -17,8 +17,8 @@ from risuspubl.dbmodels import Client
 blueprint = Blueprint("clients", __name__, url_prefix="/clients")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 create_client = crt_tbl_row_clos(Client)
 delete_clnt_by_id = del_tbl_row_by_id_clos(Client)
 display_clnt_by_id = disp_tbl_row_by_id_clos(Client)

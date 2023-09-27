@@ -20,8 +20,8 @@ from risuspubl.dbmodels import Book, Manuscript, Series
 blueprint = Blueprint("series", __name__, url_prefix="/series")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 crt_srs = crt_tbl_row_clos(Series)
 del_srs_by_id = del_tbl_row_by_id_clos(Series)
 disp_bk_by_bkid_srs_id = disp_tbl_row_by_id_foreign_key_clos(

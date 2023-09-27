@@ -21,8 +21,8 @@ from risuspubl.dbmodels import Book, Editor, Manuscript, db
 blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 crt_edtr = crt_tbl_row_clos(Editor)
 del_bk_by_bkid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
     Editor, "editor_id", Book, "book_id"

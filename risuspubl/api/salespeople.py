@@ -23,8 +23,8 @@ from risuspubl.dbmodels import Client, Salesperson, db
 blueprint = Blueprint("salespeople", __name__, url_prefix="/salespeople")
 
 
-# These functions return closures that implement the requested functions,
-# filling in the blank(s) with the provided class objects.
+# These functions return closures that implement the requested
+# functions, filling in the blank(s) with the provided class objects.
 crt_slsp = crt_tbl_row_clos(Salesperson)
 del_clnt_by_clid_slsp_id = del_tbl_row_by_id_foreign_key_clos(
     Salesperson, "salesperson_id", Client, "client_id"
