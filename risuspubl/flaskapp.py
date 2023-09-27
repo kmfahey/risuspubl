@@ -6,6 +6,7 @@ import flask
 import risuspubl.api.authors
 import risuspubl.api.books
 import risuspubl.api.clients
+import risuspubl.api.docroot
 import risuspubl.api.editors
 import risuspubl.api.manuscripts
 import risuspubl.api.sales_records
@@ -40,6 +41,7 @@ def create_app(test_config=None):
     app.register_blueprint(risuspubl.api.books.blueprint)
     app.register_blueprint(risuspubl.api.manuscripts.blueprint)
     app.register_blueprint(risuspubl.api.clients.blueprint)
+    app.register_blueprint(risuspubl.api.docroot.blueprint)
     app.register_blueprint(risuspubl.api.editors.blueprint)
     app.register_blueprint(risuspubl.api.salespeople.blueprint)
     app.register_blueprint(risuspubl.api.series.blueprint)
