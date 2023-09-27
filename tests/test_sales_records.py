@@ -14,7 +14,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the GET /sales_records/<id> endpoint -- test 67 of 83
+# Testing the GET /sales_records/<id> endpoint -- test 67 of 84
 def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -32,7 +32,7 @@ def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /sales_records/books/<id> endpoint -- test 68 of 83
+# Testing the GET /sales_records/books/<id> endpoint -- test 68 of 84
 def test_display_sales_records_by_book_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -65,7 +65,7 @@ def test_display_sales_records_by_book_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /sales_records/years/<year>/books/<id> endpoint -- test 69 of 83
+# Testing the GET /sales_records/years/<year>/books/<id> endpoint -- test 69 of 84
 def test_display_sales_records_by_year_and_book_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -101,7 +101,7 @@ def test_display_sales_records_by_year_and_book_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /sales_records/years/<year>/months/<month>/books/<id> endpoint -- test 70 of 83
+# Testing the GET /sales_records/years/<year>/months/<month>/books/<id> endpoint -- test 70 of 84
 def test_display_sales_records_by_year_and_month_and_book_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -195,7 +195,7 @@ def _setup_for_display_by_date(db, year, *months):
     return editor_obj, book_objs_l, sales_record_objs_l
 
 
-# Testing the GET /sales_records/years/<year>/month/<month> endpoint -- test 71 of 83
+# Testing the GET /sales_records/years/<year>/month/<month> endpoint -- test 71 of 84
 def test_display_sales_records_by_year_and_month_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -242,7 +242,7 @@ def test_display_sales_records_by_year_and_month_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /sales_records/years/<year> endpoint -- test 72 of 83
+# Testing the GET /sales_records/years/<year> endpoint -- test 72 of 84
 def test_display_sales_records_by_year_endpoint(
     db_w_cleanup, staged_app_client
 ):

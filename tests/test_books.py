@@ -18,7 +18,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the DELETE /books/<id> endpoint -- test 31 of 83
+# Testing the DELETE /books/<id> endpoint -- test 31 of 84
 def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -49,7 +49,7 @@ def test_delete_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /books/<id> endpoint -- test 32 of 83
+# Testing the GET /books/<id> endpoint -- test 32 of 84
 def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -66,7 +66,7 @@ def test_display_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /books endpoint -- test 33 of 83
+# Testing the GET /books endpoint -- test 33 of 84
 def test_index_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -90,7 +90,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):
         )
 
 
-# Testing the PATCH /books/<id> endpoint -- test 34 of 83
+# Testing the PATCH /books/<id> endpoint -- test 34 of 84
 def test_update_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 

@@ -10,7 +10,7 @@ from risuspubl.api.utility import handle_exc
 blueprint = Blueprint("docroot", __name__, url_prefix="/")
 
 HELP_JSOBJ = {
-    "site": {
+    "docroot": {
         "/": {"GET": "Returns this help object."},
     },
     "authors": {

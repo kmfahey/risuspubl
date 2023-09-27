@@ -19,7 +19,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the POST /editors endpoint -- test 40 of 83
+# Testing the POST /editors endpoint -- test 40 of 84
 def test_create_editor_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -34,7 +34,7 @@ def test_create_editor_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the DELETE /editors/<id>/books/<id> endpoint -- test 41 of 83
+# Testing the DELETE /editors/<id>/books/<id> endpoint -- test 41 of 84
 def test_delete_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -68,7 +68,7 @@ def test_delete_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert db.session.query(Editor).get(editor_obj.editor_id) is not None
 
 
-# Testing the DELETE /editors/<id> endpoint -- test 42 of 83
+# Testing the DELETE /editors/<id> endpoint -- test 42 of 84
 def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -96,7 +96,7 @@ def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the DELETE /editors/<id>/manuscripts/<id> endpoint -- test 43 of 83
+# Testing the DELETE /editors/<id>/manuscripts/<id> endpoint -- test 43 of 84
 def test_delete_editor_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -138,7 +138,7 @@ def test_delete_editor_manuscript_by_id_endpoint(
     assert db.session.query(Editor).get(editor_obj.editor_id) is not None
 
 
-# Testing the GET /editors/<id>/books/<id> endpoint -- test 44 of 83
+# Testing the GET /editors/<id>/books/<id> endpoint -- test 44 of 84
 def test_display_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -164,7 +164,7 @@ def test_display_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /editors/<id>/books endpoint -- test 45 of 83
+# Testing the GET /editors/<id>/books endpoint -- test 45 of 84
 def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -194,7 +194,7 @@ def test_display_editor_books_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /editors/<id> endpoint -- test 46 of 83
+# Testing the GET /editors/<id> endpoint -- test 46 of 84
 def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -210,7 +210,7 @@ def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /editors/<id>/manuscripts/<id> endpoint -- test 47 of 83
+# Testing the GET /editors/<id>/manuscripts/<id> endpoint -- test 47 of 84
 def test_display_editor_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -245,7 +245,7 @@ def test_display_editor_manuscript_by_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /editors/<id>/manuscripts endpoint -- test 48 of 83
+# Testing the GET /editors/<id>/manuscripts endpoint -- test 48 of 84
 def test_display_editor_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -280,7 +280,7 @@ def test_display_editor_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /editors endpoint -- test 49 of 83
+# Testing the GET /editors endpoint -- test 49 of 84
 def test_index_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -300,7 +300,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):
         )
 
 
-# Testing the PATCH /editors/<id>/books/<id> endpoint -- test 50 of 83
+# Testing the PATCH /editors/<id>/books/<id> endpoint -- test 50 of 84
 def test_update_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -360,7 +360,7 @@ def test_update_editor_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /editors/<id> endpoint -- test 51 of 83
+# Testing the PATCH /editors/<id> endpoint -- test 51 of 84
 def test_update_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -394,7 +394,7 @@ def test_update_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /editors/<id>/manuscripts/<id> endpoint -- test 52 of 83
+# Testing the PATCH /editors/<id>/manuscripts/<id> endpoint -- test 52 of 84
 def test_update_editor_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):

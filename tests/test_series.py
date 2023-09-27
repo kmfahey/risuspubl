@@ -14,7 +14,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the POST /series endpoint -- test 73 of 83
+# Testing the POST /series endpoint -- test 73 of 84
 def test_create_series_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -32,7 +32,7 @@ def test_create_series_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the DELETE /series/<id> endpoint -- test 74 of 83
+# Testing the DELETE /series/<id> endpoint -- test 74 of 84
 def test_delete_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -53,7 +53,7 @@ def test_delete_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /series/<id>/books/<id> endpoint -- test 75 of 83
+# Testing the GET /series/<id>/books/<id> endpoint -- test 75 of 84
 def test_display_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -81,7 +81,7 @@ def test_display_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404
 
 
-# Testing the GET /series/<id>/books endpoint -- test 76 of 83
+# Testing the GET /series/<id>/books endpoint -- test 76 of 84
 def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -111,7 +111,7 @@ def test_display_series_books_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404
 
 
-# Testing the GET /series/<id> endpoint -- test 77 of 83
+# Testing the GET /series/<id> endpoint -- test 77 of 84
 def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -128,7 +128,7 @@ def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /series/<id>/manuscripts/<id> endpoint -- test 78 of 83
+# Testing the GET /series/<id>/manuscripts/<id> endpoint -- test 78 of 84
 def test_display_series_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -167,7 +167,7 @@ def test_display_series_manuscript_by_id_endpoint(
     assert response.status_code == 404
 
 
-# Testing the GET /series/<id>/manuscripts endpoint -- test 79 of 83
+# Testing the GET /series/<id>/manuscripts endpoint -- test 79 of 84
 def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -196,7 +196,7 @@ def test_display_series_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404
 
 
-# Testing the GET /series endpoint -- test 80 of 83
+# Testing the GET /series endpoint -- test 80 of 84
 def test_index_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -211,7 +211,7 @@ def test_index_endpoint(db_w_cleanup, staged_app_client):
         )
 
 
-# Testing the PATCH /series/<id>/books/<id> endpoint -- test 81 of 83
+# Testing the PATCH /series/<id>/books/<id> endpoint -- test 81 of 84
 def test_update_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -261,7 +261,7 @@ def test_update_series_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /series/<id> endpoint -- test 82 of 83
+# Testing the PATCH /series/<id> endpoint -- test 82 of 84
 def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -287,7 +287,7 @@ def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the PATCH /series/<id>/manuscripts/<id> endpoint -- test 83 of 83
+# Testing the PATCH /series/<id>/manuscripts/<id> endpoint -- test 83 of 84
 def test_update_series_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):

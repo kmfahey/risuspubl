@@ -13,7 +13,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the POST /authors endpoint -- test 1 of 83
+# Testing the POST /authors endpoint -- test 1 of 84
 def test_author_create_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -30,7 +30,7 @@ def test_author_create_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the POST /authors/<id>/books endpoint -- test 2 of 83
+# Testing the POST /authors/<id>/books endpoint -- test 2 of 84
 def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -115,7 +115,7 @@ def test_create_author_book_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the POST /authors/<id>/manuscripts endpoint -- test 3 of 83
+# Testing the POST /authors/<id>/manuscripts endpoint -- test 3 of 84
 def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -192,7 +192,7 @@ def test_create_author_manuscript_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the POST /authors/<id>/metadata endpoint -- test 4 of 83
+# Testing the POST /authors/<id>/metadata endpoint -- test 4 of 84
 def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -240,7 +240,7 @@ def test_create_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     assert failed_response.status_code == 400, failed_response.data
 
 
-# Testing the POST /authors/<id>/<id>/books endpoint -- test 5 of 83
+# Testing the POST /authors/<id>/<id>/books endpoint -- test 5 of 84
 def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
@@ -387,7 +387,7 @@ def test_create_authors_book_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the POST /authors/<id>/<id>/manuscripts endpoint -- test 6 of 83
+# Testing the POST /authors/<id>/<id>/manuscripts endpoint -- test 6 of 84
 def test_create_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client

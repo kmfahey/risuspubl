@@ -12,7 +12,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the GET /authors endpoint -- test 24 of 83
+# Testing the GET /authors endpoint -- test 24 of 84
 def test_index_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client

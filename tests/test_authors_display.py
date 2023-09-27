@@ -13,7 +13,7 @@ os.environ["FLASK_ENV"] = "testing"
 # This should be set before creating the app instance.
 
 
-# Testing the GET /authors/<id>/books/<id> endpoint -- test 13 of 83
+# Testing the GET /authors/<id>/books/<id> endpoint -- test 13 of 84
 def test_display_author_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -33,7 +33,7 @@ def test_display_author_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/books endpoint -- test 14 of 83
+# Testing the GET /authors/<id>/books endpoint -- test 14 of 84
 def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -65,7 +65,7 @@ def test_display_author_books_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id> endpoint -- test 15 of 83
+# Testing the GET /authors/<id> endpoint -- test 15 of 84
 def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -81,7 +81,7 @@ def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/manuscripts/<id> endpoint -- test 16 of 83
+# Testing the GET /authors/<id>/manuscripts/<id> endpoint -- test 16 of 84
 def test_display_author_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -109,7 +109,7 @@ def test_display_author_manuscript_by_id_endpoint(
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/manuscripts endpoint -- test 17 of 83
+# Testing the GET /authors/<id>/manuscripts endpoint -- test 17 of 84
 def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -146,7 +146,7 @@ def test_display_author_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 404, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/metadata endpoint -- test 18 of 83
+# Testing the GET /authors/<id>/metadata endpoint -- test 18 of 84
 def test_display_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -171,7 +171,7 @@ def test_display_author_metadata_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 500, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/<id>/books/<id> endpoint -- test 19 of 83
+# Testing the GET /authors/<id>/<id>/books/<id> endpoint -- test 19 of 84
 def test_display_authors_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -238,7 +238,7 @@ def test_display_authors_book_by_id_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/<id>/books endpoint -- test 20 of 83
+# Testing the GET /authors/<id>/<id>/books endpoint -- test 20 of 84
 def test_display_authors_books_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -307,7 +307,7 @@ def test_display_authors_books_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/<id> endpoint -- test 21 of 83
+# Testing the GET /authors/<id>/<id> endpoint -- test 21 of 84
 def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
@@ -349,7 +349,7 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/<id>/manuscripts/<id> endpoint -- test 22 of 83
+# Testing the GET /authors/<id>/<id>/manuscripts/<id> endpoint -- test 22 of 84
 def test_display_authors_manuscript_by_id_endpoint(
     db_w_cleanup, staged_app_client
 ):
@@ -427,7 +427,7 @@ def test_display_authors_manuscript_by_id_endpoint(
     assert response.status_code == 400, response.data.decode("utf8")
 
 
-# Testing the GET /authors/<id>/<id>/manuscripts endpoint -- test 23 of 83
+# Testing the GET /authors/<id>/<id>/manuscripts endpoint -- test 23 of 84
 def test_display_authors_manuscripts_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
