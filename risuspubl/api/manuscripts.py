@@ -3,11 +3,11 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
-    delete_table_row_by_id_function,
-    display_table_row_by_id_function,
-    display_table_rows_function,
-    handle_exception,
-    update_table_row_by_id_function,
+    del_tbl_row_by_id_clos,
+    disp_tbl_row_by_id_clos,
+    disp_tbl_rows_clos,
+    handle_exc,
+    updt_tbl_row_by_id_clos,
 )
 from risuspubl.dbmodels import Manuscript
 
@@ -17,10 +17,10 @@ blueprint = Blueprint("manuscripts", __name__, url_prefix="/manuscripts")
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
-delete_manuscript_by_id = delete_table_row_by_id_function(Manuscript)
-display_manuscript_by_id = display_table_row_by_id_function(Manuscript)
-display_manuscripts = display_table_rows_function(Manuscript)
-update_manuscript_by_Id = update_table_row_by_id_function(Manuscript)
+del_mscrpt_by_msid = del_tbl_row_by_id_clos(Manuscript)
+disp_mscrpt_by_msid = disp_tbl_row_by_id_clos(Manuscript)
+disp_mscrpts = disp_tbl_rows_clos(Manuscript)
+updt_mscrpt_by_msd = updt_tbl_row_by_id_clos(Manuscript)
 
 
 @blueprint.route("", methods=["GET"])
@@ -32,13 +32,13 @@ def index_endpoint():
     :return:    A flask.Response object.
     """
     try:
-        return display_manuscripts()
+        return disp_mscrpts()
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["GET"])
-def display_manuscript_by_id_endpoint(manuscript_id: int):
+def disp_mscrpt_by_msid_endpt(manuscript_id: int):
     """
     Implements a GET /manuscripts/{manuscript_id} endpoint. The row in the
     manuscripts table with the given manuscript_id is loaded and output in JSON.
@@ -48,9 +48,9 @@ def display_manuscript_by_id_endpoint(manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        return display_manuscript_by_id(manuscript_id)
+        return disp_mscrpt_by_msid(manuscript_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 # A Create endpoint is deliberately not implemented, because without a way
@@ -63,7 +63,7 @@ def display_manuscript_by_id_endpoint(manuscript_id: int):
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["PATCH", "PUT"])
-def update_manuscript_by_id_endpoint(manuscript_id: int):
+def updt_mscrpt_by_msid_endpt(manuscript_id: int):
     """
     Implements a PATCH /manuscripts/{manuscript_id} endpoint. The row in
     the manuscripts table with that manuscript_id is updated from the JSON
@@ -74,13 +74,13 @@ def update_manuscript_by_id_endpoint(manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        return update_manuscript_by_Id(manuscript_id, request.json)
+        return updt_mscrpt_by_msd(manuscript_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:manuscript_id>", methods=["DELETE"])
-def delete_manuscript_by_id_endpoint(manuscript_id: int):
+def del_mscrpt_by_msid_endpt(manuscript_id: int):
     """
     Implements a DELETE /manuscripts/{manuscript_id} endpoint. The row in the
     manuscripts table with that manuscript_id is deleted.
@@ -90,6 +90,6 @@ def delete_manuscript_by_id_endpoint(manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        return delete_manuscript_by_id(manuscript_id)
+        return del_mscrpt_by_msid(manuscript_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)

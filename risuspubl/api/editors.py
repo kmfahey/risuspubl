@@ -4,16 +4,16 @@ from flask import Blueprint, request, jsonify
 
 from risuspubl.api.utility import (
     check_json_req_props,
-    create_table_row_function,
-    delete_table_row_by_id_and_foreign_key_function,
-    delete_table_row_by_id_function,
-    display_table_row_by_id_and_foreign_key_function,
-    display_table_row_by_id_function,
-    display_table_rows_by_foreign_id_function,
-    display_table_rows_function,
-    handle_exception,
-    update_table_row_by_id_and_foreign_key_function,
-    update_table_row_by_id_function,
+    crt_tbl_row_clos,
+    del_tbl_row_by_id_foreign_key_clos,
+    del_tbl_row_by_id_clos,
+    disp_tbl_row_by_id_foreign_key_clos,
+    disp_tbl_row_by_id_clos,
+    disp_tbl_rows_by_foreign_id_clos,
+    disp_tbl_rows_clos,
+    handle_exc,
+    updt_tbl_row_by_id_foreign_key_clos,
+    updt_tbl_row_by_id_clos,
 )
 from risuspubl.dbmodels import Book, Editor, Manuscript, db
 
@@ -23,47 +23,37 @@ blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
-create_editor = create_table_row_function(Editor)
-delete_book_by_book_id_and_editor_id = delete_table_row_by_id_and_foreign_key_function(
+crt_edtr = crt_tbl_row_clos(Editor)
+del_bk_by_bkid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
     Editor, "editor_id", Book, "book_id"
 )
-delete_editor_by_id = delete_table_row_by_id_function(Editor)
-delete_manuscript_by_manuscript_id_and_editor_id = (
-    delete_table_row_by_id_and_foreign_key_function(
-        Editor, "editor_id", Manuscript, "manuscript_id"
-    )
+del_edtr_by_id = del_tbl_row_by_id_clos(Editor)
+del_mscrpt_by_msid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
 )
-display_book_by_book_id_and_editor_id = (
-    display_table_row_by_id_and_foreign_key_function(
-        Editor, "editor_id", Book, "book_id"
-    )
+disp_bk_by_bkid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Book, "book_id"
 )
-display_books_by_editor_id = display_table_rows_by_foreign_id_function(
-    Editor, "editor_id", Book
+disp_bks_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(Editor, "editor_id", Book)
+disp_edtr_by_id = disp_tbl_row_by_id_clos(Editor)
+disp_edtrs = disp_tbl_rows_clos(Editor)
+disp_mscrpt_by_msid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
 )
-display_editor_by_id = display_table_row_by_id_function(Editor)
-display_editors = display_table_rows_function(Editor)
-display_manuscript_by_manuscript_id_and_editor_id = (
-    display_table_row_by_id_and_foreign_key_function(
-        Editor, "editor_id", Manuscript, "manuscript_id"
-    )
-)
-display_manuscripts_by_editor_id = display_table_rows_by_foreign_id_function(
+disp_mscrpts_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(
     Editor, "editor_id", Manuscript
 )
-update_book_by_book_id_and_editor_id = update_table_row_by_id_and_foreign_key_function(
+updt_bk_by_bkid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
     Editor, "editor_id", Book, "book_id"
 )
-update_editor_by_id = update_table_row_by_id_function(Editor)
-update_manuscript_by_manuscript_id_and_editor_id = (
-    update_table_row_by_id_and_foreign_key_function(
-        Editor, "editor_id", Manuscript, "manuscript_id"
-    )
+updt_edtr_by_id = updt_tbl_row_by_id_clos(Editor)
+updt_mscrpt_by_msid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
 )
 
 
 @blueprint.route("", methods=["GET"])
-def index_endpoint():
+def index_endpt():
     """
     Implements a GET /editors endpoint. All rows in the editors table are loaded
     and output as a JSON list.
@@ -71,13 +61,13 @@ def index_endpoint():
     :return: A flask.Response object.
     """
     try:
-        return display_editors()
+        return disp_edtrs()
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>", methods=["GET"])
-def display_editor_by_id_endpoint(editor_id: int):
+def disp_edtr_by_edid_endpt(editor_id: int):
     """
     Implements a GET /editors/{editor_id} endpoint. The row in the editors table
     with the given editor_id is loaded and output in JSON.
@@ -87,13 +77,13 @@ def display_editor_by_id_endpoint(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return display_editor_by_id(editor_id)
+        return disp_edtr_by_id(editor_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/books", methods=["GET"])
-def display_editor_books_endpoint(editor_id: int):
+def disp_edtr_bks_endpt(editor_id: int):
     """
     Implements a GET /editors/{editor_id}/books endpoint. All rows in the books
     table with that editor_id are loaded and output as a JSON list.
@@ -103,13 +93,13 @@ def display_editor_books_endpoint(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return display_books_by_editor_id(editor_id)
+        return disp_bks_by_edtr_id(editor_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["GET"])
-def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
+def disp_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
     Implements a GET /editors/{editor_id}/books/{book_id} endpoint. The row in
     the books table with that editor_id and that book_id is loaded and outputed
@@ -120,13 +110,13 @@ def display_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return display_book_by_book_id_and_editor_id(editor_id, book_id)
+        return disp_bk_by_bkid_and_edtr_id(editor_id, book_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/manuscripts", methods=["GET"])
-def display_editor_manuscripts_endpoint(editor_id: int):
+def disp_edtr_mscrpts_endpt(editor_id: int):
     """
     Implements a GET /editors/{editor_id}/manuscripts endpoint. All rows in the
     manuscripts table with that editor_id are loaded and output as a JSON list.
@@ -137,13 +127,13 @@ def display_editor_manuscripts_endpoint(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return display_manuscripts_by_editor_id(editor_id)
+        return disp_mscrpts_by_edtr_id(editor_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["GET"])
-def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
+def disp_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
     Implements a GET /editors/{editor_id}/manuscripts/{manuscript_id} endpoint.
     The row in the manuscripts table with that editor_id and that manuscript_id
@@ -156,15 +146,13 @@ def display_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int)
     :return:          A flask.Response object.
     """
     try:
-        return display_manuscript_by_manuscript_id_and_editor_id(
-            editor_id, manuscript_id
-        )
+        return disp_mscrpt_by_msid_and_edtr_id(editor_id, manuscript_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("", methods=["POST"])
-def create_editor_endpoint():
+def crt_edtr_endpt():
     """
     Implements a POST /editors endpoint. A new row in the editors table is
     constituted from the JSON parameters and saved to that table.
@@ -173,13 +161,13 @@ def create_editor_endpoint():
     """
     try:
         check_json_req_props(Editor, request.json, {"editor_id"})
-        return create_editor(request.json)
+        return crt_edtr(request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>", methods=["PATCH", "PUT"])
-def update_editor_by_id_endpoint(editor_id: int):
+def updt_edtr_by_edid_endpt(editor_id: int):
     """
     Implements a PATCH /editors/{editor_id} endpoint. The row in the editors
     table with that editor_id is updated from the JSON parameters.
@@ -188,13 +176,13 @@ def update_editor_by_id_endpoint(editor_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return update_editor_by_id(editor_id, request.json)
+        return updt_edtr_by_id(editor_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["PATCH", "PUT"])
-def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
+def updt_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
     Implements a PATCH /editors/{editor_id}/books/{book_id} endpoint. The row
     in the books table with that book_id and that editor_id is updated from the
@@ -211,15 +199,15 @@ def update_editor_book_by_id_endpoint(editor_id: int, book_id: int):
                 + "fields to update"
             )
         check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
-        return update_book_by_book_id_and_editor_id(editor_id, book_id, request.json)
+        return updt_bk_by_bkid_and_edtr_id(editor_id, book_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route(
     "/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["PATCH", "PUT"]
 )
-def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
+def updt_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
     Implements a PATCH /editors/{editor_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id and that
@@ -239,15 +227,13 @@ def update_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
         check_json_req_props(
             Manuscript, request.json, {"manuscript_id"}, chk_missing=False
         )
-        return update_manuscript_by_manuscript_id_and_editor_id(
-            editor_id, manuscript_id, request.json
-        )
+        return updt_mscrpt_by_msid_and_edtr_id(editor_id, manuscript_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>", methods=["DELETE"])
-def delete_editor_by_id_endpoint(editor_id: int):
+def del_edtr_by_edid_endpt(editor_id: int):
     """
     Implements a DELETE /editors/{editor_id} endpoint. The row in the
     editors table with that editor_id is deleted. All rows in the books
@@ -270,11 +256,11 @@ def delete_editor_by_id_endpoint(editor_id: int):
         db.session.commit()
         return jsonify(True)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/books/<int:book_id>", methods=["DELETE"])
-def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
+def del_edtr_bk_by_edid_endpt(editor_id: int, book_id: int):
     """
     Implements a DELETE /editors/{editor_id}/books/{book_id} endpoint. The row
     in the books table with that book_id and that editor_id is deleted.
@@ -284,13 +270,13 @@ def delete_editor_book_by_id_endpoint(editor_id: int, book_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return delete_book_by_book_id_and_editor_id(editor_id, book_id)
+        return del_bk_by_bkid_and_edtr_id(editor_id, book_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:editor_id>/manuscripts/<int:manuscript_id>", methods=["DELETE"])
-def delete_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
+def del_edtr_mscrpt_by_edid_endpt(editor_id: int, manuscript_id: int):
     """
     Implements a DELETE /editors/{editor_id}/manuscripts/{manuscript_id}
     endpoint. The row in the manuscripts table with that manuscript_id and that
@@ -302,8 +288,6 @@ def delete_editor_manuscript_by_id_endpoint(editor_id: int, manuscript_id: int):
     :return:        A flask.Response object.
     """
     try:
-        return delete_manuscript_by_manuscript_id_and_editor_id(
-            editor_id, manuscript_id
-        )
+        return del_mscrpt_by_msid_and_edtr_id(editor_id, manuscript_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)

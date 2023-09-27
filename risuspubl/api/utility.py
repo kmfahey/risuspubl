@@ -40,7 +40,7 @@ _foreign_keys_to_model_subclasses = {
 }
 
 
-def create_model_obj(model_subclass, params_argd, optional_params=()):
+def crt_model_obj(model_subclass, params_argd, optional_params=()):
     """
     Instantiates an object in the provided SQLAlchemy.Model subclass using the
     dict of key/value pairs as arguments to the constructor. A value in that
@@ -80,7 +80,7 @@ def create_model_obj(model_subclass, params_argd, optional_params=()):
     return model_subclass(**model_obj_args)
 
 
-def update_model_obj(id_val, model_subclass, params_argd):
+def updt_model_obj(id_val, model_subclass, params_argd):
     """
     Retrieves the object in the SQLAlchemy.Model subclass by the given id, and
     updates it using the dict of key/value pairs to assign new attribute values.
@@ -117,7 +117,7 @@ def update_model_obj(id_val, model_subclass, params_argd):
     return model_obj
 
 
-def delete_model_obj(id_val, model_subclass):
+def del_model_obj(id_val, model_subclass):
     """
     Looks up an id value in the provided SQLAlchemy.Model subclass, and has
     the matching row in that table deleted. If the model subclass is Book or
@@ -273,11 +273,11 @@ def _validate_bool(param_name, param_value):
         )
 
 
-def generate_create_update_argd(model_class, request_json, **argd):
+def generate_crt_updt_argd(model_class, request_json, **argd):
     """
     Accepts a SQLAlchemy.Model subclass and a request.json object and returns a
     dict of parameter key/value pairs, whose values have been validated, that
-    can be used as an argument to create_model_obj() or update_model_obj().
+    can be used as an argument to crt_model_obj() or updt_model_obj().
 
     :model_class:  A SQLAlchemy.Model subclass class object, the target to build
                    constructor/update arguments for.
@@ -390,7 +390,7 @@ def generate_create_update_argd(model_class, request_json, **argd):
     return create_or_update_argd
 
 
-def handle_exception(exception):
+def handle_exc(exception):
     """
     A generalized exception handler which implements an ideal handler for
     endpoint function try/except blocks.
@@ -415,7 +415,7 @@ def handle_exception(exception):
     return Response("".join(traceback.format_exception(exception)), status)
 
 
-def create_table_row_function(model_class):
+def crt_tbl_row_clos(model_class):
     """
     Returns a function that executes a endpoint function POST /{table}, using
     the supplied SQLAlchemy.Model subclass.
@@ -426,21 +426,21 @@ def create_table_row_function(model_class):
 
     def _internal_create_table_row(request_json):
         try:
-            # Using create_model_obj() to process request.json into a
+            # Using crt_model_obj() to process request.json into a
             # model_class argument dict and instance a model_class object.
-            model_class_obj = create_model_obj(
-                model_class, generate_create_update_argd(model_class, request_json)
+            model_class_obj = crt_model_obj(
+                model_class, generate_crt_updt_argd(model_class, request_json)
             )
             db.session.add(model_class_obj)
             db.session.commit()
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_create_table_row
 
 
-def delete_table_row_by_id_function(model_class):
+def del_tbl_row_by_id_clos(model_class):
     """
     Returns a function that executes a endpoint function for DELETE
     /{table}/{id}, using the supplied SQLAlchemy.Model subclass.
@@ -456,15 +456,15 @@ def delete_table_row_by_id_function(model_class):
 
     def _internal_delete_table_row_by_id(model_id):
         try:
-            delete_model_obj(model_id, model_class)
+            del_model_obj(model_id, model_class)
             return jsonify(True)
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_delete_table_row_by_id
 
 
-def delete_table_row_by_id_and_foreign_key_function(
+def del_tbl_row_by_id_foreign_key_clos(
     outer_class, outer_id_column, inner_class, inner_id_column
 ):
     """
@@ -504,17 +504,15 @@ def delete_table_row_by_id_and_foreign_key_function(
             # Deleting the row in the inner table with that foreign key.
             # If inner_class is Book or Manuscript, also cleans up the
             # authors_books or authors_manuscripts table.
-            delete_model_obj(inner_id, inner_class)
+            del_model_obj(inner_id, inner_class)
             return jsonify(True)
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_delete_table_row_by_id_and_foreign_key
 
 
-def display_table_rows_by_foreign_id_function(
-    outer_class, outer_id_column, inner_class
-):
+def disp_tbl_rows_by_foreign_id_clos(outer_class, outer_id_column, inner_class):
     """
     Returns a function that executes an endpoint function for GET
     /{outer_table}/{outer_id}/{inner_table}, using the supplied
@@ -546,12 +544,12 @@ def display_table_rows_by_foreign_id_function(
                 return abort(404)
             return jsonify(retval)
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_display_table_rows_by_foreign_id
 
 
-def display_table_rows_function(model_class):
+def disp_tbl_rows_clos(model_class):
     """
     Returns an endpoint function that executes GET /{table}, using the supplied
     SQLAlchemy.Model subclasses.
@@ -572,12 +570,12 @@ def display_table_rows_function(model_class):
             ]
             return jsonify(result)
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_display_table_rows
 
 
-def display_table_row_by_id_function(model_class):
+def disp_tbl_row_by_id_clos(model_class):
     """
     Returns an endpoint function that executes GET /{table}/{id}, using the
     supplied SQLAlchemy.Model subclass.
@@ -596,12 +594,12 @@ def display_table_row_by_id_function(model_class):
             model_class_obj = model_class.query.get_or_404(model_id)
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_display_table_row_by_id
 
 
-def display_table_row_by_id_and_foreign_key_function(
+def disp_tbl_row_by_id_foreign_key_clos(
     outer_class, outer_id_column, inner_class, inner_id_column
 ):
     """
@@ -640,12 +638,12 @@ def display_table_row_by_id_and_foreign_key_function(
                     return jsonify(inner_class_obj.serialize())
             return abort(404)
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_display_table_row_by_id_and_foreign_key
 
 
-def update_table_row_by_id_function(model_class):
+def updt_tbl_row_by_id_clos(model_class):
     """
     Returns an endpoint function that executes PATCH /{table}/{id}, using the
     supplied SQLAlchemy.Model subclass.
@@ -663,25 +661,25 @@ def update_table_row_by_id_function(model_class):
 
     def _internal_update_table_row_by_id(model_id, request_json):
         try:
-            # update_model_obj is used to fetch and update the model class
+            # updt_model_obj is used to fetch and update the model class
             # object indicates by the model_class object and its id value
-            # model_id. generate_create_update_argd() is used to build its param
+            # model_id. generate_crt_updt_argd() is used to build its param
             # dict argument.
-            model_class_obj = update_model_obj(
+            model_class_obj = updt_model_obj(
                 model_id,
                 model_class,
-                generate_create_update_argd(model_class, request_json),
+                generate_crt_updt_argd(model_class, request_json),
             )
             db.session.add(model_class_obj)
             db.session.commit()
             return jsonify(model_class_obj.serialize())
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_update_table_row_by_id
 
 
-def update_table_row_by_id_and_foreign_key_function(
+def updt_tbl_row_by_id_foreign_key_clos(
     outer_class, outer_id_column, inner_class, inner_id_column
 ):
     """
@@ -722,12 +720,12 @@ def update_table_row_by_id_and_foreign_key_function(
             ):
                 return abort(404)
 
-            # Using update_model_obj() to fetch the inner_class object and
+            # Using updt_model_obj() to fetch the inner_class object and
             # update it against request.json.
-            inner_class_obj = update_model_obj(
+            inner_class_obj = updt_model_obj(
                 inner_id,
                 inner_class,
-                generate_create_update_argd(
+                generate_crt_updt_argd(
                     inner_class, request_json, **{outer_id_column: outer_id}
                 ),
             )
@@ -735,7 +733,7 @@ def update_table_row_by_id_and_foreign_key_function(
             db.session.commit()
             return jsonify(inner_class_obj.serialize())
         except Exception as exception:
-            return handle_exception(exception)
+            return handle_exc(exception)
 
     return _internal_update_table_row_by_id_and_foreign_key
 

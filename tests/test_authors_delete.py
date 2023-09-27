@@ -372,8 +372,7 @@ def test_delete_authors_book_endpoint(db_w_cleanup, staged_app_client):  # 11/83
     book_id = book_obj.book_id
     Genius.gen_authors_books_obj(author_obj.author_id, book_id)
     response = client.delete(
-        f"/authors/{author_obj.author_id}"
-        + f"/{author_obj.author_id}/books/{book_id}"
+        f"/authors/{author_obj.author_id}" + f"/{author_obj.author_id}/books/{book_id}"
     )
     assert response.status_code == 400
 

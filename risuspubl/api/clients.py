@@ -3,13 +3,13 @@
 from flask import Blueprint, request
 
 from risuspubl.api.utility import (
-    create_table_row_function,
+    crt_tbl_row_clos,
     check_json_req_props,
-    delete_table_row_by_id_function,
-    display_table_row_by_id_function,
-    display_table_rows_function,
-    handle_exception,
-    update_table_row_by_id_function,
+    del_tbl_row_by_id_clos,
+    disp_tbl_row_by_id_clos,
+    disp_tbl_rows_clos,
+    handle_exc,
+    updt_tbl_row_by_id_clos,
 )
 from risuspubl.dbmodels import Client
 
@@ -19,15 +19,15 @@ blueprint = Blueprint("clients", __name__, url_prefix="/clients")
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
-create_client = create_table_row_function(Client)
-delete_client_by_id = delete_table_row_by_id_function(Client)
-display_client_by_id = display_table_row_by_id_function(Client)
-display_clients = display_table_rows_function(Client)
-update_client_by_id = update_table_row_by_id_function(Client)
+create_client = crt_tbl_row_clos(Client)
+delete_clnt_by_id = del_tbl_row_by_id_clos(Client)
+display_clnt_by_id = disp_tbl_row_by_id_clos(Client)
+display_clients = disp_tbl_rows_clos(Client)
+update_clnt_by_id = updt_tbl_row_by_id_clos(Client)
 
 
 @blueprint.route("", methods=["GET"])
-def index_endpoint():
+def index_endpt():
     """
     Implements a GET /clients endpoint. All rows in the clients table are loaded
     and output as a JSON list.
@@ -37,11 +37,11 @@ def index_endpoint():
     try:
         return display_clients()
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["GET"])
-def display_client_by_id_endpoint(client_id: int):
+def disp_clnt_by_clid_endpt(client_id: int):
     """
     Implements a GET /clients/{client_id} endpoint. The row in the clients table
     with the given client_id is loaded and output in JSON.
@@ -51,13 +51,13 @@ def display_client_by_id_endpoint(client_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return display_client_by_id(client_id)
+        return display_clnt_by_id(client_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("", methods=["POST"])
-def create_client_endpoint():
+def crt_clnt_endpt():
     """
     Implements a POST /clients endpoint. A new row in the clients table is
     constituted from the JSON parameters and saved to that table.
@@ -68,11 +68,11 @@ def create_client_endpoint():
         check_json_req_props(Client, request.json, {"client_id"})
         return create_client(request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["PATCH", "PUT"])
-def update_client_by_id_endpoint(client_id: int):
+def updt_clnt_by_clid_endpt(client_id: int):
     """
     Implements a PATCH /clients/{client_id} endpoint. The row in the clients
     table with that client_id is updated from the JSON parameters.
@@ -82,13 +82,13 @@ def update_client_by_id_endpoint(client_id: int):
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"}, chk_missing=False)
-        return update_client_by_id(client_id, request.json)
+        return update_clnt_by_id(client_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:client_id>", methods=["DELETE"])
-def delete_client_by_id_endpoint(client_id: int):
+def del_clnt_by_clid_endpt(client_id: int):
     """
     Implements a DELETE /clients/{client_id} endpoint. The row in the clients
     table with that client_id is deleted.
@@ -97,6 +97,6 @@ def delete_client_by_id_endpoint(client_id: int):
     :return:    A flask.Response object.
     """
     try:
-        return delete_client_by_id(client_id)
+        return delete_clnt_by_id(client_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)

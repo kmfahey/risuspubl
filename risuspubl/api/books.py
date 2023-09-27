@@ -4,11 +4,11 @@ from flask import Blueprint, request
 
 from risuspubl.api.utility import (
     check_json_req_props,
-    delete_table_row_by_id_function,
-    display_table_row_by_id_function,
-    display_table_rows_function,
-    handle_exception,
-    update_table_row_by_id_function,
+    del_tbl_row_by_id_clos,
+    disp_tbl_row_by_id_clos,
+    disp_tbl_rows_clos,
+    handle_exc,
+    updt_tbl_row_by_id_clos,
 )
 from risuspubl.dbmodels import Book
 
@@ -18,14 +18,14 @@ blueprint = Blueprint("books", __name__, url_prefix="/books")
 
 # These functions return closures that implement the requested functions,
 # filling in the blank(s) with the provided class objects.
-delete_book_by_id = delete_table_row_by_id_function(Book)
-display_book_by_id = display_table_row_by_id_function(Book)
-display_books = display_table_rows_function(Book)
-update_book_by_id = update_table_row_by_id_function(Book)
+del_bk_by_bkid = del_tbl_row_by_id_clos(Book)
+disp_bk_by_bkid = disp_tbl_row_by_id_clos(Book)
+disp_bks = disp_tbl_rows_clos(Book)
+updt_bk_by_bkid = updt_tbl_row_by_id_clos(Book)
 
 
 @blueprint.route("", methods=["GET"])
-def index_endpoint():
+def index_endpt():
     """
     Implements a GET /books endpoint. All rows in the books table are loaded
     and output as a JSON list.
@@ -33,13 +33,13 @@ def index_endpoint():
     :return:    A flask.Response object.
     """
     try:
-        return display_books()
+        return disp_bks()
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:book_id>", methods=["GET"])
-def display_book_by_id_endpoint(book_id: int):
+def disp_bk_by_bkid_endpt(book_id: int):
     """
     Implements a GET /books/{book_id} endpoint. The row in the books table with
     the given book_id is loaded and output in JSON.
@@ -49,9 +49,9 @@ def display_book_by_id_endpoint(book_id: int):
     :return:  A flask.Response object.
     """
     try:
-        return display_book_by_id(book_id)
+        return disp_bk_by_bkid(book_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 # A Create endpoint is deliberately not implemented, because without
@@ -64,7 +64,7 @@ def display_book_by_id_endpoint(book_id: int):
 
 
 @blueprint.route("/<int:book_id>", methods=["PATCH", "PUT"])
-def update_book_by_id_endpoint(book_id: int):
+def updt_bk_by_bkid_endpt(book_id: int):
     """
     Implements a PATCH /books/{book_id} endpoint. The row in the books table
     with that book_id is updated from the JSON parameters.
@@ -74,13 +74,13 @@ def update_book_by_id_endpoint(book_id: int):
     """
     try:
         check_json_req_props(Book, request.json, {"book_id"}, chk_missing=False)
-        return update_book_by_id(book_id, request.json)
+        return updt_bk_by_bkid(book_id, request.json)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)
 
 
 @blueprint.route("/<int:book_id>", methods=["DELETE"])
-def delete_book_by_id_endpoint(book_id: int):
+def del_bk_by_bkid_endpt(book_id: int):
     """
     Implements a DELETE /books/{book_id} endpoint. The row in the books table
     with that book_id is deleted.
@@ -89,6 +89,6 @@ def delete_book_by_id_endpoint(book_id: int):
     :return:  A flask.Response object.
     """
     try:
-        return delete_book_by_id(book_id)
+        return del_bk_by_bkid(book_id)
     except Exception as exception:
-        return handle_exception(exception)
+        return handle_exc(exception)

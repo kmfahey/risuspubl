@@ -345,9 +345,7 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):  # 21
     DbBasedTester.cleanup__empty_all_tables()
 
     author_obj = Genius.gen_author_obj()
-    response = client.get(
-        f"/authors/{author_obj.author_id}/{author_obj.author_id}"
-    )
+    response = client.get(f"/authors/{author_obj.author_id}/{author_obj.author_id}")
     assert response.status_code == 400, response.data.decode("utf8")
 
 

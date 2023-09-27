@@ -426,4 +426,3 @@ def test_update_authors_manuscript_endpoint(db_w_cleanup, staged_app_client):  #
         json=manuscript_dict,
     )
     assert response.status_code == 400, response.data.decode("utf8")
-
