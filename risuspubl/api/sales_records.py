@@ -45,7 +45,7 @@ def disp_slrcds_by_yr_endpt(year: int):
         if not (1990 <= year <= 2022):
             raise ValueError(
                 f"year parameter value {year} not in the range [1990, 2022]: "
-                + f"no sales in specified year"
+                + "no sales in specified year"
             )
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
             retval.append(sales_record_obj.serialize())

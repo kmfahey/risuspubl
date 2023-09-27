@@ -94,9 +94,7 @@ def test_delete_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the DELETE /salespeople/<id>/clients/<id> endpoint -- test 60 of 84
-def test_delete_salesperson_client_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_delete_salesperson_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -148,9 +146,7 @@ def test_display_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /salespeople/<id>/clients/<id> endpoint -- test 62 of 84
-def test_display_salesperson_client_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_salesperson_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -273,9 +269,7 @@ def test_update_salesperson_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the PATCH /salespeople/<id>/clients/<id> endpoint -- test 66 of 84
-def test_update_salesperson_client_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_update_salesperson_client_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():

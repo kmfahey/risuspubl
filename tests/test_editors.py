@@ -97,9 +97,7 @@ def test_delete_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the DELETE /editors/<id>/manuscripts/<id> endpoint -- test 43 of 84
-def test_delete_editor_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_delete_editor_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 
@@ -211,9 +209,7 @@ def test_display_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /editors/<id>/manuscripts/<id> endpoint -- test 47 of 84
-def test_display_editor_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_editor_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -395,9 +391,7 @@ def test_update_editor_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the PATCH /editors/<id>/manuscripts/<id> endpoint -- test 52 of 84
-def test_update_editor_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_update_editor_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     def _setup():

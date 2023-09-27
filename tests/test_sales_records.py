@@ -33,9 +33,7 @@ def test_display_sales_record_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /sales_records/books/<id> endpoint -- test 68 of 84
-def test_display_sales_records_by_book_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_sales_records_by_book_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     editor_obj = Genius.gen_editor_obj()
@@ -243,9 +241,7 @@ def test_display_sales_records_by_year_and_month_endpoint(
 
 
 # Testing the GET /sales_records/years/<year> endpoint -- test 72 of 84
-def test_display_sales_records_by_year_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_sales_records_by_year_endpoint(db_w_cleanup, staged_app_client):
     db = db_w_cleanup
     app, client = staged_app_client
 

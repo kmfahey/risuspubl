@@ -129,9 +129,7 @@ def test_display_series_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /series/<id>/manuscripts/<id> endpoint -- test 78 of 84
-def test_display_series_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_series_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()
@@ -288,9 +286,7 @@ def test_update_series_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the PATCH /series/<id>/manuscripts/<id> endpoint -- test 83 of 84
-def test_update_series_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_update_series_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     series_obj = Genius.gen_series_obj()

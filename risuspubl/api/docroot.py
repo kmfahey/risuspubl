@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 
-import itertools
-
-from flask import Blueprint, Response, abort, jsonify, request
-
+from flask import Blueprint, jsonify
 from risuspubl.api.utility import handle_exc
 
 
@@ -241,8 +238,8 @@ HELP_JSOBJ = {
     "manuscripts": {
         "/manuscripts": {"GET": "Displays a list of all manuscripts."},
         "/manuscripts/{{manuscriptId}}": {
-            "DELETE": ("Deletes the manuscript with manuscript id {{manuscriptId}}."),
-            "GET": ("Displays the manuscript with manuscript id {{manuscriptId}}."),
+            "DELETE": "Deletes the manuscript with manuscript id {{manuscriptId}}.",
+            "GET": "Displays the manuscript with manuscript id {{manuscriptId}}.",
             "PATCH": (
                 "Updates the manuscript with manuscript id {{manuscriptId}} "
                 + "according to the data submitted."

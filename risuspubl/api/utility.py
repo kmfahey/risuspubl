@@ -49,7 +49,7 @@ def crt_model_obj(model_subclass, params_argd, optional_params=()):
 
     :model_subclass: An SQLAlchemy.Model subclass class object, the
     class to instance an object of.
-    :params_argd: A dict of parameters key to values.
+    :params_argd: A dict mapping of parameter keys to values.
     :optional_params: An optional argument, a set of parameter names
     that are not required for the constructor. If the value of one of
     these parameters is None, it's skipped. If a parameter does NOT
@@ -223,7 +223,7 @@ def _validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=ma
     return param_int_value
 
 
-def _validate_str(param_name, param_value, lower_bound=1, upper_bound=64):
+def _validate_str(param_name, param_value, lower_bound=1, upper_bound=64.0):
     # Tests if a param value string's length falls between lower and
     # upper bounds. If it succeeds, the string is returned. If it fails,
     # a ValueError is raised.

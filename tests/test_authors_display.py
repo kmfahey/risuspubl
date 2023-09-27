@@ -82,9 +82,7 @@ def test_display_author_by_id_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /authors/<id>/manuscripts/<id> endpoint -- test 16 of 84
-def test_display_author_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_author_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case
@@ -350,9 +348,7 @@ def test_display_authors_by_ids_endpoint(db_w_cleanup, staged_app_client):
 
 
 # Testing the GET /authors/<id>/<id>/manuscripts/<id> endpoint -- test 22 of 84
-def test_display_authors_manuscript_by_id_endpoint(
-    db_w_cleanup, staged_app_client
-):
+def test_display_authors_manuscript_by_id_endpoint(db_w_cleanup, staged_app_client):
     app, client = staged_app_client
 
     # Testing base case

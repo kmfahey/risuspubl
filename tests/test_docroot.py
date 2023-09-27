@@ -3,13 +3,8 @@
 import os
 import re
 
-from pprint import pformat
 from collections import defaultdict
 from functools import partial as curry
-
-from risuspubl.dbmodels import Author
-
-from conftest import Genius
 
 
 # Set environment variable for Flask's configuration
@@ -19,7 +14,6 @@ os.environ["FLASK_ENV"] = "testing"
 
 # Testing the GET /authors endpoint -- test 84 of 84
 def test_docroot_endpoint(db_w_cleanup, staged_app_client):
-    db = db_w_cleanup
     app, client = staged_app_client
 
     response = client.get("/")
@@ -65,6 +59,6 @@ def test_docroot_endpoint(db_w_cleanup, staged_app_client):
                     + "not present in help"
                 )
                 del respdat_simplf[section][endpt][method]
-            assert len(respdat_simplf[section][endpt]) == 0, (
-                f"section: {section}, endpoint: {endpt} has extra methods"
-            )
+            assert (
+                len(respdat_simplf[section][endpt]) == 0
+            ), f"section: {section}, endpoint: {endpt} has extra methods"
