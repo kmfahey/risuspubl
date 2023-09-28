@@ -70,10 +70,14 @@ The default database name is `risuspubl`. The database's tables are:
                 Displays a help file in JSON format, listing each section of the
                 app, every endpoint in each section, every method each endpoint accepts,
                 and what functionality is offered by each method + endpoint combination.
-                <code>authors</code> table.
             </p>
         </td>
     </tr>
+
+    <tr>
+        <td colspan="3"><hr width="75%"></td>
+    </tr>
+
     <tr>
         <td valign=top><code>GET</code></td>
         <td valign=top><code><nobr>/authors</nobr></code></td>

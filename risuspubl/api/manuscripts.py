@@ -24,7 +24,7 @@ updt_mscrpt_by_msd = updt_tbl_row_by_id_clos(Manuscript)
 
 
 @blueprint.route("", methods=["GET"])
-def index_endpoint():
+def index_endpt():
     """
     Implements a GET /manuscripts endpoint. All rows in the manuscripts
     table are loaded and output as a JSON list.

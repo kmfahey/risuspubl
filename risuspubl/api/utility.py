@@ -53,7 +53,7 @@ def crt_model_obj(model_subclass, params_argd, optional_params=()):
     :optional_params: An optional argument, a set of parameter names
     that are not required for the constructor. If the value of one of
     these parameters is None, it's skipped. If a parameter does NOT
-    occur in this set and it's None, a ValueError is raised.
+    occur in this set, and it's None, a ValueError is raised.
     :return: An instance of the class that was the first argument.
     """
     model_obj_args = dict()
@@ -202,8 +202,9 @@ def _validate_int(param_name, param_value, lower_bound=-math.inf, upper_bound=ma
             f"parameter {param_name}: value {param_value} doesn't parse as an integer"
         )
     if not (lower_bound <= param_int_value <= upper_bound):
-        # Checking against the bounds. By default these are (-inf,
-        # +int), which are impossible to fall outside of.
+        # Checking against the bounds. By default, these are (-inf,
+        # +inf), a range that will include any input number apart
+        # from NaN.
         if lower_bound == -math.inf and upper_bound != math.inf:
             raise ValueError(
                 f"parameter {param_name}: supplied integer value "
@@ -387,7 +388,7 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
 
     # The lambda that computes the argd that can be constructor or
     # update arguments for the model_class arguments is located, and
-    # called with request_json so it evaluates.
+    # called with request_json, so it evaluates.
     create_or_update_argd = classes_to_argd_lambdas[model_class](request_json)
 
     # If the id_column and its value id_value are defined, and the
@@ -428,7 +429,7 @@ def handle_exc(exception):
 
 def crt_tbl_row_clos(model_class):
     """
-    Returns a function that executes a endpoint function POST /{table},
+    Returns a function that executes an endpoint function POST /{table},
     using the supplied SQLAlchemy.Model subclass.
 
     :model_class: the Model subclass for outer table
@@ -454,7 +455,7 @@ def crt_tbl_row_clos(model_class):
 
 def del_tbl_row_by_id_clos(model_class):
     """
-    Returns a function that executes a endpoint function for DELETE
+    Returns a function that executes an endpoint function for DELETE
     /{table}/{id}, using the supplied SQLAlchemy.Model subclass.
 
     :model_class: the Model subclass for the table
@@ -543,7 +544,7 @@ def disp_tbl_rows_by_foreign_id_clos(outer_class, outer_id_column, inner_class):
     def _internal_display_table_rows_by_foreign_id(outer_id):
         try:
             outer_class.query.get_or_404(outer_id)
-            # A outer_class object for every row in the inner_class
+            # An outer_class object for every row in the inner_class
             # table with the given outer_id.
             retval = [
                 inner_class_obj.serialize()

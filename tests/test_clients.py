@@ -3,8 +3,6 @@
 import os
 import random
 
-import pytest
-
 from risuspubl.dbmodels import (
     Client,
     Salesperson,

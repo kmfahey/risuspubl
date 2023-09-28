@@ -4,8 +4,6 @@ import os
 import random
 import itertools
 
-import pytest
-
 from conftest import Genius, DbBasedTester, randint_excluding
 
 

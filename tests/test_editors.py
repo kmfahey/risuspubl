@@ -4,8 +4,6 @@ import os
 import random
 import operator
 
-import pytest
-
 from risuspubl.dbmodels import (
     Book,
     Editor,
