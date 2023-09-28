@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module risuspubl.api.editors</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="risuspubl.html"><font color="#ffffff">risuspubl</font></a>.<a href="risuspubl.api.html"><font color="#ffffff">api</font></a>.editors</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/risuspubl/risuspubl/api/editors.py">/home/kmfahey/Workspace/risuspubl/risuspubl/api/editors.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-crt_edtr_endpt"><strong>crt_edtr_endpt</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/editors&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the&nbsp;editors&nbsp;table<br>
+is&nbsp;constituted&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters&nbsp;and&nbsp;saved&nbsp;to&nbsp;that&nbsp;table.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-del_edtr_bk_by_edid_endpt"><strong>del_edtr_bk_by_edid_endpt</strong></a>(editor_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/editors/{editor_id}/books/{book_id}&nbsp;endpoint.<br>
+The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;and&nbsp;that&nbsp;editor_id&nbsp;is<br>
+deleted.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;delete.<br>
+:book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;delete.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-del_edtr_by_edid_endpt"><strong>del_edtr_by_edid_endpt</strong></a>(editor_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/editors/{editor_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
+editors&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;is&nbsp;deleted.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;books<br>
+and&nbsp;manuscripts&nbsp;tables&nbsp;that&nbsp;have&nbsp;editor_id&nbsp;set&nbsp;equal&nbsp;to&nbsp;that&nbsp;value<br>
+have&nbsp;it&nbsp;reset&nbsp;to&nbsp;null.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;editors&nbsp;table&nbsp;to&nbsp;delete.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-del_edtr_mscrpt_by_edid_endpt"><strong>del_edtr_mscrpt_by_edid_endpt</strong></a>(editor_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/editors/{editor_id}/manuscripts/{manuscript_id}<br>
+endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id<br>
+and&nbsp;that&nbsp;editor_id&nbsp;is&nbsp;deleted.<br>
+&nbsp;<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
+delete.<br>
+:manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
+table&nbsp;to&nbsp;delete.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_edtr_bk_by_edid_endpt"><strong>disp_edtr_bk_by_edid_endpt</strong></a>(editor_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors/{editor_id}/books/{book_id}&nbsp;endpoint.<br>
+The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;and&nbsp;that&nbsp;book_id&nbsp;is<br>
+loaded&nbsp;and&nbsp;outputed&nbsp;in&nbsp;JSON.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;display.<br>
+:book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;load&nbsp;and<br>
+display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_edtr_bks_endpt"><strong>disp_edtr_bks_endpt</strong></a>(editor_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors/{editor_id}/books&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in<br>
+the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON<br>
+list.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;associated&nbsp;with&nbsp;book_ids&nbsp;in&nbsp;the<br>
+editors_books&nbsp;table&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_edtr_by_edid_endpt"><strong>disp_edtr_by_edid_endpt</strong></a>(editor_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors/{editor_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the<br>
+editors&nbsp;table&nbsp;with&nbsp;the&nbsp;given&nbsp;editor_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;output&nbsp;in&nbsp;JSON.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;editors&nbsp;table&nbsp;to&nbsp;load<br>
+and&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_edtr_mscrpt_by_edid_endpt"><strong>disp_edtr_mscrpt_by_edid_endpt</strong></a>(editor_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors/{editor_id}/manuscripts/{manuscript_id}<br>
+endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;and<br>
+that&nbsp;manuscript_id&nbsp;is&nbsp;loaded&nbsp;and&nbsp;outputed&nbsp;in&nbsp;JSON.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
+display.<br>
+:manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
+table&nbsp;to&nbsp;load&nbsp;and&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_edtr_mscrpts_endpt"><strong>disp_edtr_mscrpts_endpt</strong></a>(editor_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors/{editor_id}/manuscripts&nbsp;endpoint.&nbsp;All&nbsp;rows<br>
+in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output<br>
+as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;associated&nbsp;with&nbsp;manuscript_ids&nbsp;in&nbsp;the<br>
+editors_manuscripts&nbsp;table&nbsp;of&nbsp;rows&nbsp;from&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
+display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-index_endpt"><strong>index_endpt</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/editors&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;editors&nbsp;table<br>
+are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-updt_edtr_bk_by_edid_endpt"><strong>updt_edtr_bk_by_edid_endpt</strong></a>(editor_id: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/editors/{editor_id}/books/{book_id}&nbsp;endpoint.<br>
+The&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;and&nbsp;that&nbsp;editor_id&nbsp;is<br>
+updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;update.<br>
+:book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;books&nbsp;table&nbsp;to&nbsp;update.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-updt_edtr_by_edid_endpt"><strong>updt_edtr_by_edid_endpt</strong></a>(editor_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/editors/{editor_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in<br>
+the&nbsp;editors&nbsp;table&nbsp;with&nbsp;that&nbsp;editor_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON<br>
+parameters.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;editors&nbsp;table&nbsp;to&nbsp;update.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-updt_edtr_mscrpt_by_edid_endpt"><strong>updt_edtr_mscrpt_by_edid_endpt</strong></a>(editor_id: int, manuscript_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/editors/{editor_id}/manuscripts/{manuscript_id}<br>
+endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;with&nbsp;that&nbsp;manuscript_id<br>
+and&nbsp;that&nbsp;editor_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+&nbsp;<br>
+:editor_id:&nbsp;The&nbsp;editor_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts&nbsp;table&nbsp;to<br>
+update.<br>
+:manuscript_id:&nbsp;The&nbsp;manuscript_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;manuscripts<br>
+table&nbsp;to&nbsp;update.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>blueprint</strong> = &lt;Blueprint 'editors'&gt;<br>
+<strong>db</strong> = &lt;SQLAlchemy&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
+</body></html>

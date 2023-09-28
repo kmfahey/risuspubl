@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module risuspubl.api.salespeople</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="risuspubl.html"><font color="#ffffff">risuspubl</font></a>.<a href="risuspubl.api.html"><font color="#ffffff">api</font></a>.salespeople</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/risuspubl/risuspubl/api/salespeople.py">/home/kmfahey/Workspace/risuspubl/risuspubl/api/salespeople.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-crt_slsp_clnt_endpt"><strong>crt_slsp_clnt_endpt</strong></a>(salesperson_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/salespeople/{salesperson_id}/clients&nbsp;endpoint.&nbsp;A<br>
+new&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;is&nbsp;constituted&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters<br>
+and&nbsp;that&nbsp;salesperson_id&nbsp;and&nbsp;saved&nbsp;to&nbsp;that&nbsp;table.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;to&nbsp;save&nbsp;to&nbsp;the&nbsp;new&nbsp;row&nbsp;in&nbsp;the<br>
+clients&nbsp;table.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-crt_slsp_endpt"><strong>crt_slsp_endpt</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;POST&nbsp;/salespeople&nbsp;endpoint.&nbsp;A&nbsp;new&nbsp;row&nbsp;in&nbsp;the<br>
+salespeople&nbsp;table&nbsp;is&nbsp;constituted&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters&nbsp;and&nbsp;saved<br>
+to&nbsp;that&nbsp;table.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-del_slsp_by_slpid_endpt"><strong>del_slsp_by_slpid_endpt</strong></a>(salesperson_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE&nbsp;/salespeople/{salesperson_id}&nbsp;endpoint.&nbsp;The&nbsp;row<br>
+in&nbsp;the&nbsp;salespeople&nbsp;table&nbsp;with&nbsp;that&nbsp;salesperson_id&nbsp;is&nbsp;deleted.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;salespeople<br>
+table&nbsp;to&nbsp;delete.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-del_slsp_clnt_by_slpid_endpt"><strong>del_slsp_clnt_by_slpid_endpt</strong></a>(salesperson_id: int, client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;DELETE<br>
+/salespeople/{salesperson_id}/clients/{client_id}&nbsp;endpoint.&nbsp;The&nbsp;row<br>
+in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with&nbsp;that&nbsp;client_id&nbsp;and&nbsp;that&nbsp;salesperson_id&nbsp;is<br>
+deleted.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table<br>
+to&nbsp;delete.<br>
+:client_id:&nbsp;The&nbsp;client_id&nbsp;value&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;to<br>
+delete.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_slsp_by_slpid_endpt"><strong>disp_slsp_by_slpid_endpt</strong></a>(salesperson_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/salespeople/{salesperson_id}&nbsp;endpoint.&nbsp;The&nbsp;row&nbsp;in<br>
+the&nbsp;salespeople&nbsp;table&nbsp;with&nbsp;the&nbsp;given&nbsp;salesperson_id&nbsp;is&nbsp;loaded&nbsp;and<br>
+output&nbsp;in&nbsp;JSON.<br>
+&nbsp;<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;salespeople<br>
+table&nbsp;to&nbsp;load&nbsp;and&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_slsp_clients_endpt"><strong>disp_slsp_clients_endpt</strong></a>(salesperson_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/salespeople/{salesperson_id}/clients&nbsp;endpoint.&nbsp;All<br>
+rows&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with&nbsp;that&nbsp;salesperson_id&nbsp;are&nbsp;loaded&nbsp;and<br>
+output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;rows&nbsp;from&nbsp;the&nbsp;clients<br>
+table&nbsp;to&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_slsp_clnt_by_slpid_endpt"><strong>disp_slsp_clnt_by_slpid_endpt</strong></a>(salesperson_id: int, client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/salespeople/{salesperson_id}/clients&nbsp;endpoint.&nbsp;All<br>
+rows&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with&nbsp;that&nbsp;salesperson_id&nbsp;are&nbsp;loaded&nbsp;and<br>
+output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;rows&nbsp;from&nbsp;the&nbsp;clients<br>
+table&nbsp;to&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-index_endpt"><strong>index_endpt</strong></a>()</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/salespeople&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;salespeople<br>
+table&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-updt_slsp_by_slpid_endpt"><strong>updt_slsp_by_slpid_endpt</strong></a>(salesperson_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/salespeople/{salesperson_id}&nbsp;endpoint.&nbsp;The&nbsp;row<br>
+in&nbsp;the&nbsp;salespeople&nbsp;table&nbsp;with&nbsp;that&nbsp;salesperson_id&nbsp;is&nbsp;updated&nbsp;from<br>
+the&nbsp;JSON&nbsp;parameters.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;salespeople<br>
+table&nbsp;to&nbsp;update.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-updt_slsp_clnt_by_clid_endpt"><strong>updt_slsp_clnt_by_clid_endpt</strong></a>(salesperson_id: int, client_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;PATCH&nbsp;/salespeople/{salesperson_id}/clients/{client_id}<br>
+endpoint.&nbsp;The&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;with&nbsp;that&nbsp;client_id&nbsp;and&nbsp;that<br>
+salesperson_id&nbsp;is&nbsp;updated&nbsp;from&nbsp;the&nbsp;JSON&nbsp;parameters.<br>
+&nbsp;<br>
+:salesperson_id:&nbsp;The&nbsp;salesperson_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table<br>
+to&nbsp;update.<br>
+:client_id:&nbsp;The&nbsp;client_id&nbsp;of&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;clients&nbsp;table&nbsp;to&nbsp;update.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>blueprint</strong> = &lt;Blueprint 'salespeople'&gt;<br>
+<strong>db</strong> = &lt;SQLAlchemy&gt;<br>
+<strong>request</strong> = &lt;LocalProxy unbound&gt;</td></tr></table>
+</body></html>

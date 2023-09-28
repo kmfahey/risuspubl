@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module risuspubl.api.sales_records</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="risuspubl.html"><font color="#ffffff">risuspubl</font></a>.<a href="risuspubl.api.html"><font color="#ffffff">api</font></a>.sales_records</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/kmfahey/Workspace/risuspubl/risuspubl/api/sales_records.py">/home/kmfahey/Workspace/risuspubl/risuspubl/api/sales_records.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-disp_slrcd_endpt"><strong>disp_slrcd_endpt</strong></a>(sales_record_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/{sales_record_id}&nbsp;endpoint.&nbsp;The&nbsp;row<br>
+with&nbsp;that&nbsp;sales_record_id&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;is&nbsp;displayed.<br>
+&nbsp;<br>
+:year:&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_slrcds_by_bkid_endpt"><strong>disp_slrcds_by_bkid_endpt</strong></a>(book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/books/{book_id}&nbsp;endpoint.&nbsp;All&nbsp;rows<br>
+in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;book_id&nbsp;value&nbsp;are&nbsp;displayed&nbsp;in<br>
+order&nbsp;by&nbsp;year&nbsp;and&nbsp;month.<br>
+&nbsp;<br>
+:book_id:&nbsp;The&nbsp;book_id&nbsp;of&nbsp;the&nbsp;book&nbsp;to&nbsp;see&nbsp;the&nbsp;complete&nbsp;sales&nbsp;records<br>
+for.<br>
+:return:&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-disp_slrcds_by_yr_bkid_endpt"><strong>disp_slrcds_by_yr_bkid_endpt</strong></a>(year: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}/books/{book_id}<br>
+endpoint.&nbsp;Loads&nbsp;the&nbsp;sales&nbsp;data&nbsp;from&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;for&nbsp;the<br>
+specified&nbsp;year&nbsp;and&nbsp;the&nbsp;specified&nbsp;book&nbsp;and&nbsp;displays&nbsp;them&nbsp;in&nbsp;order&nbsp;by<br>
+month.<br>
+&nbsp;<br>
+:year:&nbsp;the&nbsp;year&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:book_id:&nbsp;the&nbsp;book_id&nbsp;of&nbsp;the&nbsp;book&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:return:&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-disp_slrcds_by_yr_endpt"><strong>disp_slrcds_by_yr_endpt</strong></a>(year: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}&nbsp;endpoint.&nbsp;All&nbsp;rows&nbsp;in<br>
+the&nbsp;sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;year&nbsp;are&nbsp;displayed&nbsp;in&nbsp;order&nbsp;by<br>
+year,&nbsp;month&nbsp;and&nbsp;book_id.<br>
+&nbsp;<br>
+:year:&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display.<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+ <dl><dt><a name="-disp_slrcds_by_yr_mo_bkid_endpt"><strong>disp_slrcds_by_yr_mo_bkid_endpt</strong></a>(year: int, month: int, book_id: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET<br>
+/sales_records/years/{year}/months/{month}/books/{book_id}&nbsp;endpoint.<br>
+Retrieves&nbsp;the&nbsp;row&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;with&nbsp;the&nbsp;given&nbsp;year,<br>
+month&nbsp;and&nbsp;book_id&nbsp;values&nbsp;and&nbsp;displays&nbsp;it.<br>
+&nbsp;<br>
+:year:&nbsp;the&nbsp;year&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:month:&nbsp;the&nbsp;month&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:book_id:&nbsp;the&nbsp;book_id&nbsp;to&nbsp;retrieve&nbsp;sales&nbsp;data&nbsp;for<br>
+:return:&nbsp;a&nbsp;flask.Response&nbsp;object</tt></dd></dl>
+ <dl><dt><a name="-disp_slrcds_by_yr_mo_endpt"><strong>disp_slrcds_by_yr_mo_endpt</strong></a>(year: int, month: int)</dt><dd><tt>Implements&nbsp;a&nbsp;GET&nbsp;/sales_records/years/{year}/months/{month}<br>
+endpoint.&nbsp;All&nbsp;rows&nbsp;in&nbsp;the&nbsp;sales_records&nbsp;table&nbsp;with&nbsp;that&nbsp;year&nbsp;and<br>
+that&nbsp;month&nbsp;are&nbsp;loaded&nbsp;and&nbsp;output&nbsp;as&nbsp;a&nbsp;JSON&nbsp;list.<br>
+&nbsp;<br>
+:year:&nbsp;The&nbsp;year&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display&nbsp;(between<br>
+1990&nbsp;and&nbsp;the&nbsp;current&nbsp;year).<br>
+:month:&nbsp;The&nbsp;month&nbsp;of&nbsp;rows&nbsp;from&nbsp;sales_records&nbsp;table&nbsp;to&nbsp;display<br>
+(between&nbsp;1&nbsp;and&nbsp;12).<br>
+:return:&nbsp;A&nbsp;flask.Response&nbsp;object.</tt></dd></dl>
+</td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#55aa55">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><strong>blueprint</strong> = &lt;Blueprint 'sales_records'&gt;</td></tr></table>
+</body></html>
