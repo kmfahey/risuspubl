@@ -84,12 +84,12 @@ def crt_clnt_endpt():
 @blueprint.route("/<int:client_id>", methods=["PATCH", "PUT"])
 def updt_clnt_by_clid_endpt(client_id: int):
     """
-    Implements a PATCH /clients/{client_id} endpoint. The row in
-    the clients table with that client_id is updated from the JSON
-    parameters.
-upd_clnt_by_id
-    :client_id: The client_id of the row in the clients table to update.
-    :return: A flask.Response object.
+        Implements a PATCH /clients/{client_id} endpoint. The row in
+        the clients table with that client_id is updated from the JSON
+        parameters.
+    upd_clnt_by_id
+        :client_id: The client_id of the row in the clients table to update.
+        :return: A flask.Response object.
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"}, chk_missing=False)

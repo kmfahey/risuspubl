@@ -21,9 +21,8 @@ from risuspubl.dbmodels import Book, Editor, Manuscript, db
 blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 
 
-# These functions return closures that implement the requested
-# functions, filling in the blank(s) with the provided class objects and
-# column names.
+# These functions return closures that implement endpoint functions,
+# filling in the blank(s) with the provided class objects.
 
 # A closure for POST /editors
 crt_edtr = crt_tbl_row_clos(Editor)
@@ -71,7 +70,6 @@ updt_edtr_by_id = updt_tbl_row_by_id_clos(Editor)
 
 # A closure for DELETE /editors/<id>
 del_edtr_by_id = del_tbl_row_by_id_clos(Editor)
-
 
 
 @blueprint.route("", methods=["GET"])

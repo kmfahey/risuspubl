@@ -22,26 +22,48 @@ blueprint = Blueprint("series", __name__, url_prefix="/series")
 
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
+
+# A closure for POST /series
 crt_srs = crt_tbl_row_clos(Series)
+
+# A closure for DELETE /series/<id>
 del_srs_by_id = del_tbl_row_by_id_clos(Series)
+
+# A closure for GET /series/<id>/books/<id>
 disp_bk_by_bkid_srs_id = disp_tbl_row_by_id_foreign_key_clos(
     Series, "series_id", Book, "book_id"
 )
+
+# A closure for GET /series/<id>/books
 disp_bks_by_srs_id = disp_tbl_rows_by_foreign_id_clos(Series, "series_id", Book)
+
+# A closure for GET /series/<id>/manuscripts/<id>
 disp_mscrpt_by_mscrpt_id_srs_id = disp_tbl_row_by_id_foreign_key_clos(
     Series, "series_id", Manuscript, "manuscript_id"
 )
+
+# A closure for GET /series/<id>/manuscripts
 disp_mscrpts_by_srs_id = disp_tbl_rows_by_foreign_id_clos(
     Series, "series_id", Manuscript
 )
+
+# A closure for GET /series/<id>
 disp_srs_by_id = disp_tbl_row_by_id_clos(Series)
+
+# A closure for GET /series
 disp_srs = disp_tbl_rows_clos(Series)
+
+# A closure for PATCH /series/<id>/books/<id>
 updt_bk_by_bkid_srs_id = updt_tbl_row_by_id_foreign_key_clos(
     Series, "series_id", Book, "book_id"
 )
+
+# A closure for PATCH /series/<id>/manuscripts/<id>
 updt_mscrpt_by_mscrpt_id_srs_idr = updt_tbl_row_by_id_foreign_key_clos(
     Series, "series_id", Manuscript, "manuscript_id"
 )
+
+# A closure for PATCH /series/<id>
 updt_srs_by_id = updt_tbl_row_by_id_clos(Series)
 
 

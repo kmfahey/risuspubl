@@ -310,7 +310,7 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
 
     # A dispatch table for code to generate arguments for a given
     # SQLAlchemy model subclass's constructor.
-    # 
+    #
     # The keys are the model subclasses themselves; the values are
     # lambdas that take a dict of the JSON from a request, and return a
     # dict of the corresponding constructor's arguments which have been
@@ -321,7 +321,6 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
         },
-
         # Extracts & validates the arguments for the AuthorMetadata constructor.
         AuthorMetadata: lambda json: {
             "author_id": _validate_int("author_id", json.get("author_id")),
@@ -335,7 +334,6 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "photo_url": _validate_str("photo_url", json.get("photo_url"), 1, 256),
         },
-
         # Extracts & validates the arguments for the Book constructor.
         Book: lambda json: {
             "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
@@ -349,7 +347,6 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "is_in_print": _validate_bool("is_in_print", json.get("is_in_print")),
         },
-
         # Extracts & validates the arguments for the Manuscript constructor.
         Manuscript: lambda json: {
             "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
@@ -363,7 +360,6 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "advance": _validate_int("advance", json.get("advance"), 5000, 100000),
         },
-
         # Extracts & validates the arguments for the Client constructor.
         Client: lambda json: {
             "salesperson_id": _validate_int(
@@ -382,21 +378,18 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             "zipcode": _validate_str("zipcode", json.get("zipcode"), 9, 9),
             "country": _validate_str("country", json.get("country")),
         },
-
         # Extracts & validates the arguments for the Editor constructor.
         Editor: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
             "salary": _validate_int("salary", json.get("salary"), 0),
         },
-
         # Extracts & validates the arguments for the Salesperson constructor.
         Salesperson: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
             "salary": _validate_int("salary", json.get("salary"), 0),
         },
-
         # Extracts & validates the arguments for the Series constructor.
         Series: lambda json: {
             "title": _validate_str("title", json.get("title")),
@@ -824,7 +817,7 @@ def check_json_req_props(
     # If the two sets didn't match, work out which combination of
     # unexpected and missing properties happened and raise the
     # appropriate error.
-    # 
+    #
     # Since failing this function's tests is most likely to happen
     # because an entirely different kind of object was POSTed, if both
     # unexpected and missing properties happened a combined exception

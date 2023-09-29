@@ -17,9 +17,17 @@ blueprint = Blueprint("manuscripts", __name__, url_prefix="/manuscripts")
 
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
+
+# A closure for DELETE /manuscripts/<id>
 del_mscrpt_by_msid = del_tbl_row_by_id_clos(Manuscript)
+
+# A closure for GET /manuscripts/<id>
 disp_mscrpt_by_msid = disp_tbl_row_by_id_clos(Manuscript)
+
+# A closure for GET /manuscripts
 disp_mscrpts = disp_tbl_rows_clos(Manuscript)
+
+# A closure for PATCH /manuscripts/<id>
 updt_mscrpt_by_msd = updt_tbl_row_by_id_clos(Manuscript)
 
 

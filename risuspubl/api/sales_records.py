@@ -12,6 +12,8 @@ blueprint = Blueprint("sales_records", __name__, url_prefix="/sales_records")
 
 # This function returns a closure that implements the requested
 # function, filling in the blank with the provided class object.
+
+# A closure for GET /sales_records/<record_id>
 disp_slrcd_by_id = disp_tbl_row_by_id_clos(SalesRecord)
 
 
