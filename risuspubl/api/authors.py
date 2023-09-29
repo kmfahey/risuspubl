@@ -29,11 +29,19 @@ from risuspubl.dbmodels import (
 blueprint = Blueprint("authors", __name__, url_prefix="/authors")
 
 
-# These functions return closures that implement the requested
-# functions, filling in the blank(s) with the provided class objects.
+# These functions return closures that implement endpoint functions,
+# filling in the blank(s) with the provided class objects.
+
+# A closure for POST /authors
 crt_auth = crt_tbl_row_clos(Author)
+
+# A closure for GET /authors/<id>
 disp_auth_by_auid = disp_tbl_row_by_id_clos(Author)
+
+# A closure for GET /authors
 disp_auths = disp_tbl_rows_clos(Author)
+
+# A closure for PATCH /authors/<id>
 updt_auth_by_auid = updt_tbl_row_by_id_clos(Author)
 
 

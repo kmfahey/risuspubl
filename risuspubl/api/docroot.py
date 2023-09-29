@@ -6,6 +6,8 @@ from risuspubl.api.utility import handle_exc
 
 blueprint = Blueprint("docroot", __name__, url_prefix="/")
 
+# The dict equivalent of the help JSON object the / endpoint function
+# returns.
 HELP_JSOBJ = {
     "docroot": {
         "/": {"GET": "Returns this help object."},
