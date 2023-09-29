@@ -19,11 +19,11 @@ blueprint = Blueprint("clients", __name__, url_prefix="/clients")
 
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
-create_client = crt_tbl_row_clos(Client)
-delete_clnt_by_id = del_tbl_row_by_id_clos(Client)
-display_clnt_by_id = disp_tbl_row_by_id_clos(Client)
-display_clients = disp_tbl_rows_clos(Client)
-update_clnt_by_id = updt_tbl_row_by_id_clos(Client)
+crt_clnt = crt_tbl_row_clos(Client)
+del_clnt_by_id = del_tbl_row_by_id_clos(Client)
+disp_clnt_by_id = disp_tbl_row_by_id_clos(Client)
+disp_clnts = disp_tbl_rows_clos(Client)
+upd_clnt_by_id = updt_tbl_row_by_id_clos(Client)
 
 
 @blueprint.route("", methods=["GET"])
@@ -35,7 +35,7 @@ def index_endpt():
     :return: A flask.Response object.
     """
     try:
-        return display_clients()
+        return disp_clnts()
     except Exception as exception:
         return handle_exc(exception)
 
@@ -51,7 +51,7 @@ def disp_clnt_by_clid_endpt(client_id: int):
     :return: A flask.Response object.
     """
     try:
-        return display_clnt_by_id(client_id)
+        return disp_clnt_by_id(client_id)
     except Exception as exception:
         return handle_exc(exception)
 
@@ -66,7 +66,7 @@ def crt_clnt_endpt():
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"})
-        return create_client(request.json)
+        return crt_clnt(request.json)
     except Exception as exception:
         return handle_exc(exception)
 
@@ -83,7 +83,7 @@ def updt_clnt_by_clid_endpt(client_id: int):
     """
     try:
         check_json_req_props(Client, request.json, {"client_id"}, chk_missing=False)
-        return update_clnt_by_id(client_id, request.json)
+        return upd_clnt_by_id(client_id, request.json)
     except Exception as exception:
         return handle_exc(exception)
 
@@ -98,6 +98,6 @@ def del_clnt_by_clid_endpt(client_id: int):
     :return: A flask.Response object.
     """
     try:
-        return delete_clnt_by_id(client_id)
+        return del_clnt_by_id(client_id)
     except Exception as exception:
         return handle_exc(exception)

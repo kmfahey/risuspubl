@@ -3,6 +3,7 @@
 import math
 import traceback
 from datetime import date, timedelta
+from operator import attrgetter
 
 from flask import Response, abort, jsonify
 
@@ -307,16 +308,21 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
     # reading.
     tm_date_str = (date.today() + timedelta(days=1)).isoformat()
 
-    # This data structure associates a SQLAlchemy.Model subclass object
-    # with a lambda that returns a valid constructor/update argd when
-    # called with the value of requests.json. Executing the lambda
-    # passes each value through the correct _validate_*() function so
-    # the argd has valid parameter values.
+    # A dispatch table for code to generate arguments for a given
+    # SQLAlchemy model subclass's constructor.
+    # 
+    # The keys are the model subclasses themselves; the values are
+    # lambdas that take a dict of the JSON from a request, and return a
+    # dict of the corresponding constructor's arguments which have been
+    # validated.
     classes_to_argd_lambdas = {
+        # Extracts & validates the arguments for the Author constructor.
         Author: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
         },
+
+        # Extracts & validates the arguments for the AuthorMetadata constructor.
         AuthorMetadata: lambda json: {
             "author_id": _validate_int("author_id", json.get("author_id")),
             "age": _validate_int("age", json.get("age"), 18, 120),
@@ -329,6 +335,8 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "photo_url": _validate_str("photo_url", json.get("photo_url"), 1, 256),
         },
+
+        # Extracts & validates the arguments for the Book constructor.
         Book: lambda json: {
             "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
             "series_id": _validate_int("series_id", json.get("series_id"), 0),
@@ -341,6 +349,8 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "is_in_print": _validate_bool("is_in_print", json.get("is_in_print")),
         },
+
+        # Extracts & validates the arguments for the Manuscript constructor.
         Manuscript: lambda json: {
             "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
             "series_id": _validate_int("series_id", json.get("series_id"), 0),
@@ -353,6 +363,8 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             ),
             "advance": _validate_int("advance", json.get("advance"), 5000, 100000),
         },
+
+        # Extracts & validates the arguments for the Client constructor.
         Client: lambda json: {
             "salesperson_id": _validate_int(
                 "salesperson_id", json.get("salesperson_id"), 0
@@ -370,16 +382,22 @@ def generate_crt_updt_argd(model_class, request_json, **argd):
             "zipcode": _validate_str("zipcode", json.get("zipcode"), 9, 9),
             "country": _validate_str("country", json.get("country")),
         },
+
+        # Extracts & validates the arguments for the Editor constructor.
         Editor: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
             "salary": _validate_int("salary", json.get("salary"), 0),
         },
+
+        # Extracts & validates the arguments for the Salesperson constructor.
         Salesperson: lambda json: {
             "first_name": _validate_str("first_name", json.get("first_name")),
             "last_name": _validate_str("last_name", json.get("last_name")),
             "salary": _validate_int("salary", json.get("salary"), 0),
         },
+
+        # Extracts & validates the arguments for the Series constructor.
         Series: lambda json: {
             "title": _validate_str("title", json.get("title")),
             "volumes": _validate_int("volumes", json.get("volumes"), 2),
@@ -758,6 +776,31 @@ def check_json_req_props(
     chk_missing=True,
     chk_unexp=True,
 ):
+    """
+    Checks the dict equivalent of a JSON object that's expected to
+    consist of some or all the properties needed to define one of the
+    SQLAlchemy model subclass objects. Raises a ValueError if the JSON
+    object contains properties that aren't associated with the model
+    subclass, or doesn't include properties needed to instance the model
+    subclass. Otherwise returns True.
+
+    :sqlal_model_cls: The SQLAlchemy model subclass to test the JSON
+    object as valid arguments for creating or modifying an instance of.
+    :request_json: The dict equivalent of the JSON object that was
+    submitted via POST data to test.
+    :excl_cols: An optional argument of columns to treat as unexpected;
+    typically used for *_id columns since submitted JSON shouldn't
+    dictate an id.
+    :optional_cols: An optional argument of columns to treat as
+    optional-- i.e. to accept either the presence or absence of without
+    raising a ValueError.
+    :chk_missing: A boolean that if false supresses checks for missing
+    properties.
+    :return: If a ValueError is not raised, returns True.
+    """
+
+    # A utility function that converts a list of keys into an English
+    # expression listing the keys, for an error message.
     def _prop_expr(keys_list):
         match len(keys_list):
             case 1:
@@ -771,11 +814,21 @@ def check_json_req_props(
                     + f"', and '{keys_list[-1]}'"
                 )
 
+    # Collect the two set of properties.
     request_json_prop = set(request_json.keys())
-    columns = set(map(lambda c: c.name, sqlal_model_cls.__table__.columns))
+    columns = set(map(attrgetter("name"), sqlal_model_cls.__table__.columns))
     expected_prop = columns - excl_cols
     if expected_prop == request_json_prop:
         return True
+
+    # If the two sets didn't match, work out which combination of
+    # unexpected and missing properties happened and raise the
+    # appropriate error.
+    # 
+    # Since failing this function's tests is most likely to happen
+    # because an entirely different kind of object was POSTed, if both
+    # unexpected and missing properties happened a combined exception
+    # with both issues is raised.
     errors = list()
     missing_prop = expected_prop - request_json_prop - optional_cols
     unexpected_prop = request_json_prop - expected_prop - optional_cols
