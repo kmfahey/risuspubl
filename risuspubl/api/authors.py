@@ -10,7 +10,7 @@ from risuspubl.api.utility import (
     check_json_req_props,
     disp_tbl_row_by_id_clos,
     disp_tbl_rows_clos,
-    generate_crt_updt_argd,
+    gen_crt_updt_argd,
     handle_exc,
     updt_model_obj,
     updt_tbl_row_by_id_clos,
@@ -60,16 +60,19 @@ def disp_auth_metdt_endpt(author_id: int):
         metadata_objs = list(
             AuthorMetadata.query.where(AuthorMetadata.author_id == author_id)
         )
-        if not len(metadata_objs):
-            return abort(404)
-        elif len(metadata_objs) > 1:
-            return Response(
-                f"internal error: author_id {author_id} matches more than "
-                + "one row in authors_metadata table",
-                status=500,
-            )
-        (metadata_obj,) = metadata_objs
-        return jsonify(metadata_obj.serialize())
+        match len(metadata_objs):
+            case 0:
+                return abort(404)
+            case 1:
+                return jsonify(metadata_objs[0].serialize())
+            case _:
+                # Have more than one row for this author_id in the
+                # author_metadata table fsr.
+                return Response(
+                    f"internal error: author_id {author_id} matches more than "
+                    + "one row in authors_metadata table",
+                    status=500,
+                )
     except Exception as exception:
         return handle_exc(exception)
 
@@ -455,15 +458,22 @@ def updt_auth_metdt_endpt(author_id: int):
                 return abort(404)
             case 1:
                 author_metadata_id = author_metadata_objs[0].author_metadata_id
+                # We have the model subclass object, but the endpoint
+                # closure takes the author_metadata_id and grabs the
+                # object itself. A little wasteful, nbd. Updates the
+                # object and returns it, it's saved, serialized,
+                # jsonified and returned.
                 author_metadata_obj = updt_model_obj(
                     author_metadata_id,
                     AuthorMetadata,
-                    generate_crt_updt_argd(AuthorMetadata, request.json),
+                    gen_crt_updt_argd(AuthorMetadata, request.json),
                 )
                 db.session.add(author_metadata_obj)
                 db.session.commit()
                 return jsonify(author_metadata_obj.serialize())
             case _:
+                # Have more than one row for this author_id in the
+                # author_metadata table fsr.
                 return Response(
                     f"internal error: author_id {author_id} matches more than "
                     + "one row in authors_metadata table",
@@ -492,26 +502,29 @@ def updt_auths_bk_endpt(author1_id: int, author2_id: int, book_id: int):
     :return: a flask.Response object
     """
     try:
+        # Check the request JSON for the correct set of properties.
         check_json_req_props(
             Book, request.json, {"book_id"}, {"series_id"}, chk_missing=False
         )
+        # Check that both the Author objects exist.
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         if author1_id == author2_id:
             raise ValueError("author1_id and author2_id are equal")
+        # Grabbing each Author object's associated Book objects, looking
+        # for one with an id matching the book_id arg. If either list is
+        # empty, errors out with a 404.
         a1_book_objs = list(
             filter(lambda bobj: bobj.book_id == book_id, author1_obj.books)
         )
         a2_book_objs = list(
             filter(lambda bobj: bobj.book_id == book_id, author2_obj.books)
         )
-        # Verifying that both author_ids are associated with this
-        # book_id in authors_books.
         if len(a1_book_objs) == 0 or len(a2_book_objs) == 0:
             return abort(404)
-        book_obj = updt_model_obj(
-            book_id, Book, generate_crt_updt_argd(Book, request.json)
-        )
+        # The book_id checks out, so the update closure is used to
+        # update it. The Book object is saved, serialized and jsonified.
+        book_obj = updt_model_obj(book_id, Book, gen_crt_updt_argd(Book, request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -540,6 +553,7 @@ def updt_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int
     :return: a flask.Response object
     """
     try:
+        # Check the request JSON for the correct set of properties.
         check_json_req_props(
             Manuscript,
             request.json,
@@ -547,10 +561,14 @@ def updt_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int
             {"series_id"},
             chk_missing=False,
         )
+        # Check that both the Author objects exist.
         author1_obj = Author.query.get_or_404(author1_id)
         author2_obj = Author.query.get_or_404(author2_id)
         if author1_id == author2_id:
             raise ValueError("author1_id and author2_id are equal")
+        # Grabbing each Author object's associated Manuscript objects,
+        # looking for one with an id matching the manuscript_id arg. If
+        # either list is empty, errors out with a 404.
         a1_manuscript_objs = list(
             filter(
                 lambda bobj: bobj.manuscript_id == manuscript_id,
@@ -572,7 +590,7 @@ def updt_auths_mscrpt_endpt(author1_id: int, author2_id: int, manuscript_id: int
         manuscript_obj = updt_model_obj(
             manuscript_id,
             Manuscript,
-            generate_crt_updt_argd(Manuscript, request.json),
+            gen_crt_updt_argd(Manuscript, request.json),
         )
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -623,9 +641,7 @@ def updt_auth_bk_endpt(author_id: int, book_id: int):
             return abort(404)
         # Using updt_model_obj() to fetch the Book object and update it
         # against request.json.
-        book_obj = updt_model_obj(
-            book_id, Book, generate_crt_updt_argd(Book, request.json)
-        )
+        book_obj = updt_model_obj(book_id, Book, gen_crt_updt_argd(Book, request.json))
         db.session.add(book_obj)
         db.session.commit()
         return jsonify(book_obj.serialize())
@@ -668,7 +684,7 @@ def updt_auth_mscrpt_endpt(author_id: int, manuscript_id: int):
         manuscript_obj = updt_model_obj(
             manuscript_id,
             Manuscript,
-            generate_crt_updt_argd(Manuscript, request.json),
+            gen_crt_updt_argd(Manuscript, request.json),
         )
         db.session.add(manuscript_obj)
         db.session.commit()
@@ -707,7 +723,7 @@ def crt_auth_metdt_endpt(author_id: int):
 
         query_dict = dict(author_id=author_id, **request.json)
         author_metadata_obj = crt_model_obj(
-            AuthorMetadata, generate_crt_updt_argd(AuthorMetadata, query_dict)
+            AuthorMetadata, gen_crt_updt_argd(AuthorMetadata, query_dict)
         )
         db.session.add(author_metadata_obj)
         db.session.commit()
@@ -756,7 +772,7 @@ def crt_auths_bk_endpt(author1_id: int, author2_id: int):
         # argument dict and instance a Book() object.
         book_obj = crt_model_obj(
             Book,
-            generate_crt_updt_argd(Book, request.json),
+            gen_crt_updt_argd(Book, request.json),
             optional_params={"series_id"},
         )
         db.session.add(book_obj)
@@ -803,7 +819,7 @@ def crt_auths_mscrpt_endpt(author1_id: int, author2_id: int):
         # Manuscript() argument dict and instance a Manuscript() object.
         manuscript_obj = crt_model_obj(
             Manuscript,
-            generate_crt_updt_argd(Manuscript, request.json),
+            gen_crt_updt_argd(Manuscript, request.json),
             optional_params={"series_id"},
         )
         db.session.add(manuscript_obj)
@@ -846,7 +862,7 @@ def crt_auth_bk_endpt(author_id: int):
         )
         book_obj = crt_model_obj(
             Book,
-            generate_crt_updt_argd(Book, request.json),
+            gen_crt_updt_argd(Book, request.json),
             optional_params={"series_id"},
         )
         db.session.add(book_obj)
@@ -884,7 +900,7 @@ def crt_auth_mscrpt_endpt(author_id: int):
         # Manuscript() argument dict and instance a Manuscript() object.
         manuscript_obj = crt_model_obj(
             Manuscript,
-            generate_crt_updt_argd(Manuscript, request.json),
+            gen_crt_updt_argd(Manuscript, request.json),
             optional_params={"series_id"},
         )
         db.session.add(manuscript_obj)

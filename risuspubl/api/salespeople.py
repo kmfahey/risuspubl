@@ -12,7 +12,7 @@ from risuspubl.api.utility import (
     disp_tbl_row_by_id_clos,
     disp_tbl_rows_by_foreign_id_clos,
     disp_tbl_rows_clos,
-    generate_crt_updt_argd,
+    gen_crt_updt_argd,
     handle_exc,
     updt_tbl_row_by_id_foreign_key_clos,
     updt_tbl_row_by_id_clos,
@@ -159,7 +159,7 @@ def crt_slsp_clnt_endpt(salesperson_id: int):
         # argument dict and instance a Client() object.
         client_obj = crt_model_obj(
             Client,
-            generate_crt_updt_argd(Client, request.json, salesperson_id=salesperson_id),
+            gen_crt_updt_argd(Client, request.json, salesperson_id=salesperson_id),
         )
         client_obj.salesperson_id = salesperson_id
         db.session.add(client_obj)

@@ -87,7 +87,8 @@ def updt_model_obj(id_val, model_subclass, params_argd):
     Retrieves the object in the SQLAlchemy.Model subclass by the given
     id, and updates it using the dict of key/value pairs to assign new
     attribute values. If a value in the parameter argd is None, it is
-    skipped. The object is returned.
+    skipped. The object is *not* saved, just returned. The calling code
+    has to save it itself.
 
     :model_subclass: An SQLAlchemy.Model subclass class object, the
     class to instance an object of.
@@ -283,7 +284,7 @@ def _validate_bool(param_name, param_value):
         )
 
 
-def generate_crt_updt_argd(model_class, request_json, **argd):
+def gen_crt_updt_argd(model_class, request_json, **argd):
     """
     Accepts a SQLAlchemy.Model subclass and a request.json object and
     returns a dict of parameter key/value pairs, whose values have been
@@ -453,7 +454,7 @@ def crt_tbl_row_clos(model_class):
             # model_class argument dict and instance a model_class
             # object.
             model_class_obj = crt_model_obj(
-                model_class, generate_crt_updt_argd(model_class, request_json)
+                model_class, gen_crt_updt_argd(model_class, request_json)
             )
             db.session.add(model_class_obj)
             db.session.commit()
@@ -686,12 +687,12 @@ def updt_tbl_row_by_id_clos(model_class):
         try:
             # updt_model_obj is used to fetch and update the model class
             # object indicates by the model_class object and its id
-            # value model_id. generate_crt_updt_argd() is used to build
+            # value model_id. gen_crt_updt_argd() is used to build
             # its param dict argument.
             model_class_obj = updt_model_obj(
                 model_id,
                 model_class,
-                generate_crt_updt_argd(model_class, request_json),
+                gen_crt_updt_argd(model_class, request_json),
             )
             db.session.add(model_class_obj)
             db.session.commit()
@@ -748,7 +749,7 @@ def updt_tbl_row_by_id_foreign_key_clos(
             inner_class_obj = updt_model_obj(
                 inner_id,
                 inner_class,
-                generate_crt_updt_argd(
+                gen_crt_updt_argd(
                     inner_class, request_json, **{outer_id_column: outer_id}
                 ),
             )
