@@ -27,7 +27,26 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-check_json_req_props"><strong>check_json_req_props</strong></a>(sqlal_model_cls, request_json, excl_cols=frozenset(), optional_cols=frozenset(), chk_missing=True, chk_unexp=True)</dt></dl>
+<td width="100%"><dl><dt><a name="-check_json_req_props"><strong>check_json_req_props</strong></a>(sqlal_model_cls, request_json, excl_cols=frozenset(), optional_cols=frozenset(), chk_missing=True, chk_unexp=True)</dt><dd><tt>Checks&nbsp;the&nbsp;dict&nbsp;equivalent&nbsp;of&nbsp;a&nbsp;JSON&nbsp;object&nbsp;that's&nbsp;expected&nbsp;to<br>
+consist&nbsp;of&nbsp;some&nbsp;or&nbsp;all&nbsp;the&nbsp;properties&nbsp;needed&nbsp;to&nbsp;define&nbsp;one&nbsp;of&nbsp;the<br>
+SQLAlchemy&nbsp;model&nbsp;subclass&nbsp;objects.&nbsp;Raises&nbsp;a&nbsp;ValueError&nbsp;if&nbsp;the&nbsp;JSON<br>
+object&nbsp;contains&nbsp;properties&nbsp;that&nbsp;aren't&nbsp;associated&nbsp;with&nbsp;the&nbsp;model<br>
+subclass,&nbsp;or&nbsp;doesn't&nbsp;include&nbsp;properties&nbsp;needed&nbsp;to&nbsp;instance&nbsp;the&nbsp;model<br>
+subclass.&nbsp;Otherwise&nbsp;returns&nbsp;True.<br>
+&nbsp;<br>
+:sqlal_model_cls:&nbsp;The&nbsp;SQLAlchemy&nbsp;model&nbsp;subclass&nbsp;to&nbsp;test&nbsp;the&nbsp;JSON<br>
+object&nbsp;as&nbsp;valid&nbsp;arguments&nbsp;for&nbsp;creating&nbsp;or&nbsp;modifying&nbsp;an&nbsp;instance&nbsp;of.<br>
+:request_json:&nbsp;The&nbsp;dict&nbsp;equivalent&nbsp;of&nbsp;the&nbsp;JSON&nbsp;object&nbsp;that&nbsp;was<br>
+submitted&nbsp;via&nbsp;POST&nbsp;data&nbsp;to&nbsp;test.<br>
+:excl_cols:&nbsp;An&nbsp;optional&nbsp;argument&nbsp;of&nbsp;columns&nbsp;to&nbsp;treat&nbsp;as&nbsp;unexpected;<br>
+typically&nbsp;used&nbsp;for&nbsp;*_id&nbsp;columns&nbsp;since&nbsp;submitted&nbsp;JSON&nbsp;shouldn't<br>
+dictate&nbsp;an&nbsp;id.<br>
+:optional_cols:&nbsp;An&nbsp;optional&nbsp;argument&nbsp;of&nbsp;columns&nbsp;to&nbsp;treat&nbsp;as<br>
+optional--&nbsp;i.e.&nbsp;to&nbsp;accept&nbsp;either&nbsp;the&nbsp;presence&nbsp;or&nbsp;absence&nbsp;of&nbsp;without<br>
+raising&nbsp;a&nbsp;ValueError.<br>
+:chk_missing:&nbsp;A&nbsp;boolean&nbsp;that&nbsp;if&nbsp;false&nbsp;supresses&nbsp;checks&nbsp;for&nbsp;missing<br>
+properties.<br>
+:return:&nbsp;If&nbsp;a&nbsp;ValueError&nbsp;is&nbsp;not&nbsp;raised,&nbsp;returns&nbsp;True.</tt></dd></dl>
  <dl><dt><a name="-crt_model_obj"><strong>crt_model_obj</strong></a>(model_subclass, params_argd, optional_params=())</dt><dd><tt>Instantiates&nbsp;an&nbsp;object&nbsp;in&nbsp;the&nbsp;provided&nbsp;SQLAlchemy.Model&nbsp;subclass<br>
 using&nbsp;the&nbsp;dict&nbsp;of&nbsp;key/value&nbsp;pairs&nbsp;as&nbsp;arguments&nbsp;to&nbsp;the&nbsp;constructor.<br>
 A&nbsp;value&nbsp;in&nbsp;that&nbsp;dict&nbsp;can&nbsp;be&nbsp;None&nbsp;if&nbsp;the&nbsp;key&nbsp;is&nbsp;in&nbsp;optional_params,<br>
