@@ -19,17 +19,18 @@ blueprint = Blueprint("books", __name__, url_prefix="/books")
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
 
-# A closure for DELETE /books/<id>
-del_bk_by_bkid = del_tbl_row_by_id_clos(Book)
+# A closure for GET /books
+disp_bks = disp_tbl_rows_clos(Book)
+
 
 # A closure for GET /books/<id>
 disp_bk_by_bkid = disp_tbl_row_by_id_clos(Book)
 
-# A closure for GET /books
-disp_bks = disp_tbl_rows_clos(Book)
-
 # A closure for PATCH /books/<id>
 updt_bk_by_bkid = updt_tbl_row_by_id_clos(Book)
+
+# A closure for DELETE /books/<id>
+del_bk_by_bkid = del_tbl_row_by_id_clos(Book)
 
 
 @blueprint.route("", methods=["GET"])

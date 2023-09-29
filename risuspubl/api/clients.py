@@ -20,20 +20,22 @@ blueprint = Blueprint("clients", __name__, url_prefix="/clients")
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
 
-# A closure for POST /clients
-crt_clnt = crt_tbl_row_clos(Client)
-
-# A closure for DELETE /clients/<id>
-del_clnt_by_id = del_tbl_row_by_id_clos(Client)
-
-# A closure for GET /clients/<id>
-disp_clnt_by_id = disp_tbl_row_by_id_clos(Client)
 
 # A closure for GET /clients
 disp_clnts = disp_tbl_rows_clos(Client)
 
+# A closure for POST /clients
+crt_clnt = crt_tbl_row_clos(Client)
+
+
+# A closure for GET /clients/<id>
+disp_clnt_by_id = disp_tbl_row_by_id_clos(Client)
+
 # A closure for PATCH /clients/<id>
 upd_clnt_by_id = updt_tbl_row_by_id_clos(Client)
+
+# A closure for DELETE /clients/<id>
+del_clnt_by_id = del_tbl_row_by_id_clos(Client)
 
 
 @blueprint.route("", methods=["GET"])

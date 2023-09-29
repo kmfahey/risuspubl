@@ -7,7 +7,6 @@ from risuspubl.api.utility import (
     crt_model_obj,
     crt_tbl_row_clos,
     del_tbl_row_by_id_foreign_key_clos,
-    del_tbl_row_by_id_clos,
     disp_tbl_row_by_id_foreign_key_clos,
     disp_tbl_row_by_id_clos,
     disp_tbl_rows_by_foreign_id_clos,
@@ -26,37 +25,41 @@ blueprint = Blueprint("salespeople", __name__, url_prefix="/salespeople")
 # These functions return closures that implement the requested
 # functions, filling in the blank(s) with the provided class objects.
 
+
+# A closure for GET /salespeople
+disp_slsps = disp_tbl_rows_clos(Salesperson)
+
 # A closure for POST /salespeople
 crt_slsp = crt_tbl_row_clos(Salesperson)
 
-# A closure for DELETE /salespeople/<id>/clients/<id>
-del_clnt_by_clid_slsp_id = del_tbl_row_by_id_foreign_key_clos(
-    Salesperson, "salesperson_id", Client, "client_id"
-)
 
-# A closure for GET /salespeople/<id>/clients/<id>
-disp_clnt_by_clid_slsp_id = disp_tbl_row_by_id_foreign_key_clos(
-    Salesperson, "salesperson_id", Client, "client_id"
-)
+# A closure for GET /salespeople/<id>
+disp_slsp_by_id = disp_tbl_row_by_id_clos(Salesperson)
+
+# A closure for PATCH /salespeople/<id>
+updt_slsp_by_id = updt_tbl_row_by_id_clos(Salesperson)
+
 
 # A closure for GET /salespeople/<id>/clients
 disp_clnts_by_slsp_id = disp_tbl_rows_by_foreign_id_clos(
     Salesperson, "salesperson_id", Client
 )
 
-# A closure for GET /salespeople
-disp_slsps = disp_tbl_rows_clos(Salesperson)
 
-# A closure for GET /salespeople/<id>
-disp_slsp_by_id = disp_tbl_row_by_id_clos(Salesperson)
+# A closure for GET /salespeople/<id>/clients/<id>
+disp_clnt_by_clid_slsp_id = disp_tbl_row_by_id_foreign_key_clos(
+    Salesperson, "salesperson_id", Client, "client_id"
+)
 
 # A closure for PATCH /salespeople/<id>/clients/<id>
 updt_clnt_by_clid_slsp_id = updt_tbl_row_by_id_foreign_key_clos(
     Salesperson, "salesperson_id", Client, "client_id"
 )
 
-# A closure for PATCH /salespeople/<id>
-updt_slsp_by_id = updt_tbl_row_by_id_clos(Salesperson)
+# A closure for DELETE /salespeople/<id>/clients/<id>
+del_clnt_by_clid_slsp_id = del_tbl_row_by_id_foreign_key_clos(
+    Salesperson, "salesperson_id", Client, "client_id"
+)
 
 
 @blueprint.route("", methods=["GET"])

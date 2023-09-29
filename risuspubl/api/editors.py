@@ -24,52 +24,64 @@ blueprint = Blueprint("editors", __name__, url_prefix="/editors")
 # These functions return closures that implement endpoint functions,
 # filling in the blank(s) with the provided class objects.
 
-# A closure for POST /editors
-crt_edtr = crt_tbl_row_clos(Editor)
-
-# Closures for DELETE /editors/<id>/books/<id> and DELETE
-# /editors/<id>/manuscripts/<id>.
-del_bk_by_bkid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Book, "book_id"
-)
-del_mscrpt_by_msid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Manuscript, "manuscript_id"
-)
-
-# Closures for GET /editors/<id>/books/<id> and GET
-# /editors/<id>/manuscripts/<id>
-disp_bk_by_bkid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Book, "book_id"
-)
-disp_mscrpt_by_msid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Manuscript, "manuscript_id"
-)
-
-# Closures for GET /editors/<id>/books and GET /editors/<id>/manuscripts
-disp_bks_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(Editor, "editor_id", Book)
-disp_mscrpts_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(
-    Editor, "editor_id", Manuscript
-)
-
-# Closures for PATCH /editors/<id>/books/<id> and PATCH /editors/<id>/manuscripts/<id>
-updt_bk_by_bkid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Book, "book_id"
-)
-updt_mscrpt_by_msid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
-    Editor, "editor_id", Manuscript, "manuscript_id"
-)
-
-# A closure for GET /editors/<id>
-disp_edtr_by_id = disp_tbl_row_by_id_clos(Editor)
 
 # A closure for GET /editors
 disp_edtrs = disp_tbl_rows_clos(Editor)
+
+# A closure for POST /editors
+crt_edtr = crt_tbl_row_clos(Editor)
+
+
+# A closure for GET /editors/<id>
+disp_edtr_by_id = disp_tbl_row_by_id_clos(Editor)
 
 # A closure for PATCH /editors/<id>
 updt_edtr_by_id = updt_tbl_row_by_id_clos(Editor)
 
 # A closure for DELETE /editors/<id>
 del_edtr_by_id = del_tbl_row_by_id_clos(Editor)
+
+
+# A closure for GET /editors/<id>/books
+disp_bks_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(Editor, "editor_id", Book)
+
+
+# A closure for GET /editors/<id>/books/<id>
+disp_bk_by_bkid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Book, "book_id"
+)
+
+# A closure for PATCH /editors/<id>/books/<id>
+updt_bk_by_bkid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Book, "book_id"
+)
+
+# A closure for DELETE /editors/<id>/books/<id>
+del_bk_by_bkid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Book, "book_id"
+)
+
+
+# A closure for GET /editors/<id>/manuscripts
+disp_mscrpts_by_edtr_id = disp_tbl_rows_by_foreign_id_clos(
+    Editor, "editor_id", Manuscript
+)
+
+
+# A closure for GET /editors/<id>/manuscripts/<id>
+disp_mscrpt_by_msid_and_edtr_id = disp_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
+)
+
+# A closure for PATCH /editors/<id>/manuscripts/<id>
+updt_mscrpt_by_msid_and_edtr_id = updt_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
+)
+
+# A closure for DELETE /editors/<id>/manuscripts/<id>
+del_mscrpt_by_msid_and_edtr_id = del_tbl_row_by_id_foreign_key_clos(
+    Editor, "editor_id", Manuscript, "manuscript_id"
+)
 
 
 @blueprint.route("", methods=["GET"])
