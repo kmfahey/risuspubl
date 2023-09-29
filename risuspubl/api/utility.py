@@ -296,11 +296,11 @@ def gen_crt_updt_argd(model_class, request_json, **argd):
     :request_json: The value of request.json during the execution of a
     flask endpoint function, containing the key-value pairs to convert
     to constructor/update arguments.
-    :**argd:       (Optional.) A single key/value pair, where the key is the
-                   name of a foreign key in the relevant table, and the value
-                   is the value for that key supplied to the flask endpoint
-                   function as a URL argument. If the value for that column in
-                   request.json, it is replaced with the value.
+    :**argd: (Optional.) A single key/value pair, where the key is the
+    name of a foreign key in the relevant table, and the value is the
+    value for that key supplied to the flask endpoint function as a
+    URL argument. If the value for that column in request.json, it is
+    replaced with the value.
     :return: A dict that can be constructor/update arguments for the
     SQLAlchemy.Model subclass target.
     """
@@ -316,92 +316,113 @@ def gen_crt_updt_argd(model_class, request_json, **argd):
     # lambdas that take a dict of the JSON from a request, and return a
     # dict of the corresponding constructor's arguments which have been
     # validated.
-    classes_to_argd_lambdas = {
-        # Extracts & validates the arguments for the Author constructor.
-        Author: lambda json: {
-            "first_name": _validate_str("first_name", json.get("first_name")),
-            "last_name": _validate_str("last_name", json.get("last_name")),
-        },
-        # Extracts & validates the arguments for the AuthorMetadata constructor.
-        AuthorMetadata: lambda json: {
-            "author_id": _validate_int("author_id", json.get("author_id")),
-            "age": _validate_int("age", json.get("age"), 18, 120),
-            "biography": _validate_str("biography", json.get("biography"), 1, math.inf),
-            "photo_res_horiz": _validate_int(
-                "photo_res_horiz", json.get("photo_res_horiz"), 1
+
+    # Extracts & validates the arguments for the Author constructor.
+    def to_author_argd(req):
+        return dict(
+            first_name=_validate_str("first_name", req.get("first_name")),
+            last_name=_validate_str("last_name", req.get("last_name")),
+        )
+
+    # Extracts & validates the arguments for the AuthorMetadata constructor.
+    def to_author_metadata_argd(req):
+        return dict(
+            author_id=_validate_int("author_id", req.get("author_id")),
+            age=_validate_int("age", req.get("age"), 18, 120),
+            biography=_validate_str("biography", req.get("biography"), 1, math.inf),
+            photo_res_horiz=_validate_int(
+                "photo_res_horiz", req.get("photo_res_horiz"), 1
             ),
-            "photo_res_vert": _validate_int(
-                "photo_rest_vert", json.get("photo_res_vert"), 1
+            photo_res_vert=_validate_int(
+                "photo_rest_vert", req.get("photo_res_vert"), 1
             ),
-            "photo_url": _validate_str("photo_url", json.get("photo_url"), 1, 256),
-        },
-        # Extracts & validates the arguments for the Book constructor.
-        Book: lambda json: {
-            "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
-            "series_id": _validate_int("series_id", json.get("series_id"), 0),
-            "title": _validate_str("title", json.get("title")),
-            "publication_date": _validate_date(
-                "publication_date", json.get("publication_date"), "1990-01-01"
+            photo_url=_validate_str("photo_url", req.get("photo_url"), 1, 256),
+        )
+
+    # Extracts & validates the arguments for the Book constructor.
+    def to_book_argd(req):
+        return dict(
+            editor_id=_validate_int("editor_id", req.get("editor_id"), 0),
+            series_id=_validate_int("series_id", req.get("series_id"), 0),
+            title=_validate_str("title", req.get("title")),
+            publication_date=_validate_date(
+                "publication_date", req.get("publication_date"), "1990-01-01"
             ),
-            "edition_number": _validate_int(
-                "edition_number", json.get("edition_number"), 1, 10
+            edition_number=_validate_int(
+                "edition_number", req.get("edition_number"), 1, 10
             ),
-            "is_in_print": _validate_bool("is_in_print", json.get("is_in_print")),
-        },
-        # Extracts & validates the arguments for the Manuscript constructor.
-        Manuscript: lambda json: {
-            "editor_id": _validate_int("editor_id", json.get("editor_id"), 0),
-            "series_id": _validate_int("series_id", json.get("series_id"), 0),
-            "working_title": _validate_str("working_title", json.get("working_title")),
-            "due_date": _validate_date(
+            is_in_print=_validate_bool("is_in_print", req.get("is_in_print")),
+        )
+
+    # Extracts & validates the arguments for the Manuscript constructor.
+    def to_manuscript_argd(req):
+        return dict(
+            editor_id=_validate_int("editor_id", req.get("editor_id"), 0),
+            series_id=_validate_int("series_id", req.get("series_id"), 0),
+            working_title=_validate_str("working_title", req.get("working_title")),
+            due_date=_validate_date(
                 "due_date",
-                json.get("due_date"),
+                req.get("due_date"),
                 tm_date_str,
                 date(date.today().year + 2, date.today().month, 1).isoformat(),
             ),
-            "advance": _validate_int("advance", json.get("advance"), 5000, 100000),
-        },
-        # Extracts & validates the arguments for the Client constructor.
-        Client: lambda json: {
-            "salesperson_id": _validate_int(
-                "salesperson_id", json.get("salesperson_id"), 0
+            advance=_validate_int("advance", req.get("advance"), 5000, 100000),
+        )
+
+    # Extracts & validates the arguments for the Client constructor.
+    def to_client_argd(req):
+        return dict(
+            salesperson_id=_validate_int(
+                "salesperson_id", req.get("salesperson_id"), 0
             ),
-            "email_address": _validate_str("email_address", json.get("email_address")),
-            "phone_number": _validate_str(
-                "phone_number", json.get("phone_number"), 11, 11
-            ),
-            "business_name": _validate_str("business_name", json.get("business_name")),
-            "street_address": _validate_str(
-                "street_address", json.get("street_address")
-            ),
-            "city": _validate_str("city", json.get("city")),
-            "state": _validate_str("state", json.get("state"), 2, 2),
-            "zipcode": _validate_str("zipcode", json.get("zipcode"), 9, 9),
-            "country": _validate_str("country", json.get("country")),
-        },
-        # Extracts & validates the arguments for the Editor constructor.
-        Editor: lambda json: {
-            "first_name": _validate_str("first_name", json.get("first_name")),
-            "last_name": _validate_str("last_name", json.get("last_name")),
-            "salary": _validate_int("salary", json.get("salary"), 0),
-        },
-        # Extracts & validates the arguments for the Salesperson constructor.
-        Salesperson: lambda json: {
-            "first_name": _validate_str("first_name", json.get("first_name")),
-            "last_name": _validate_str("last_name", json.get("last_name")),
-            "salary": _validate_int("salary", json.get("salary"), 0),
-        },
-        # Extracts & validates the arguments for the Series constructor.
-        Series: lambda json: {
-            "title": _validate_str("title", json.get("title")),
-            "volumes": _validate_int("volumes", json.get("volumes"), 2),
-        },
+            email_address=_validate_str("email_address", req.get("email_address")),
+            phone_number=_validate_str("phone_number", req.get("phone_number"), 11, 11),
+            business_name=_validate_str("business_name", req.get("business_name")),
+            street_address=_validate_str("street_address", req.get("street_address")),
+            city=_validate_str("city", req.get("city")),
+            state=_validate_str("state", req.get("state"), 2, 2),
+            zipcode=_validate_str("zipcode", req.get("zipcode"), 9, 9),
+            country=_validate_str("country", req.get("country")),
+        )
+
+    # Extracts & validates the arguments for the Editor constructor.
+    def to_editor_argd(req):
+        return dict(
+            first_name=_validate_str("first_name", req.get("first_name")),
+            last_name=_validate_str("last_name", req.get("last_name")),
+            salary=_validate_int("salary", req.get("salary"), 0),
+        )
+
+    # Extracts & validates the arguments for the Salesperson constructor.
+    def to_salesperson_argd(req):
+        return dict(
+            first_name=_validate_str("first_name", req.get("first_name")),
+            last_name=_validate_str("last_name", req.get("last_name")),
+            salary=_validate_int("salary", req.get("salary"), 0),
+        )
+
+    # Extracts & validates the arguments for the Series constructor.
+    def to_series_argd(req):
+        return dict(
+            title=_validate_str("title", req.get("title")),
+            volumes=_validate_int("volumes", req.get("volumes"), 2),
+        )
+
+    to_argd_dispatch = {
+        Author: to_author_argd,
+        AuthorMetadata: to_author_metadata_argd,
+        Book: to_book_argd,
+        Manuscript: to_manuscript_argd,
+        Client: to_client_argd,
+        Editor: to_editor_argd,
+        Salesperson: to_salesperson_argd,
+        Series: to_series_argd,
     }
 
     # The lambda that computes the argd that can be constructor or
     # update arguments for the model_class arguments is located, and
     # called with request_json, so it evaluates.
-    create_or_update_argd = classes_to_argd_lambdas[model_class](request_json)
+    create_or_update_argd = to_argd_dispatch[model_class](request_json)
 
     # If the id_column and its value id_value are defined, and the
     # argd's value for a key of id_column is None, then it's set to
