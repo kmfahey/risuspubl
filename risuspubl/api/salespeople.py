@@ -227,6 +227,8 @@ def del_slsp_by_slpid_endpt(salesperson_id: int):
     """
     try:
         salesperson_obj = Salesperson.query.get_or_404(salesperson_id)
+        # Finding all Client objects with the salesperson_id column set
+        # to this value and resetting it to None for each one.
         client_objs = Client.query.filter(Client.salesperson_id == salesperson_id)
         for client_obj in client_objs:
             client_obj.salesperson_id = None

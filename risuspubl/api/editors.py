@@ -281,7 +281,11 @@ def del_edtr_by_edid_endpt(editor_id: int):
     :return: A flask.Response object.
     """
     try:
+        # Checking for the existence of this Editor object
         editor_obj = Editor.query.get_or_404(editor_id)
+
+        # Finding all Book and Manuscript objects with the editor_id
+        # column set to this value and resetting it to None i.e. null
         book_objs = Book.query.filter(Book.editor_id == editor_id)
         for book_obj in book_objs:
             book_obj.editor_id = None
@@ -289,6 +293,8 @@ def del_edtr_by_edid_endpt(editor_id: int):
         for manuscript_obj in manuscript_objs:
             manuscript_obj.editor_id = None
         db.session.commit()
+
+        # Deleting the object, now free of foreign key dependencies
         db.session.delete(editor_obj)
         db.session.commit()
         return jsonify(True)
