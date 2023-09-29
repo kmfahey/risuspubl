@@ -4,7 +4,7 @@ from datetime import date
 from flask import Blueprint, abort, jsonify
 
 from risuspubl.api.utility import disp_tbl_row_by_id_clos, handle_exc
-from risuspubl.dbmodels import SalesRecord
+from risuspubl.dbmodels import SalesRecord, db
 
 
 blueprint = Blueprint("sales_records", __name__, url_prefix="/sales_records")
@@ -16,6 +16,13 @@ blueprint = Blueprint("sales_records", __name__, url_prefix="/sales_records")
 
 # A closure for GET /sales_records/<record_id>
 disp_slrcd_by_id = disp_tbl_row_by_id_clos(SalesRecord)
+
+
+def _get_min_and_max_year():
+    return (
+        db.session.query(db.func.min(SalesRecord.year)).scalar(),
+        db.session.query(db.func.max(SalesRecord.year)).scalar(),
+    )
 
 
 @blueprint.route("/<int:sales_record_id>", methods=["GET"])
@@ -45,9 +52,10 @@ def disp_slrcds_by_yr_endpt(year: int):
     """
     try:
         retval = list()
-        if not (1990 <= year <= 2022):
+        min_year, max_year = _get_min_and_max_year()
+        if not (min_year <= year <= max_year):
             raise ValueError(
-                f"year parameter value {year} not in the range [1990, 2022]: "
+                f"year parameter value {year} not in the range [{min_year}, {max_year}]: "
                 + "no sales in specified year"
             )
         for sales_record_obj in SalesRecord.query.where(SalesRecord.year == year):
@@ -76,10 +84,11 @@ def disp_slrcds_by_yr_mo_endpt(year: int, month: int):
     try:
         retval = list()
         this_year = date.today().year
-        if not (1990 <= year <= date.today().year):
+        min_year, max_year = _get_min_and_max_year()
+        if not (min_year <= year <= max_year):
             raise ValueError(
-                f"year parameter value {year} not in the range [1990, "
-                + f"{this_year}]: no sales in specified year"
+                f"year parameter value {year} not in the range [{min_year}, {max_year}]: "
+                + "no sales in specified year"
             )
         elif not (1 <= month <= 12):
             raise ValueError(
