@@ -229,13 +229,13 @@ def test_display_sales_records_by_year_and_month_endpoint(
 
     DbBasedTester.cleanup__empty_all_tables()
 
-    # Testing 404 error with empty year
+    # Testing 400 error with empty year
     year = Genius.todays_date.year - 1
     month = random.randint(1, 12)
     _setup_for_display_by_date(db, year, month)
     different_year = randint_excluding(1990, Genius.todays_date.year, year)
     response = client.get(f"/sales_records/years/{different_year}/months/{month}")
-    assert response.status_code == 404, response.data.decode("utf8")
+    assert response.status_code == 400, response.data.decode("utf8")
 
 
 # Testing the GET /sales_records/years/<year> endpoint -- test 72 of 84
@@ -264,10 +264,10 @@ def test_display_sales_records_by_year_endpoint(db_w_cleanup, staged_app_client)
 
     DbBasedTester.cleanup__empty_all_tables()
 
-    # Testing 404 error with empty year
+    # Testing 400 error with empty year
     year = Genius.todays_date.year - 1
     month = random.randint(1, 12)
     _setup_for_display_by_date(db, year, month)
     different_year = randint_excluding(1990, Genius.todays_date.year, year)
     response = client.get(f"/sales_records/years/{different_year}/months/{month}")
-    assert response.status_code == 404, response.data.decode("utf8")
+    assert response.status_code == 400, response.data.decode("utf8")
