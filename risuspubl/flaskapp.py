@@ -3,16 +3,31 @@
 import os
 import flask
 
-import risuspubl.api.authors
-import risuspubl.api.books
-import risuspubl.api.clients
-import risuspubl.api.docroot
-import risuspubl.api.editors
-import risuspubl.api.manuscripts
-import risuspubl.api.sales_records
-import risuspubl.api.salespeople
-import risuspubl.api.series
+from risuspubl.api import (
+    authors,
+    books,
+    clients,
+    docroot,
+    editors,
+    manuscripts,
+    sales_records,
+    salespeople,
+    series,
+)
 from risuspubl.dbmodels import db
+
+
+API_MODULES = (
+    authors,
+    books,
+    clients,
+    docroot,
+    editors,
+    manuscripts,
+    sales_records,
+    salespeople,
+    series,
+)
 
 
 def create_app(test_config=None):
@@ -37,15 +52,8 @@ def create_app(test_config=None):
 
     db.init_app(app)
 
-    app.register_blueprint(risuspubl.api.authors.blueprint)
-    app.register_blueprint(risuspubl.api.books.blueprint)
-    app.register_blueprint(risuspubl.api.manuscripts.blueprint)
-    app.register_blueprint(risuspubl.api.clients.blueprint)
-    app.register_blueprint(risuspubl.api.docroot.blueprint)
-    app.register_blueprint(risuspubl.api.editors.blueprint)
-    app.register_blueprint(risuspubl.api.salespeople.blueprint)
-    app.register_blueprint(risuspubl.api.series.blueprint)
-    app.register_blueprint(risuspubl.api.sales_records.blueprint)
+    for api_module in API_MODULES:
+        app.register_blueprint(api_module.blueprint)
 
     # ensure the instance folder exists
     try:

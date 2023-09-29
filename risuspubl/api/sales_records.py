@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-from datetime import date
 from flask import Blueprint, abort, jsonify
 
 from risuspubl.api.utility import disp_tbl_row_by_id_clos, handle_exc
@@ -83,7 +82,6 @@ def disp_slrcds_by_yr_mo_endpt(year: int, month: int):
     """
     try:
         retval = list()
-        this_year = date.today().year
         min_year, max_year = _get_min_and_max_year()
         if not (min_year <= year <= max_year):
             raise ValueError(
